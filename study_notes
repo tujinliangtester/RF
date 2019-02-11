@@ -9,3 +9,5 @@ Plain text format
 
 2.1.4   Rules for parsing the data
 Dividing test data to several rows
+
+Variable number of arguments
