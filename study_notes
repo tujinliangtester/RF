@@ -17,3 +17,10 @@ Named arguments example
 
 quickstart:
 User keywords
+
+robotframework接口设计规范
+1.用例目录结构规则
+  最多3层
+  大的产品模块
+  第2/3层可以根据产品应用模块或接口url来定（暂用url来定吧）
+  
