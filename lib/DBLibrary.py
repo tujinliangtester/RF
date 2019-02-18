@@ -7,4 +7,5 @@ import configparser
 
 class DBLibrary(object):
     def __init__(self):
+        print(1)
         
