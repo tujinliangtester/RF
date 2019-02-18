@@ -14,8 +14,8 @@ class InterfaceRequest(object):
     def interface_get(self, url='', headers='', params=''):
         self._config_reader_command('get', 'interface', 'baseurl')
         url = self._subout + url
-        headers=self._str2json(headers)
-        params=self._str2json(params)
+        headers = self._str2json(headers)
+        params = self._str2json(params)
         response = requests.get(url, headers=headers, params=params)
         print(response.status_code)
         return response.text
@@ -34,10 +34,11 @@ class InterfaceRequest(object):
                                    stderr=subprocess.STDOUT)
         self._subout = process.communicate()[0].strip()
 
-    def _str2json(self,s):
-        if(len(s)==0):
+    def _str2json(self, s):
+        if (len(s) == 0):
             return ''
         return json.loads(s)
+
 
 if __name__ == '__main__':
     IR = InterfaceRequest()

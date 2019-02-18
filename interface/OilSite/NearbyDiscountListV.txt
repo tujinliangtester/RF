@@ -5,12 +5,14 @@ Library  ../../lib/InterfaceRequest.py
 
 *** Test Cases ***
 Class_01
-    ${res} =    interface post    /OilSite/NearbyDiscountListV2    ${params}
+    ${res} =    interface post    /OilSite/NearbyDiscountListV2    ${orderbyfield_pointdistance}
     should contain    ${res}    "code":1
 Class_02
-    interface get
+    ${res} =    interface post    /OilSite/NearbyDiscountListV2    ${orderbyfield_price}
+    should contain    ${res}    "code":1
 
 
 
 *** Variables ***
-${params}     {"product_type_id": "10", "longitude": "104.06791687011719", "latitude": "30.548940658569336", "distance": "30", "orderbyfield": "pointdistance", "site_id": "", "site_name": "", "pageNumber": "1", "pagesize": "10", "r": "0.2110462989440982"}
+${orderbyfield_pointdistance}     {"product_type_id": "10", "longitude": "104.06791687011719", "latitude": "30.548940658569336", "distance": "30", "orderbyfield": "pointdistance", "site_id": "", "site_name": "", "pageNumber": "1", "pagesize": "10", "r": "0.2110462989440982"}
+${orderbyfield_price}     {"product_type_id": "10", "longitude": "104.06791687011719", "latitude": "30.548940658569336", "distance": "30", "orderbyfield": "price", "site_id": "", "site_name": "", "pageNumber": "1", "pagesize": "10", "r": "0.2110462989440982"}
