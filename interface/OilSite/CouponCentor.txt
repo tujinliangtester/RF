@@ -1,3 +1,10 @@
 
 
 *** Settings ***
+Library  ../../lib/Interface2UI.py
+
+*** Test Cases ***
+
+Class_01
+    ${res} =    coupon setting    add_coupon
+    should be equal    1    ${res}
