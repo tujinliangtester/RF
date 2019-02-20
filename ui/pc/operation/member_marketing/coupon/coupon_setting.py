@@ -21,7 +21,23 @@
 
 
 '''
+import sys
+
+
 def add_coupon():
-    print(1)
+    print('hahha')
     return 2
+
+
+if __name__ == '__main__':
+    actions = {'add_coupon': add_coupon,  'help': help}
+    try:
+        action = sys.argv[1]
+    except IndexError:
+        action = 'help'
+    args = sys.argv[2:]
+    try:
+        actions[action](*args)
+    except (KeyError, TypeError):
+        help()
 

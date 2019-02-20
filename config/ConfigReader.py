@@ -1,4 +1,5 @@
 import configparser
+import sys
 
 cf_obj = configparser.ConfigParser()
 cf_obj.read('E:\\tjl\测试工具\\auto\\RF\\config\\setting.ini')
@@ -6,16 +7,27 @@ cf_obj.read('E:\\tjl\测试工具\\auto\\RF\\config\\setting.ini')
 
 def get(option, item):
     msg = cf_obj.get(option, item)
+    print(msg)
     return msg
 
 
 def sec():
     li = cf_obj.sections()
+    print(li)
     return li
 
 
 if __name__ == '__main__':
-    print(get('interface', 'baseurl'))
+    actions = {'get': get, 'help': help}
+    try:
+        action = sys.argv[1]
+    except IndexError:
+        action = 'help'
+    args = sys.argv[2:]
+    try:
+        actions[action](*args)
+    except (KeyError, TypeError):
+        help()
 
 '''
 cf=configparser.ConfigParser()
