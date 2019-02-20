@@ -24,9 +24,10 @@
 import sys
 
 
+
 def add_coupon():
-    print('hahha')
-    return 2
+    print('1')
+    return 1
 
 
 if __name__ == '__main__':
