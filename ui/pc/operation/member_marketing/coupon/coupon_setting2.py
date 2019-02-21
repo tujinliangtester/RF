@@ -33,11 +33,9 @@ import unittest, time, re
 from ui.pc import start_selenium
 
 driver = start_selenium.start_selenium().driver
-
-
 def test():
-    print(1)
-    return 1
+    print(2)
+    return 2
 
 def add_coupon():
     driver.find_element_by_id("10000553").click()
@@ -110,4 +108,4 @@ if __name__ == '__main__':
     #     actions[action](*args)
     # except (KeyError, TypeError):
     #     help()
-    print(1)
+    print(2)

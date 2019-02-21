@@ -1,13 +1,21 @@
-import sys
-# -*- coding: utf-8 -*-
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import NoAlertPresentException
-import unittest, time, re
+import  time, re
 
-driver = webdriver.Firefox()
-driver.implicitly_wait(30)
-accept_next_alert = True
+
+executable_path='E:\\tjl\\script\\geckodriver.exe'
+
+class start_selenium(object):
+    print('请注意手动登录后台')
+    driver = webdriver.Firefox(executable_path=executable_path)
+    driver.maximize_window()
+    driver.implicitly_wait(30)
+    accept_next_alert = True
+    driver.get("http://www.ytny.demo/sjytadmin/index.php/index/index")
+
+    # python3.7 倒计时
+    for i in range(10, -1, -1):
+        print('\r', '距离登录结束还有 %s 秒！' % str(i).zfill(2), end='')
+        time.sleep(1)
+    print('\r', '{:^20}'.format('登录结束！'))
+
+
