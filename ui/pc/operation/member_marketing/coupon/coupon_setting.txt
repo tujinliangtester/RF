@@ -2,7 +2,6 @@
 
 
 *** Settings ***
-Suite Teardown    Close Browser
 #方便IDE调试，不添加无法找到关键字定义
 Library    browsermanagement
 Library    AlertKeywords
@@ -30,9 +29,13 @@ ${undefined}    https://www.katalon.com/
 
 
 *** Test Cases ***
-Test Case
+class_01
     open browser    http://www.ytny.demo/sjytadmin/index.php/index/index
-    sleep  30
+    set browser implicit wait  10
+
+    sleep  10
+Test Case
+    go to    http://www.ytny.demo/sjytadmin/index.php/index/index
     click element    id=10000553
     click element    link=会员营销
     click element    xpath=//li[7]/ul/li[3]/a/span
