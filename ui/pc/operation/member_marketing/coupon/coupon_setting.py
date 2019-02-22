@@ -21,15 +21,10 @@
 
 
 '''
-import sys
 # -*- coding: utf-8 -*-
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+import sys
 from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import NoAlertPresentException
-import unittest, time, re
+import  time
 from ui.pc import start_selenium
 
 driver = start_selenium.start_selenium().driver
@@ -100,14 +95,13 @@ def add_coupon():
 
 
 if __name__ == '__main__':
-    # actions = {'add_coupon': add_coupon,  'help': help}
-    # try:
-    #     action = sys.argv[1]
-    # except IndexError:
-    #     action = 'help'
-    # args = sys.argv[2:]
-    # try:
-    #     actions[action](*args)
-    # except (KeyError, TypeError):
-    #     help()
-    print(1)
+    actions = {'add_coupon': add_coupon,  'help': help}
+    try:
+        action = sys.argv[1]
+    except IndexError:
+        action = 'help'
+    args = sys.argv[2:]
+    try:
+        actions[action](*args)
+    except (KeyError, TypeError):
+        help()

@@ -2,7 +2,6 @@ import requests
 import os.path
 import subprocess
 import sys
-import json
 
 
 class Interface2UI(object):

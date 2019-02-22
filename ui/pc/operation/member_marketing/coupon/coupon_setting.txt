@@ -4,8 +4,7 @@
 *** Settings ***
 Suite Setup    Open Browser    https://www.katalon.com/    firefox
 Suite Teardown    Close Browser
-
-
+Library    seleniumLibrary
 *** Variables ***
 ${undefined}    https://www.katalon.com/
 
