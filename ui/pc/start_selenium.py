@@ -1,5 +1,7 @@
 from selenium import webdriver
 import  time, re
+import SeleniumLibrary
+
 
 #此文件的目的是提供一个浏览器，给UI自动化脚本进行公用
 executable_path='E:\\tjl\\script\\geckodriver.exe'

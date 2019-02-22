@@ -2,79 +2,101 @@
 
 
 *** Settings ***
-Suite Setup    Open Browser    https://www.katalon.com/    firefox
 Suite Teardown    Close Browser
-Library    seleniumLibrary
+#方便IDE调试，不添加无法找到关键字定义
+Library    browsermanagement
+Library    AlertKeywords
+Library    BrowserManagementKeywords
+Library    CookieKeywords
+Library    ElementKeywords
+Library    FormElementKeywords
+Library    FrameKeywords
+Library    JavaScriptKeywords
+Library    RunOnFailureKeywords
+Library    ScreenshotKeywords
+Library    SelectElementKeywords
+Library    TableElementKeywords
+Library    WaitingKeywords
+Library    WindowKeywords
+
+Library     SeleniumLibrary
+
+
 *** Variables ***
 ${undefined}    https://www.katalon.com/
 
+
+*** Keywords ***
+
+
 *** Test Cases ***
 Test Case
-    open    http://www.ytny.demo/sjytadmin/index.php/index/index
-    click    id=10000553
-    click    link=会员营销
-    click    xpath=//li[7]/ul/li[3]/a/span
-    click    xpath=//li[7]/ul/li[3]/ul/li/a/span
-    selectFrame    index=1
-    click    xpath=//b
-    click    xpath=//li[3]
-    click    xpath=//input[@value='查询']
-    click    link=编辑
-    selectFrame    index=0
-    click    xpath=//form[@id='form']/div/ul/li[16]/div/div/a/span
-    click    xpath=//form[@id='form']/div/ul/li[16]/div/div/div/ul/li[3]
-    click    xpath=//button[@type='submit']
-    click    xpath=//div[@id='layui-layer2']/span/a
-    click    name=username
-    type    name=username    admin
-    type    xpath=//input[@type='password']    123456
-    type    name=checkcode    2596
-    click    xpath=//button[@type='submit']
-    click    id=10000553
-    click    xpath=//li[7]/a/span
-    click    link=优惠券设置
-    click    xpath=//li[7]/ul/li[3]/ul/li/a/span
-    selectFrame    index=1
-    click    link=添加优惠券
-    selectFrame    index=0
-    click    name=md[name]
-    type    name=md[name]    优惠券auto0220
-    click    name=md[use_limit_desc]
-    type    name=md[use_limit_desc]    自动生成优惠券
-    click    xpath=//div[@id='discount_container']/li/div/div/a/span
-    click    xpath=//div[@id='discount_container']/li/div/div/div/ul/li[2]
-    click    xpath=//div[@id='discount_container']/li[2]/div/div/a/span
-    click    xpath=//div[@id='discount_container']/li[2]/div/div/div/ul/li[2]
-    click    name=md[face_value]
-    type    name=md[face_value]    100
-    click    xpath=//form[@id='form']/div/ul/li[8]/div/span/div/a/span
-    click    xpath=//form[@id='form']/div/ul/li[8]/div/span/div/div/ul/li[2]
-    click    xpath=//form[@id='form']/div/ul/li[8]/div/span[2]/div/a/span
-    click    xpath=//form[@id='form']/div/ul/li[8]/div/span[2]/div/div/ul/li[2]
-    click    id=dp1550648777154
-    click    link=20
-    click    id=end_time
-    click    link=28
-    click    name=md[count_max_send]
-    type    name=md[count_max_send]    100
-    click    xpath=//form[@id='form']/div/ul/li[12]/div/div/a/span
-    click    xpath=//form[@id='form']/div/ul/li[12]/div/div/div/ul/li[2]
-    click    id=productCategory
-    select    id=productCategory    汽油
-    click    xpath=(//option[@value='1'])[7]
-    click    id=productTypeId
-    select    id=productTypeId    92#汽油
-    click    xpath=//option[@value='10']
-    click    id=md_use_model__2
-    click    id=md_use_model__1
-    click    xpath=//span[@id='md_valid_time_type']/span/label
-    click    id=dp1550648777155
-    click    link=20
-    click    id=md_valid_end_time
-    click    link=28
-    click    xpath=//div[@id='teshuxianzhi_chosen']/a/span
-    click    xpath=//div[@id='teshuxianzhi_chosen']/div/ul/li[2]
-    click    xpath=//form[@id='form']/div/ul/li[17]/div/div/a/span
-    click    xpath=//form[@id='form']/div/ul/li[17]/div/div/div/ul/li[2]
-    click    id=md_tag_is_enable__0
-    click    xpath=//button[@type='submit']
+    open browser    http://www.ytny.demo/sjytadmin/index.php/index/index
+    sleep  30
+    click element    id=10000553
+    click element    link=会员营销
+    click element    xpath=//li[7]/ul/li[3]/a/span
+    click element    xpath=//li[7]/ul/li[3]/ul/li/a/span
+    select frame    index=1
+    click element    xpath=//b
+    click element    xpath=//li[3]
+    click element    xpath=//input[@value='查询']
+    click element    link=编辑
+    select frame    index=0
+    click element    xpath=//form[@id='form']/div/ul/li[16]/div/div/a/span
+    click element    xpath=//form[@id='form']/div/ul/li[16]/div/div/div/ul/li[3]
+    click element    xpath=//button[@type='submit']
+    click element    xpath=//div[@id='layui-layer2']/span/a
+    click element    name=username
+    input text    name=username    admin
+    input text    xpath=//input[@type='password']    123456
+    input text    name=checkcode    2596
+    click element    xpath=//button[@type='submit']
+    click element    id=10000553
+    click element    xpath=//li[7]/a/span
+    click element    link=优惠券设置
+    click element    xpath=//li[7]/ul/li[3]/ul/li/a/span
+    select frame    index=1
+    click element    link=添加优惠券
+    select frame    index=0
+    click element    name=md[name]
+    input text    name=md[name]    优惠券auto0220
+    click element    name=md[use_limit_desc]
+    input text    name=md[use_limit_desc]    自动生成优惠券
+    click element    xpath=//div[@id='discount_container']/li/div/div/a/span
+    click element    xpath=//div[@id='discount_container']/li/div/div/div/ul/li[2]
+    click element    xpath=//div[@id='discount_container']/li[2]/div/div/a/span
+    click element    xpath=//div[@id='discount_container']/li[2]/div/div/div/ul/li[2]
+    click element    name=md[face_value]
+    input text    name=md[face_value]    100
+    click element    xpath=//form[@id='form']/div/ul/li[8]/div/span/div/a/span
+    click element    xpath=//form[@id='form']/div/ul/li[8]/div/span/div/div/ul/li[2]
+    click element    xpath=//form[@id='form']/div/ul/li[8]/div/span[2]/div/a/span
+    click element    xpath=//form[@id='form']/div/ul/li[8]/div/span[2]/div/div/ul/li[2]
+    click element    id=dp1550648777154
+    click element    link=20
+    click element    id=end_time
+    click element    link=28
+    click element    name=md[count_max_send]
+    input text    name=md[count_max_send]    100
+    click element    xpath=//form[@id='form']/div/ul/li[12]/div/div/a/span
+    click element    xpath=//form[@id='form']/div/ul/li[12]/div/div/div/ul/li[2]
+    click element    id=productCategory
+    select from list    id=productCategory    汽油
+    click element    xpath=(//option[@value='1'])[7]
+    click element    id=productTypeId
+    select from list    id=productTypeId    92#汽油
+    click element    xpath=//option[@value='10']
+    click element    id=md_use_model__2
+    click element    id=md_use_model__1
+    click element    xpath=//span[@id='md_valid_time_type']/span/label
+    click element    id=dp1550648777155
+    click element    link=20
+    click element    id=md_valid_end_time
+    click element    link=28
+    click element    xpath=//div[@id='teshuxianzhi_chosen']/a/span
+    click element    xpath=//div[@id='teshuxianzhi_chosen']/div/ul/li[2]
+    click element    xpath=//form[@id='form']/div/ul/li[17]/div/div/a/span
+    click element    xpath=//form[@id='form']/div/ul/li[17]/div/div/div/ul/li[2]
+    click element    id=md_tag_is_enable__0
+    click element    xpath=//button[@type='submit']

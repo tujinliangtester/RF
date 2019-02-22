@@ -1,0 +1,6 @@
+*** Settings ***
+Library  coupon_setting_class.py
+
+*** Test Cases ***
+class_01
+    test

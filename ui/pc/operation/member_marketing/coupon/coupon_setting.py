@@ -42,9 +42,7 @@ def add_coupon():
     # ERROR: Caught exception [ERROR: Unsupported command [selectFrame | index=1 | ]]
     # driver.find_element_by_link_text(u"添加优惠券").click()
     # ERROR: Caught exception [ERROR: Unsupported command [selectFrame | index=0 | ]]
-    time.sleep(3)
     driver.find_element_by_xpath('/html/body/div[1]/div/div[1]/div[1]/a').click()
-
     driver.find_element_by_name("md[name]").click()
     driver.find_element_by_name("md[name]").clear()
     driver.find_element_by_name("md[name]").send_keys(u"优惠券auto0220")
@@ -105,3 +103,4 @@ if __name__ == '__main__':
         actions[action](*args)
     except (KeyError, TypeError):
         help()
+    add_coupon()
