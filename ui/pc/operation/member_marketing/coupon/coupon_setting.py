@@ -24,7 +24,7 @@
 # -*- coding: utf-8 -*-
 import sys
 from selenium.webdriver.support.ui import Select
-import  time
+import time
 from ui.pc import start_selenium
 
 driver = start_selenium.start_selenium().driver
@@ -33,6 +33,7 @@ driver = start_selenium.start_selenium().driver
 def test():
     print(1)
     return 1
+
 
 def add_coupon():
     driver.find_element_by_id("10000553").click()
@@ -93,7 +94,7 @@ def add_coupon():
 
 
 if __name__ == '__main__':
-    actions = {'add_coupon': add_coupon,  'help': help}
+    actions = {'add_coupon': add_coupon, 'help': help}
     try:
         action = sys.argv[1]
     except IndexError:

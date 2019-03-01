@@ -1,6 +1,8 @@
-from ui.pc.operation.member_marketing.coupon import coupon_setting,coupon_setting2
+# from ui.pc.operation.member_marketing.coupon import coupon_setting,coupon_setting2
 
 
-if __name__=='main':
-    print(coupon_setting.add_coupon())
-    print(coupon_setting2.add_coupon())
+if __name__=='__main__':
+    i = 100/ 0.33
+    print(i)
+    i = 303* 0.33
+    print(i)

@@ -96,14 +96,33 @@ robotframework接口设计规范
 Python
     注意，在跨文件调用时，被调用的文件在执行时，涉及文件地址，是根据当前运行目录来拼接的
         一种办法是使用绝对路径
-        其他办法是调用sys.path来进行拼接，但感觉还是不太好用，暂时用绝对路径吧，可以用subprocess
+        其他办法是调用sys.path来进行拼接，
+        可以用subprocess
         注意，subprocess在执行时，如果指定stdout=subprocess.PIPE，则调用的函数需要将结果print 即用屏幕标准输出，这样才能捕获结果
             所以，需要严格控制print，否则会出错
 
     注意，requests在发起请求时，header和body都必须是字典类型，所以在传入参数时需要传入字典形式的字符串
+    str='foo%20%5B12%5D'编码foo [12]:
+
+    %20 is space
+    %5B is '['
+    and %5D is ']'
+    所以，如果发起请求时，参数中带有[]，系统会自动转换为%5B  %5D等，而在传参时，仍然要用[ 或 ] ！
 
 
 
 
 小工具
     filddler截包时，表单数据可能会整合成字符串，可以用common里面的方法进行转换
+
+selenium
+    经过试验，多个调用selenium的robot文件可以共用同一个浏览器
+    但是现在的问题是，如何在需要的时候单独调用某个robot？
+    这里想到一种方式是用py来调用robot，感觉好像整的好复杂？robot-py-robot?试验证明，这样执行会报错，找不到文件？
+    之前的尝试中，robot-py-py，在后面调用的py时，会出现各种包不存在的异常，搞不明白呢
+    需要重新尝试robot-py-py这种方式
+
+
+
+遗留问题：
+    1.如何用robotframework将接口和ui自动化结合起来

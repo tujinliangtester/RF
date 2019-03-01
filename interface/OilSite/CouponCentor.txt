@@ -1,10 +1,16 @@
 
 
 *** Settings ***
-Library  ../../lib/Interface2UI.py
+Library  ../../lib/InterfaceRequest.py
+
+*** Variables ***
+${coupon_url_add}    /sjytadmin/index.php/market-coupon/add?&act=save
+${param_coupon_add}    {"md[name]": "tjl03011345", "md[use_limit_desc]": "tjl03011102", "md[coupon_type]": "1", "md[discount_type]": "1", "md[face_value]": "1", "md[parter_id]": "0", "md[send_method]": "1", "md[send_condition]": "0", "md[send_start_time]": "2019-03-01", "md[send_end_time]": "2019-03-02", "md[count_max_send]": "1", "md[app_client_type]": "0", "md[oil_product_category]": "", "md[oil_product_type_id]": "", "md[use_model]": "1", "md[valid_time_type]": "1", "md[valid_start_time]": "2019-03-01", "md[valid_end_time]": "2019-03-01", "md[limit_min_spend_money]": "0.00", "md[limit_province_id]": "", "md[limit_city_id]": "", "md[use_condition]": "0", "md[is_trade]": "1", "md[tag_is_enable]": "0"}
+${header}    {"Cookie": "PHPSESSID=ag6bgta5p32coboagum9l7tub1; currentmoduleName=%E4%BC%98%E6%83%A0%E5%88%B8%E8%AE%BE%E7%BD%AE; currentmoduleId=10000314"}
+
 
 *** Test Cases ***
 
 Class_01
-    ${res} =    coupon setting    add_coupon
-    should be equal    1    ${res}
+    ${res} =    pc interface post    ${coupon_url_add}    ${param_coupon_add}    ${header}
+    should contain    ${res}    "success":true
