@@ -2,6 +2,7 @@
 
 *** Settings ***
 Library  ../../lib/InterfaceRequest.py
+Test Setup  
 
 *** Variables ***
 ${coupon_url_add}    /sjytadmin/index.php/market-coupon/add?&act=save

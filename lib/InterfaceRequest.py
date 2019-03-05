@@ -55,6 +55,17 @@ class InterfaceRequest(object):
         print(response.text)
         return response.text
 
+    def parter_interface_post(self, url='', params='', header=''):
+        print('_config_reader_path', self._config_reader_path)
+
+        self._config_reader_command('get', 'interface', 'parter_baseurl')
+        url = self._subout + url
+        params = self._str2json(params)
+        header = self._str2json(header)
+        response = requests.post(url, data=params, headers=header)
+        print(response.text)
+        return response.text
+
     def _config_reader_command(self, command, *args):
         command = [sys.executable, self._config_reader_path, command] + list(args)
         print('command:', command)

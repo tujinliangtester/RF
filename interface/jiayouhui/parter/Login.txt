@@ -1,0 +1,25 @@
+*** Settings ***
+Library  ../../../lib/InterfaceRequest.py
+
+
+*** Variables ***
+${login url}    /Parter/Login
+
+*** Keywords ***
+invalid login post
+    [Arguments]    ${param}
+    ${res}=    parter interface post    ${login url}    ${param}
+    should contain    ${res}    "code":-98
+
+*** Test Cases ***
+valid login
+    ${res}=    parter interface post    ${login url}    {"phone": "19903040945", "password": "f379eaf3c831b04de153469d1bec345e"}
+    should contain    ${res}    "code":1
+
+invalid login
+    [Template]    invalid login post
+    {"phone": "19903040945", "password": "f379eaf3c831b04de153469d1bec345"}
+    {"phone": "19903040945", "password": ""}
+
+
+
