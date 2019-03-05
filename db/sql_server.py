@@ -2,7 +2,6 @@
 
 import pymssql
 
-
 class MSSQL:
     def __init__(self, host, user, pwd, db):
         self.host = host
@@ -35,6 +34,13 @@ class MSSQL:
         self.conn.commit()
         self.conn.close()
 
+
+def ExecQuery(sql):
+    ms = MSSQL(host="192.168.1.1", user="sa", pwd="sa", db="testdb")
+    ms.ExecQuery(sql)
+
+if __name__=='__main__':
+    ExecQuery('sele')
 
 '''
 ms = MSSQL(host="192.168.1.1",user="sa",pwd="sa",db="testdb")

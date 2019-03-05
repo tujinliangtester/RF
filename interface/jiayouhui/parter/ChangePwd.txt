@@ -10,5 +10,7 @@ ${mobile}   19903040945
 *** Test Cases ***
 Class_01
     parter interface post   ${CheckMobile url}  {"mobile": ${mobile}}
-    ${res}=    sql exec    "SELECT * FROM pit_member_sms WHERE mobile ='${mobile}' ORDER BY send_time desc "
+    ${res}=    sql exec    "SELECT top 1 code FROM pit_member_sms WHERE mobile ='${mobile}' ORDER BY send_time desc"
+
+
 

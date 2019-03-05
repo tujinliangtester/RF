@@ -1,19 +1,27 @@
-from db import sql_server
-from config import ConfigReader
-
+# from db import sql_server
+# from config import ConfigReader
+import sys,subprocess,os
 
 class SqlAPI(object):
     def __init__(self):
-        self.db_host = ConfigReader.get('db', 'db_host')
-        self.db_pwd = ConfigReader.get('db', 'db_pwd')
-        self.db_user = ConfigReader.get('db', 'db_user')
-        self.db_name = ConfigReader.get('db', 'db_name')
+        self._sub_command_path = os.path.join(os.path.dirname(__file__),
+                                                     'sql_server.py')
 
     def sql_exec(self, s):
-        ms = sql_server.MSSQL(host=self.db_host, user=self.db_user, pwd=self.db_pwd, db=self.db_name)
-        reslist = ms.ExecQuery(s)
-        return reslist
+        self._sub_command('ExecQuery',s)
+        return self._subout
+
+    def _sub_command(self, command, *args):
+        command = [sys.executable, self._sub_command_path, command] + list(args)
+        print('command:', command)
+        process = subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT)
+        self._subout = process.communicate()[0].strip()
 
     def test(self):
         print(111)
         return 111
+
+if __name__=='__main__':
+    sa=SqlAPI()
+    print(sa.sql_exec('se'))
