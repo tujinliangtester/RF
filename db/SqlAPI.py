@@ -2,7 +2,7 @@ from db import sql_server
 from config import ConfigReader
 
 
-class sqlAPI(object):
+class SqlAPI(object):
     def __init__(self):
         self.db_host = ConfigReader.get('db', 'db_host')
         self.db_pwd = ConfigReader.get('db', 'db_pwd')

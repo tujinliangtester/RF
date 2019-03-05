@@ -1,6 +1,6 @@
 *** Settings ***
 Library  ../../../lib/InterfaceRequest.py
-Library  ../../../db/sqlAPI.py
+Library  ../../../db/SqlAPI.py
 
 *** Variables ***
 ${ChangePwd url}    /Parter/ChangePwd
