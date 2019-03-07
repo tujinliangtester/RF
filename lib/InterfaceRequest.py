@@ -3,7 +3,7 @@ import os.path
 import subprocess
 import sys
 import json
-
+import re
 
 class InterfaceRequest(object):
 
@@ -66,6 +66,17 @@ class InterfaceRequest(object):
         print(response.text)
         return response.text
 
+    #这里的sql目前只支持查看手机验证码，且调用的是Django的本机服务
+    def sql_interface_post(self, url='', params='', header=''):
+        print('_config_reader_path', self._config_reader_path)
+        params = self._str2json(params)
+        header = self._str2json(header)
+        response = requests.post(url, data=params, headers=header)
+        s=response.text
+        res=re.search('\d+',s).group()
+        print(res)
+        return res
+
     def _config_reader_command(self, command, *args):
         command = [sys.executable, self._config_reader_path, command] + list(args)
         print('command:', command)
@@ -81,6 +92,7 @@ class InterfaceRequest(object):
 
 if __name__ == '__main__':
     IR = InterfaceRequest()
-    params = '{"product_type_id": "10", "longitude": "104.06791687011719", "latitude": "30.548940658569336", "distance": "30", "orderbyfield": "pointdistance", "site_id": "", "site_name": "", "pageNumber": "1", "pagesize": "10", "r": "0.2110462989440982"}'
+    # params = '{"product_type_id": "10", "longitude": "104.06791687011719", "latitude": "30.548940658569336", "distance": "30", "orderbyfield": "pointdistance", "site_id": "", "site_name": "", "pageNumber": "1", "pagesize": "10", "r": "0.2110462989440982"}'
     # IR.interface_get(url='/v2transapi', headers=None, params=params)
-    IR.interface_post(url='/OilSite/NearbyDiscountList', params=params)
+    # IR.interface_post(url='/OilSite/NearbyDiscountList', params=params)
+    IR.sql_interface_post('http://localhost:8000/polls/sql_fun/18703070908')

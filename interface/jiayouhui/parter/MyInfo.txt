@@ -1,0 +1,14 @@
+*** Settings ***
+Library  ../../../lib/InterfaceRequest.py
+
+*** Variables ***
+${add leafleteer user url}      /sjytadmin/index.php/drp-leafleteer_user/add?&act=save
+${mobile}       19903071443
+
+${pcCookie}    "PHPSESSID=030a9kgdqqq3m147hpoms8al74"
+
+*** Test Cases ***
+
+add_leafleteer
+#    pc interface post       ${add leafleteer user url}      {"md[username]": ${mobile}, "md[name]": "推广员37", "md[parter_id]": "2", "md[roles]": "2", "md[mobile]": ${mobile}, "md[email]": "", "md[wx_account]": "", "md[pay_account]": "", "md[settlement_type]": "1", "md[reg_user_amount]": "1.00"}      {"Cookie":"PHPSESSID=030a9kgdqqq3m147hpoms8al74" }
+    pc interface post       ${add leafleteer user url}      {"md[username]": ${mobile}, "md[name]": "推广员37", "md[parter_id]": "2", "md[roles]": "2", "md[mobile]": ${mobile}, "md[email]": "", "md[wx_account]": "", "md[pay_account]": "", "md[settlement_type]": "1", "md[reg_user_amount]": "1.00"}      {"Cookie":${pcCookie}}

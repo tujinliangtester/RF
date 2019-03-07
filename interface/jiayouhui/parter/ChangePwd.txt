@@ -1,16 +1,83 @@
 *** Settings ***
 Library  ../../../lib/InterfaceRequest.py
-Library  ../../../db/SqlAPI.py
+Library  ../../../lib/tools.py
+
+
 
 *** Variables ***
 ${ChangePwd url}    /Parter/ChangePwd
 ${CheckMobile url}  /Parter/CheckMobile
-${mobile}   19903040945
+${login url}    /Parter/Login
+${add leafleteer user url}      /sjytadmin/index.php/drp-leafleteer_user/add?&act=save
+${mobile}   19903071428
+${not exist mobile}   19903040000
+${pwd123456}    e10adc3949ba59abbe56e057f20f883e
+${pwd456789}    e35cf7b66449df565f93c607d5a81d09
+${pcCookie}    "PHPSESSID=030a9kgdqqq3m147hpoms8al74"
+
+*** Keywords ***
+[Setup]
+    ${mobile}=      gene mobile
+[Teardown]
+invalid mobile
+    [Arguments]    ${param}
+    ${res}=    parter interface post   ${CheckMobile url}  {"mobile": ${param}}
+    should contain      ${res}      "code":-98,
+
+invalid sms
+    [Arguments]     ${param}
+    ${res}=    parter interface post   ${CheckMobile url}  {"mobile": ${mobile}}
+    should contain    ${res}    "code":1,
+    ${res}=    sql interface post  http://localhost:8000/polls/sql_fun/${mobile}
+    ${res}=    parter interface post    ${ChangePwd url}    {"mobile": ${mobile}, "code": ${param}, "password": "e10adc3949ba59abbe56e057f20f883e", "repassword": "e10adc3949ba59abbe56e057f20f883e", "smstype": "14"}
+    should contain    ${res}    "code":-98,
 
 *** Test Cases ***
-Class_01
-    parter interface post   ${CheckMobile url}  {"mobile": ${mobile}}
-    ${res}=    sql exec    "SELECT top 1 code FROM pit_member_sms WHERE mobile ='${mobile}' ORDER BY send_time desc"
 
+add_leafleteer
+#    ${mobile}=      gene mobile
+    #    pc interface post       ${add leafleteer user url}      {"md[username]": ${mobile}, "md[name]": "推广员37", "md[parter_id]": "2", "md[roles]": "2", "md[mobile]": ${mobile}, "md[email]": "", "md[wx_account]": "", "md[pay_account]": "", "md[settlement_type]": "1", "md[reg_user_amount]": "1.00"}      {"Cookie":"PHPSESSID=030a9kgdqqq3m147hpoms8al74" }
+    pc interface post       ${add leafleteer user url}      {"md[username]": ${mobile}, "md[name]": "推广员37", "md[parter_id]": "2", "md[roles]": "2", "md[mobile]": ${mobile}, "md[email]": "", "md[wx_account]": "", "md[pay_account]": "", "md[settlement_type]": "1", "md[reg_user_amount]": "1.00"}      {"Cookie":${pcCookie}}
+
+valid_changePwd_01
+    ${res}=    parter interface post   ${CheckMobile url}  {"mobile": ${mobile}}
+    should contain    ${res}    "code":1,
+    ${res}=    sql interface post  http://localhost:8000/polls/sql_fun/${mobile}
+    ${res}=    parter interface post    ${ChangePwd url}    {"mobile": ${mobile}, "code": ${res}, "password": "e10adc3949ba59abbe56e057f20f883e", "repassword": "e10adc3949ba59abbe56e057f20f883e", "smstype": "14"}
+    should contain    ${res}    "code":1,
+    ${res}=    parter interface post    ${login url}    {"phone": ${mobile}, "password": "e10adc3949ba59abbe56e057f20f883e"}
+    should contain    ${res}    "code":1,
+
+valid_changePwd_02
+    ${res}=    parter interface post   ${CheckMobile url}  {"mobile": ${mobile}}
+    should contain    ${res}    "code":1,
+    ${res}=    sql interface post  http://localhost:8000/polls/sql_fun/${mobile}
+    ${res}=    parter interface post    ${ChangePwd url}    {"mobile": ${mobile}, "code": ${res}, "password": "e35cf7b66449df565f93c607d5a81d09", "repassword": "e35cf7b66449df565f93c607d5a81d09", "smstype": "14"}
+    should contain    ${res}    "code":1,
+    ${res}=    parter interface post    ${login url}    {"phone": ${mobile}, "password": "e35cf7b66449df565f93c607d5a81d09"}
+    should contain    ${res}    "code":1,
+
+
+not_exist_mobile_01
+    ${res}=    parter interface post   ${CheckMobile url}  {"mobile": ${not exist mobile}}
+    should contain      ${res}      "code":-98,
+
+
+
+invalid_mobile_check
+    [Template]      invalid mobile
+    "1990304111a"
+    "1990304111啊"
+    "1990304111,"
+    "1"
+    "1990304111"
+    "199030411111"
+    "29903041111"
+
+
+invalid_sms_check
+    [Template]      invalid sms
+    "00000"
+    ""
 
 
