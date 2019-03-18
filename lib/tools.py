@@ -47,47 +47,33 @@ class tools(object):
         ws = wb[self._sheet_name]
         i = 3
         flag = False
-        '''
-        try:
-            while (i < self._max_line):
-                s = 'B' + str(i)
-                for key in dic.keys():
-                    if (ws[s].value is None):
-                        break
-                    if (ws[s].value == key):
-                        s2 = 'C' + str(i)
-                        ws[s2] = dic[key]
-                        flag = True
-                        break
-                if (flag): break
-                i += 1
-        except Exception:
-            print(Exception.mro())
-            
-            '''
+        null_flag=False
         while (i < self._max_line):
             s = 'B' + str(i)
+            value=ws[s].value
             for key in dic.keys():
                 if (ws[s].value is None):
+                    null_flag=True
                     break
                 if (ws[s].value == key):
                     s2 = 'C' + str(i)
                     ws[s2] = dic[key]
                     flag = True
                     break
-            if (flag): break
+            if (flag or null_flag): break
             i += 1
         if (flag == False):  # 说明xlsx中不存在这个字段
-            print(111)
             s = 'B' + str(i)
-            ws[s] = dic.keys[0]
-            s = 'C' + str(i)
-            ws[s] = dic[dic.keys[0]]
+            for key in dic.keys():
+                ws[s] = key
+                s = 'C' + str(i)
+                ws[s] = dic[key]
+        wb.save(path)
 
 
 if __name__ == '__main__':
     t = tools()
-    # t.gene_mobile()
+    mob=t.gene_mobile()
     print(t.read_data('mobile'))
-    dic = {'mobile': 123}
+    dic = {'mob': mob}
     t.edit_xlsx(dic)
