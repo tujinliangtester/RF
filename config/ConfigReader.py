@@ -2,7 +2,7 @@ import configparser
 import sys
 
 cf_obj = configparser.ConfigParser()
-cf_obj.read('E:\\tjl\测试工具\\auto\\RF\\config\\setting.ini')
+cf_obj.read('E:\\tjl\测试工具\\auto\\RF\\config\\setting.ini',encoding='UTF-8')
 
 
 def get(option, item):

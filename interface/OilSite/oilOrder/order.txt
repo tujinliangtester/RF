@@ -1,0 +1,16 @@
+
+
+*** Settings ***
+Library  ../../../lib/InterfaceRequest.py
+Library  ../../../lib/tools.py
+
+*** Variables ***
+${baseurl}  /OilOrder/Order
+${header}   {"Cookie": "ASP.NET_SessionId=zwfggp4ssgs005xbqjoiizyz; SaveValueTemp=svt_ident=xiang; wxpublic_WXUserMember=wxUserID=43OVNFeSrGg="}
+${param}    {"site_id": "2", "gun_id": "32", "direct_id": "", "activity_id": "", "platform_activity_id": "0", "coupon_id": "117103", "org_amt": "10", "real_score_amt": "0", "real_coin_amt": "0", "nogas_amt": "", "coupon_nogas_id": "0", "real_pay_amt": "0", "pay_password": "5bf935629419f6537a5e4c3e2c83be95", "app_client_type": "1", "r": "0.7199487680219514"}
+
+*** Test Cases ***
+Class_01
+    ${res}=     interface post     ${baseurl}     ${param}    ${header}
+    ${orderID}=     reg draw    ${res}      id
+    ${readData}=    read data   "mobile"
