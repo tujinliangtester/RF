@@ -1,0 +1,46 @@
+
+*** Settings ***
+Library  ../../../lib/InterfaceRequest.py
+Library  ../../../lib/tools.py
+
+*** Variables ***
+${org_amt}
+${url}      /OilOrder/TicketList
+${header}   {"Cookie": "ASP.NET_SessionId=webhf3snm41zneqcnykbj5xo; SaveValueTemp=svt_ident=testbiz; wxpublic_WXUserMember=wxUserID=4KH+0ItZ5ko="}
+#${param}    {"site_id": "35", "gun_id": "14403", "org_amt": ${org_amt}, "nogas_amt": "", "app_client_type": "1", "r": "0.6673226578129476"}
+${UpdateMerchantSettingURL}     /DrpConfig/UpdateMerchantSetting
+${PcHeader}     {"Cookie": "ASP.NET_SessionId=4tsxfh3ehmz0f0o01vjx0r5p; bizweb_UserMember=userID=hqbk2gPbDbU="}
+
+*** Keywords ***
+activity_com
+    [Arguments]      ${org_amt}     ${is_allow_superimposed}      ${expect}
+    pc_interface_post      ${UpdateMerchantSettingURL}    {"can_add_balance": "1", "can_use_coin": "1", "can_use_carnumber_pay": "1", "can_use_balance_pay": "1", "can_use_coin_pay_notoil": "1", "is_allow_superimposed": "${is_allow_superimposed}", "can_use_score_mall": "1", "can_use_fleet_card": "1"}    ${PcHeader}
+    ${res}=     interface post      ${url}      {"site_id": "35", "gun_id": "14403", "org_amt": "${org_amt}", "nogas_amt": "", "app_client_type": "1", "r": "0.6673226578129476"}       ${header}
+    ${amt_after_reduce}=    reg draw     ${res}     amt_after_reduce
+    should be equal     ${amt_after_reduce}    ${expect}
+
+*** Test Cases ***
+
+activity_com_plus_after_reduce
+    [Template]     activity_com
+    1   1   0
+    10  1   0
+    20  1   0
+    30  1   0
+    50  1   15
+    100     1   45
+    200     1   105
+    300     1   129
+    400     1   110
+
+activity_com_NoPlus_after_reduce
+    [Template]     activity_com
+    1   0   0
+    10  0   0
+    20  0   0
+    30  0   0
+    50  0   20
+    100     0   60
+    200     0   120
+    300     0   189
+    400     0   190
