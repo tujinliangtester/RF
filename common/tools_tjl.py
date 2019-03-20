@@ -22,7 +22,7 @@ def url_md_decoder(s):
 
 if __name__ == '__main__':
     # 注意，如果参数中有中文，则需要在替换后，手动改成中文
-    s = 'can_add_balance=1&can_use_coin=1&can_use_carnumber_pay=1&can_use_balance_pay=1&can_use_coin_pay_notoil=1&is_allow_superimposed=1&can_use_score_mall=1&can_use_fleet_card=1'
+    s = 'pagesize=10&pagenumber=2&is_use=0&is_expire=0&packID=0&r=0.42419922061968296'
     s2 = str(str2dic(s))
     s2 = url_md_decoder(s2)
     s2 = s2.replace('\'', '\"')

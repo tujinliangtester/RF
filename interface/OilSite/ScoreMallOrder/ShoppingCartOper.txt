@@ -1,0 +1,15 @@
+
+*** Settings ***
+Library  ../../../lib/InterfaceRequest.py
+Library  ../../../lib/tools.py
+
+
+*** Variables ***
+${ShoppingCartOperUrl}       /ScoreMallOrder/ShoppingCartOper
+
+*** Test Cases ***
+addEntityProduct
+    ${header}=      read config     header
+    ${PcHeader}=    read config     PcHeader
+    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "52", "site_id": "3501"}      ${header}
+    should contain   ${res}     "code":1,
