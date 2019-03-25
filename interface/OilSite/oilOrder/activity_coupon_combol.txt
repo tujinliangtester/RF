@@ -17,7 +17,7 @@ activity_com
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
     pc_interface_post      ${UpdateMerchantSettingURL}    {"can_add_balance": "1", "can_use_coin": "1", "can_use_carnumber_pay": "1", "can_use_balance_pay": "1", "can_use_coin_pay_notoil": "1", "is_allow_superimposed": "${is_allow_superimposed}", "can_use_score_mall": "1", "can_use_fleet_card": "1"}    ${PcHeader}
-    ${res}=     interface post      ${url}      {"site_id": "35", "gun_id": "14403", "org_amt": "${org_amt}", "nogas_amt": "", "app_client_type": "1", "r": "0.6673226578129476"}       ${header}
+    ${res}=     interface post      ${url}      {"site_id": "35", "gun_id": "14500", "org_amt": "${org_amt}", "nogas_amt": "", "app_client_type": "1", "r": "0.6673226578129476"}       ${header}
     ${amt_after_reduce}=    reg draw     ${res}     amt_after_reduce
     should be equal     ${amt_after_reduce}    ${expect}
 

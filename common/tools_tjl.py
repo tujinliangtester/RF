@@ -22,7 +22,7 @@ def url_md_decoder(s):
 
 if __name__ == '__main__':
     # 注意，如果参数中有中文，则需要在替换后，手动改成中文
-    s = 'pagesize=10&pagenumber=2&is_use=0&is_expire=0&packID=0&r=0.42419922061968296'
+    s = 'ts=2019-03-21%2014%3A40%3A37&order_id=240&postoken=79724e7b-bfba-45bf-8a97-a0f555ae8c44&sign=01fc97f80bbd9c3b5b8870fc90f406ba&code=6375&uuid=c76b57733faeccd9d514e2ab1787f46d&writeoff_user_id=47'
     s2 = str(str2dic(s))
     s2 = url_md_decoder(s2)
     s2 = s2.replace('\'', '\"')
