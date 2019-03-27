@@ -15,7 +15,8 @@ ${ClearShoppingCartUrl}     /ScoreMallOrder/ClearShoppingCart
 ${PosServiceWriteScoreMallOffOrderUrl}   /PosService/WriteScoreMallOffOrder
 
 ${site_id}      35
-${product_id}   66
+${entity_product_id}   6
+${coupon_product_id}   8
 ${POSsign}  01fc97f80bbd9c3b5b8870fc90f406ba
 
 
@@ -29,17 +30,17 @@ createEntityScoreOrder
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
 
-    interface post     ${ClearShoppingCartUrl}      {"site_id": "35"}     ${header}
+    interface post     ${ClearShoppingCartUrl}      {"site_id": "${site_id}"}     ${header}
 
     ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
     ${score_balance_before}=   reg draw  ${res}    score_balance
     ${mobile}=      should match regexp   ${res}    mobile":"\\d+
     ${mobile}=      should match regexp   ${mobile}    \\d+
 
-    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${product_id}", "site_id": "${site_id}"}      ${header}
+    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${entity_product_id}", "site_id": "${site_id}"}      ${header}
     should contain   ${res}     "code":1,
 
-    ${res}=     interface post      ${ShoppingCartDetailUrl}    {"site_id": "35"}   ${header}
+    ${res}=     interface post      ${ShoppingCartDetailUrl}    {"site_id": "${site_id}"}   ${header}
     ${use_score_sum}=   reg draw  ${res}    use_score_sum
 
     ${res}=     interface post      ${CreateOrderUrl}   {"mobile": "${mobile}", "site_id": "${site_id}"}      ${header}
@@ -68,20 +69,20 @@ createEntityScoreOrder_num2
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
 
-    interface post     ${ClearShoppingCartUrl}      {"site_id": "35"}     ${header}
+    interface post     ${ClearShoppingCartUrl}      {"site_id": "${site_id}"}     ${header}
 
     ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
     ${score_balance_before}=   reg draw  ${res}    score_balance
     ${mobile}=      should match regexp   ${res}    mobile":"\\d+
     ${mobile}=      should match regexp   ${mobile}    \\d+
 
-    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${product_id}", "site_id": "${site_id}"}      ${header}
+    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${entity_product_id}", "site_id": "${site_id}"}      ${header}
     should contain   ${res}     "code":1,
 
-    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${product_id}", "site_id": "${site_id}"}      ${header}
+    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${entity_product_id}", "site_id": "${site_id}"}      ${header}
     should contain   ${res}     "code":1,
 
-    ${res}=     interface post      ${ShoppingCartDetailUrl}    {"site_id": "35"}   ${header}
+    ${res}=     interface post      ${ShoppingCartDetailUrl}    {"site_id": "${site_id}"}   ${header}
     ${use_score_sum}=   reg draw  ${res}    use_score_sum
 
     ${res}=     interface post      ${CreateOrderUrl}   {"mobile": "${mobile}", "site_id": "${site_id}"}      ${header}
@@ -109,7 +110,7 @@ createEntityCouponScoreOrder
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
 
-    interface post     ${ClearShoppingCartUrl}      {"site_id": "35"}     ${header}
+    interface post     ${ClearShoppingCartUrl}      {"site_id": "${site_id}"}     ${header}
 
     ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
     ${score_balance_before}=   reg draw  ${res}    score_balance
@@ -120,14 +121,14 @@ createEntityCouponScoreOrder
     ${coupon_num_before}=  should match regexp     ${res}  "Coupon":\\d+
     ${coupon_num_before}=  should match regexp     ${coupon_num_before}  \\d+
 
-    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "66", "site_id": "${site_id}"}      ${header}
+    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${coupon_product_id}", "site_id": "${site_id}"}      ${header}
     should contain   ${res}     "code":1,
 
 
-    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "80", "site_id": "${site_id}"}      ${header}
+    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${entity_product_id}", "site_id": "${site_id}"}      ${header}
     should contain   ${res}     "code":1,
 
-    ${res}=     interface post      ${ShoppingCartDetailUrl}    {"site_id": "35"}   ${header}
+    ${res}=     interface post      ${ShoppingCartDetailUrl}    {"site_id": "${site_id}"}   ${header}
     ${use_score_sum}=   reg draw  ${res}    use_score_sum
 
     ${res}=     interface post      ${CreateOrderUrl}   {"mobile": "${mobile}", "site_id": "${site_id}"}      ${header}
@@ -163,7 +164,7 @@ createCouponScoreOrder
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
 
-    interface post     ${ClearShoppingCartUrl}      {"site_id": "35"}     ${header}
+    interface post     ${ClearShoppingCartUrl}      {"site_id": "${site_id}"}     ${header}
 
     ${res}=     interface post      ${MyCouponList}     {"pagesize": "100", "pagenumber": "1", "is_use": "0", "is_expire": "0", "packID": "0", "r": "0.42419922061968296"}     ${header}
     ${coupon_num_before}=  should match regexp     ${res}  "Coupon":\\d+
@@ -174,10 +175,10 @@ createCouponScoreOrder
     ${mobile}=      should match regexp   ${res}    mobile":"\\d+
     ${mobile}=      should match regexp   ${mobile}    \\d+
 
-    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "80", "site_id": "${site_id}"}      ${header}
+    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${coupon_product_id}", "site_id": "${site_id}"}      ${header}
     should contain   ${res}     "code":1,
 
-    ${res}=     interface post      ${ShoppingCartDetailUrl}    {"site_id": "35"}   ${header}
+    ${res}=     interface post      ${ShoppingCartDetailUrl}    {"site_id": "${site_id}"}   ${header}
     ${use_score_sum}=   reg draw  ${res}    use_score_sum
 
     ${res}=     interface post      ${CreateOrderUrl}   {"mobile": "${mobile}", "site_id": "${site_id}"}      ${header}
@@ -213,7 +214,7 @@ createCouponScoreOrder_num2
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
 
-    interface post     ${ClearShoppingCartUrl}      {"site_id": "35"}     ${header}
+    interface post     ${ClearShoppingCartUrl}      {"site_id": "${site_id}"}     ${header}
 
     ${res}=     interface post      ${MyCouponList}     {"pagesize": "100", "pagenumber": "1", "is_use": "0", "is_expire": "0", "packID": "0", "r": "0.42419922061968296"}     ${header}
     ${coupon_num_before}=  should match regexp     ${res}  "Coupon":\\d+
@@ -224,12 +225,12 @@ createCouponScoreOrder_num2
     ${mobile}=      should match regexp   ${res}    mobile":"\\d+
     ${mobile}=      should match regexp   ${mobile}    \\d+
 
-    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "80", "site_id": "${site_id}"}      ${header}
+    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${coupon_product_id}", "site_id": "${site_id}"}      ${header}
     should contain   ${res}     "code":1,
-    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "80", "site_id": "${site_id}"}      ${header}
+    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${coupon_product_id}", "site_id": "${site_id}"}      ${header}
     should contain   ${res}     "code":1,
 
-    ${res}=     interface post      ${ShoppingCartDetailUrl}    {"site_id": "35"}   ${header}
+    ${res}=     interface post      ${ShoppingCartDetailUrl}    {"site_id": "${site_id}"}   ${header}
     ${use_score_sum}=   reg draw  ${res}    use_score_sum
 
     ${res}=     interface post      ${CreateOrderUrl}   {"mobile": "${mobile}", "site_id": "${site_id}"}      ${header}
