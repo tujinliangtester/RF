@@ -1,4 +1,4 @@
-import time
+import time, hashlib
 import os, sys
 import re
 import subprocess
@@ -8,7 +8,7 @@ class tools(object):
     def __init__(self):
         self._sheet_name = 'Sheet3'
         self._sheet_max_line = 20
-        self._split_char='%tjl%'
+        self._split_char = '%tjl%'
 
     def gene_mobile(self):
         s = time.strftime("%Y%m%d%H%M", time.localtime())
@@ -91,7 +91,7 @@ class tools(object):
         :param val:需要修改为的值
         :return:成功返回0
         '''
-        file=os.path.join(os.path.dirname(__file__), '../config/config')
+        file = os.path.join(os.path.dirname(__file__), '../config/config')
         file_data = ""
         with open(file=file, mode="r") as f:
             for line in f:
@@ -108,6 +108,22 @@ class tools(object):
     def math_int2float(self, int_a):
         return float(int_a)
 
+    def gzh_pay_password_encode(self, passwordToken, str2, realCoinAmt):
+        m=hashlib.md5()
+
+        passwordToken=str(passwordToken)
+        str2=str(str2)
+        realCoinAmt=str(realCoinAmt)
+
+        passwordToken=passwordToken.encode(encoding='utf-8')
+        str2=str2.encode(encoding='utf-8')
+        realCoinAmt=realCoinAmt.encode(encoding='utf-8')
+
+        m.update(passwordToken)
+        res=m.hexdigest()
+        print(res)
+        return res
+
 
 if __name__ == '__main__':
     t = tools()
@@ -120,4 +136,5 @@ if __name__ == '__main__':
     reg = '"code":"\d+'
     print(t.raw_reg_draw(mom=mom, re_str=reg))
 
-    t.alter('mobile','19903281400')
+    t.alter('mobile', '19903281400')
+    t.gzh_pay_password_encode(1, 2, 3)
