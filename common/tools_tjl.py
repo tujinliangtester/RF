@@ -16,14 +16,25 @@ def url_md_decoder(s):
     # s='md%5Bname%5D=tjl03011102&md%5Bu'
     s = s.replace('%5B', '[')
     s = s.replace('%5D', ']')
+    s = s.replace('%2C', ',')
     return s
 
+def sqlstr2str(sql):
+    # s='UPDATE pit_oil_site_activity SET activity_status=1 WHERE id in (496,497,498,499,500,501);'
+    s=sql
+    s=s.replace(' ','${SPACE}')
+    str='{"SQL":"'+s+'"}'
+    return str
 
 
 if __name__ == '__main__':
     # 注意，如果参数中有中文，则需要在替换后，手动改成中文
-    s = 'ts=2019-03-21%2014%3A40%3A37&order_id=240&postoken=79724e7b-bfba-45bf-8a97-a0f555ae8c44&sign=01fc97f80bbd9c3b5b8870fc90f406ba&code=6375&uuid=c76b57733faeccd9d514e2ab1787f46d&writeoff_user_id=47'
+    s = 'order_id=10001364&pay_method_id=1&pay_password=e26c26ab9ce74f8b0980bade0cd42d62&real_coin_amt=0&r=0.778164654777834'
     s2 = str(str2dic(s))
     s2 = url_md_decoder(s2)
     s2 = s2.replace('\'', '\"')
     print(s2)
+
+    sql='UPDATE pit_oil_site_activity SET activity_status=1 WHERE id in (496,497,498,499,500,501);'
+    sqlstr=sqlstr2str(sql)
+    print(sqlstr)

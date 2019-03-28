@@ -77,6 +77,17 @@ class InterfaceRequest(object):
         print(res)
         return res
 
+    #这里的sql调用的是Django的本机服务，调用时需要将完整的sql语句填写到url中
+    def sql_interface_post_raw(self, url='', params='', header=''):
+        print('_config_reader_path', self._config_reader_path)
+        params = self._str2json(params)
+        header = self._str2json(header)
+        response = requests.post(url, data=params, headers=header)
+        s=response.text
+        res=s
+        print(res)
+        return res
+
     def POS_interface_post(self,url='', params='', header=''):
         print('_config_reader_path', self._config_reader_path)
 
@@ -103,7 +114,4 @@ class InterfaceRequest(object):
 
 if __name__ == '__main__':
     IR = InterfaceRequest()
-    # params = '{"product_type_id": "10", "longitude": "104.06791687011719", "latitude": "30.548940658569336", "distance": "30", "orderbyfield": "pointdistance", "site_id": "", "site_name": "", "pageNumber": "1", "pagesize": "10", "r": "0.2110462989440982"}'
-    # IR.interface_get(url='/v2transapi', headers=None, params=params)
-    # IR.interface_post(url='/OilSite/NearbyDiscountList', params=params)
-    IR.sql_interface_post('http://localhost:8000/polls/sql_fun/18703070908')
+    IR.sql_interface_post_raw(url='http://localhost:8000/polls/raw_sql_fun',params='{"SQL":"SELECT * from pit_member_score_balance WHERE user_id in (SELECT id FROM pit_member_user WHERE mobile =\'19903260905\') ORDER BY id desc;"}')

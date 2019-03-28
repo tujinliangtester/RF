@@ -1,20 +1,161 @@
+#注意，由于订单涉及到活动、优惠券等，为了方便统一，活动、优惠券用活动叠加用例中的活动和优惠券，
+#另外需要手动初始话用户及领取优惠券
+#1.准备新用户（老用户另外用一个脚本来执行验证）将手机号写入到config文件中
+#2.将微信和pc的header写入config
+#3.支付密码可能需要修改？要与前端确认加密方式
+
 
 
 *** Settings ***
 Library  ../../../lib/InterfaceRequest.py
 Library  ../../../lib/tools.py
+Suite Setup     setups
+Suite Teardown      teardowns
 
 *** Variables ***
+
 ${url}  /OilOrder/Order
-${header}   {"Cookie": "ASP.NET_SessionId=zwfggp4ssgs005xbqjoiizyz; SaveValueTemp=svt_ident=xiang; wxpublic_WXUserMember=wxUserID=43OVNFeSrGg="}
-${param}    {"site_id": "2", "gun_id": "32", "direct_id": "", "activity_id": "", "platform_activity_id": "0", "coupon_id": "117103", "org_amt": "10", "real_score_amt": "0", "real_coin_amt": "0", "nogas_amt": "", "coupon_nogas_id": "0", "real_pay_amt": "0", "pay_password": "5bf935629419f6537a5e4c3e2c83be95", "app_client_type": "1", "r": "0.7199487680219514"}
+${TicketListUrl}      /OilOrder/TicketList
+${OilOrderPayOilUrl}   /OilOrder/PayOil
+${DjangoRawSqlFunUrl}        http://localhost:8000/polls/raw_sql_fun
+${DrpMemberCardPayPasswordReSetUrl}  /DrpMemberCard/PayPasswordReSet
+${MyInfoUrl}     /My/Info
+${DrpMemberOffLineAddCoinOrderUrl}      /DrpMemberOffLine/AddCoinOrder
+${MyDrawCouponUrl}   /My/DrawCoupon
+${UpdateMerchantSettingURL}     /DrpConfig/UpdateMerchantSetting
+
+
+${param}    {"site_id": "35", "gun_id": "14403", "direct_id": "", "activity_id": "499", "platform_activity_id": "0", "coupon_id": "0", "org_amt": "10", "real_score_amt": "5", "real_coin_amt": "0", "nogas_amt": "", "coupon_nogas_id": "0", "real_pay_amt": "0", "pay_password": "cb2f9256adaa70ba37eae72f1e07fcba", "app_client_type": "1", "r": "0.8954788928397364"}
 
 
 
+${userId}   0
+${paypwd}   123456
+${paypwdEncoded}    e10adc3949ba59abbe56e057f20f883e
+${pay_password}     99710c6d12fa05eaf95a304a5a73038d
+
+${coupon_id1}   622
+${coupon_id2}   623
+${coupon_id3}   624
+${coupon_id4}   625
+
+${gun_id}   14403
 
 
+*** Keywords ***
+setups
+    ${header}=      read config     header
+    ${PcHeader}=    read config     PcHeader
+    ${mobile}=      read config     mobile
+
+
+    #    准备活动
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=1${SPACE}WHERE${SPACE}id${SPACE}in${SPACE}(496,497,498,499,500,501);"}
+
+    #    获取用户id
+    ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
+    ${userId}=      should match regexp     ${res}      "id":\\d+
+    ${userId}=      should match regexp     ${userId}      \\d+
+
+    #    设置用户密码，密码为123456
+    pc interface post  ${DrpMemberCardPayPasswordReSetUrl}      {"paypwd": "e10adc3949ba59abbe56e057f20f883e", "repaypwd": "e10adc3949ba59abbe56e057f20f883e", "note": "", "userID": "${userId}"}
+    should contain   ${res}     "code":1,
+
+
+    #    充值(充值活动暂不考虑？)
+    ${res}=     pc interface post  ${DrpMemberOffLineAddCoinOrderUrl}   {"user_id": "${userId}", "org_amt": "1000", "give_amt": "0", "active_id": "", "note": "", "pay_method_id": "1"}  ${PcHeader}
+    should contain   ${res}     "code":1,
+
+    #    领券
+    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id1}", "r": "0.465362035318329"}      ${header}
+    should contain   ${res}     "code":1,
+
+    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id2}", "r": "0.465362035318329"}      ${header}
+    should contain   ${res}     "code":1,
+
+    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id3}", "r": "0.465362035318329"}      ${header}
+    should contain   ${res}     "code":1,
+
+    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id4}", "r": "0.465362035318329"}      ${header}
+    should contain   ${res}     "code":1,
+
+
+teardowns
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=1${SPACE}WHERE${SPACE}id${SPACE}in${SPACE}(523);"}
+
+
+
+order_tmplate
+    [Arguments]      ${org_amt}     ${is_allow_superimposed}      ${expect}
+    ${header}=      read config     header
+    ${PcHeader}=    read config     PcHeader
+    ${mobile}=      read config     mobile
+
+    pc_interface_post      ${UpdateMerchantSettingURL}    {"can_add_balance": "1", "can_use_coin": "1", "can_use_carnumber_pay": "1", "can_use_balance_pay": "1", "can_use_coin_pay_notoil": "1", "is_allow_superimposed": "${is_allow_superimposed}", "can_use_score_mall": "1", "can_use_fleet_card": "1"}    ${PcHeader}
+
+    ${res}=     interface post      ${TicketListUrl}      {"site_id": "35", "gun_id": "14403", "org_amt": "${org_amt}", "nogas_amt": "", "app_client_type": "1", "r": "0.6673226578129476"}       ${header}
+    ${amt_after_reduce}=    reg draw     ${res}     amt_after_reduce
+    should be equal     ${amt_after_reduce}    ${expect}
+
+    #    从返回结果中，选择活动、优惠券等，这里暂直接选择最佳
+    ${ReadyPayMoney}=   should match regexp     ${res}  "ReadyPayMoney":.+
+    ${direct_id}=   should match regexp    ${ReadyPayMoney}      "direct_id":\\d+
+    ${direct_id}=   should match regexp    ${direct_id}      \\d+
+
+    ${activity_id}=     should match regexp    ${ReadyPayMoney}      "activity_id":\\d+
+    ${activity_id}=     should match regexp    ${activity_id}      \\d+
+
+#    ${platform_activity}=    should match regexp    ${ReadyPayMoney}      "platform_activity":.+
+#    ${platform_activity}=    should match regexp    ${platform_activity}      \\d+
+
+
+    ${coupon_id}=   should match regexp    ${ReadyPayMoney}      "coupon_id":\\d+
+    ${coupon_id}=   should match regexp    ${coupon_id}      \\d+
+
+    ${real_score_amt}=      should match regexp    ${ReadyPayMoney}      "real_score_amt":\\d+
+    ${real_score_amt}=      should match regexp    ${real_score_amt}      \\d+
+
+    ${nogas_amt}=   should match regexp    ${ReadyPayMoney}      "nogas_amt":\\d+
+    ${nogas_amt}=   should match regexp    ${nogas_amt}      \\d+
+
+    ${coupon_nogas_id}=     should match regexp    ${ReadyPayMoney}      "coupon_nogas_id":\\d+
+    ${coupon_nogas_id}=     should match regexp    ${coupon_nogas_id}      \\d+
+
+    ${real_pay_amt}=    should match regexp    ${ReadyPayMoney}      "real_pay_amt":\\d+
+    ${real_pay_amt}=    should match regexp    ${real_pay_amt}      \\d+
+
+
+    ${res}=     interface post     ${url}    {"site_id": "35", "gun_id": "${gun_id}", "direct_id": "${direct_id}", "activity_id": "${activity_id}", "platform_activity_id": "", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "real_score_amt": "${real_score_amt}", "real_coin_amt": "${amt_after_reduce}", "nogas_amt": "${nogas_amt}", "coupon_nogas_id": "${coupon_nogas_id}", "real_pay_amt": "${real_pay_amt}", "pay_password": "99710c6d12fa05eaf95a304a5a73038d", "app_client_type": "1", "r": "0.8897545249754606"}    ${header}
+    ${order_id}=     reg draw    ${res}      id
+
+    #    支付订单
+    ${res}=     interface post   ${OilOrderPayOilUrl}     {"order_id": "${order_id}", "pay_method_id": "1", "pay_password": "${paypwdEncoded}", "real_coin_amt": "0", "r": "0.778164654777834"}    ${header}
+    should contain      ${res}      "code":1,
+
+    sleep  10
 *** Test Cases ***
+
 Class_01
-    ${res}=     interface post     ${url}     ${param}    ${header}
-    ${orderID}=     reg draw    ${res}      id
+    [Template]  order_tmplate
+    1   1   0
+    10  1   0
+    20  1   0
+    30  1   0
+    50  1   15
+    100     1   45
+    200     1   105
+    300     1   129
+    400     1   110
+    1   0   0
+    10  0   0
+    20  0   0
+    30  0   0
+    50  0   20
+    100     0   60
+    200     0   120
+    300     0   189
+    400     0   190
+
 

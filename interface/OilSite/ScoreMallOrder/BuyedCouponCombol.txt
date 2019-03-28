@@ -69,6 +69,7 @@ createCouponScoreOrder
 
     ${res}=     interface post      ${ShoppingCartDetailUrl}    {"site_id": "${site_id}"}   ${header}
     ${use_score_sum}=   reg draw  ${res}    use_score_sum
+    should be equal     ${use_score_sum}    74
 
     ${res}=     interface post      ${CreateOrderUrl}   {"mobile": "${mobile}", "site_id": "${site_id}"}      ${header}
     should contain   ${res}     "code":1,
