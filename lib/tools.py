@@ -108,18 +108,42 @@ class tools(object):
     def math_int2float(self, int_a):
         return float(int_a)
 
-    def gzh_pay_password_encode(self, passwordToken, str2, realCoinAmt):
-        m=hashlib.md5()
+    def gzh_pay_password_encode(self, passwordToken, str2, str3):
+        # password2 = md5(md5(md5(this.passwordToken) + md5(str2)) + md5(this.order_id + ''))
 
         passwordToken=str(passwordToken)
         str2=str(str2)
-        realCoinAmt=str(realCoinAmt)
+        str3=str(str3)
 
         passwordToken=passwordToken.encode(encoding='utf-8')
         str2=str2.encode(encoding='utf-8')
-        realCoinAmt=realCoinAmt.encode(encoding='utf-8')
+        str3=str3.encode(encoding='utf-8')
 
+        m=hashlib.md5()
         m.update(passwordToken)
+        passwordTokenMD=m.hexdigest()
+
+
+        m=hashlib.md5()
+        m.update(str2)
+        str2MD=m.hexdigest()
+
+        res1=passwordTokenMD+str2MD
+        res1=res1.encode(encoding='utf-8')
+
+        m = hashlib.md5()
+        m.update(res1)
+        res1MD=m.hexdigest()
+
+        m=hashlib.md5()
+        m.update(str3)
+        str3MD=m.hexdigest()
+
+        res2=res1MD+str3MD
+        res2=res2.encode(encoding='utf-8')
+
+        m = hashlib.md5()
+        m.update(res2)
         res=m.hexdigest()
         print(res)
         return res
@@ -137,4 +161,5 @@ if __name__ == '__main__':
     print(t.raw_reg_draw(mom=mom, re_str=reg))
 
     t.alter('mobile', '19903281400')
-    t.gzh_pay_password_encode(1, 2, 3)
+    t.gzh_pay_password_encode(passwordToken='6d59db6e763d1d40', str2='123456', str3='45')
+    t.gzh_pay_password_encode(passwordToken='6d59db6e763d1d40', str2='123456', str3='0')

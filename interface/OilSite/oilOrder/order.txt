@@ -2,7 +2,7 @@
 #另外需要手动初始话用户及领取优惠券
 #1.准备新用户（老用户另外用一个脚本来执行验证）将手机号写入到config文件中
 #2.将微信和pc的header写入config
-#3.运行mysite服务
+#3.运行mysite服务 python manage.py runserver
 
 
 
@@ -47,7 +47,6 @@ setups
     ${PcHeader}=    read config     PcHeader
     ${mobile}=      read config     mobile
 
-
     #    准备活动
     sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
     sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=1${SPACE}WHERE${SPACE}id${SPACE}in${SPACE}(496,497,498,499,500,501);"}
@@ -67,17 +66,17 @@ setups
     should contain   ${res}     "code":1,
 
     #    领券
-#    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id1}", "r": "0.465362035318329"}      ${header}
-#    should contain   ${res}     "code":1,
-#
-#    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id2}", "r": "0.465362035318329"}      ${header}
-#    should contain   ${res}     "code":1,
-#
-#    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id3}", "r": "0.465362035318329"}      ${header}
-#    should contain   ${res}     "code":1,
-#
-#    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id4}", "r": "0.465362035318329"}      ${header}
-#    should contain   ${res}     "code":1,
+    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id1}", "r": "0.465362035318329"}      ${header}
+    should contain   ${res}     "code":1,
+
+    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id2}", "r": "0.465362035318329"}      ${header}
+    should contain   ${res}     "code":1,
+
+    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id3}", "r": "0.465362035318329"}      ${header}
+    should contain   ${res}     "code":1,
+
+    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id4}", "r": "0.465362035318329"}      ${header}
+    should contain   ${res}     "code":1,
 
 
 #临时的teardown
@@ -123,20 +122,30 @@ order_tmplate
     ${coupon_nogas_id}=     should match regexp    ${ReadyPayMoney}      "coupon_nogas_id":\\d+
     ${coupon_nogas_id}=     should match regexp    ${coupon_nogas_id}      \\d+
 
+    ${real_coin_amt}=     should match regexp    ${ReadyPayMoney}      "real_coin_amt":\\d+
+    ${real_coin_amt}=     should match regexp    ${real_coin_amt}      \\d+
+
     ${real_pay_amt}=    should match regexp    ${ReadyPayMoney}      "real_pay_amt":\\d+
     ${real_pay_amt}=    should match regexp    ${real_pay_amt}      \\d+
 
-
-    ${res}=     interface post     ${url}    {"site_id": "35", "gun_id": "${gun_id}", "direct_id": "${direct_id}", "activity_id": "${activity_id}", "platform_activity_id": "", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "real_score_amt": "${real_score_amt}", "real_coin_amt": "${amt_after_reduce}", "nogas_amt": "${nogas_amt}", "coupon_nogas_id": "${coupon_nogas_id}", "real_pay_amt": "${real_pay_amt}", "pay_password": "99710c6d12fa05eaf95a304a5a73038d", "app_client_type": "1", "r": "0.8897545249754606"}    ${header}
-    ${order_id}=     reg draw    ${res}      id
-
-    #    支付订单
-    #password2 = md5(md5(md5(this.passwordToken) + md5(str2)) + md5(parseInt(this.realCoinAmt) + ''))
+    #   提交订单
+    #password = md5(md5(md5(this.passwordToken) + md5(str2)) + md5(parseInt(this.realCoinAmt) + ''))
     ${res}=   interface post      ${mypaypasswordinfourl}   ${EMPTY}     ${header}
     ${passwordToken}=   should match regexp    ${res}    "password_token":"\\w+
     ${passwordToken}=   should match regexp    ${passwordToken}    :"\\w+
     ${passwordToken}=   should match regexp    ${passwordToken}    \\w+
     ${pay_password}=    gzh pay password encode     ${passwordToken}    ${paypwd}     ${amt_after_reduce}
+
+    ${res}=     interface post     ${url}    {"site_id": "35", "gun_id": "${gun_id}", "direct_id": "${direct_id}", "activity_id": "${activity_id}", "platform_activity_id": "", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "real_score_amt": "${real_score_amt}", "real_coin_amt": "${amt_after_reduce}", "nogas_amt": "${nogas_amt}", "coupon_nogas_id": "${coupon_nogas_id}", "real_pay_amt": "${real_pay_amt}", "pay_password": "${pay_password}", "app_client_type": "1", "r": "0.8897545249754606"}    ${header}
+    ${order_id}=     reg draw    ${res}      id
+
+    #    支付订单
+    #password2 = md5(md5(md5(this.passwordToken) + md5(str2)) + md5(this.order_id + ''))
+    ${res}=   interface post      ${mypaypasswordinfourl}   ${EMPTY}     ${header}
+    ${passwordToken}=   should match regexp    ${res}    "password_token":"\\w+
+    ${passwordToken}=   should match regexp    ${passwordToken}    :"\\w+
+    ${passwordToken}=   should match regexp    ${passwordToken}    \\w+
+    ${pay_password}=    gzh pay password encode     ${passwordToken}    ${paypwd}     ${order_id}
 
     ${res}=     interface post   ${OilOrderPayOilUrl}     {"order_id": "${order_id}", "pay_method_id": "1", "pay_password": "${pay_password}", "real_coin_amt": "${amt_after_reduce}", "r": "0.778164654777834"}    ${header}
     should contain      ${res}      "code":1,
@@ -146,12 +155,12 @@ order_tmplate
 
 Class_01
     [Template]  order_tmplate
-    1   1   0
+#    1   1   0
 #    10  1   0
 #    20  1   0
 #    30  1   0
 #    50  1   15
-#    100     1   45
+    100     1   45
 #    200     1   105
 #    300     1   129
 #    400     1   110

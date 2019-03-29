@@ -35,6 +35,6 @@ if __name__ == '__main__':
     s2 = s2.replace('\'', '\"')
     print(s2)
 
-    sql='UPDATE pit_oil_site_activity SET activity_status=1 WHERE id in (496,497,498,499,500,501);'
+    sql='SELECT * FROM pit_score_mall_product WHERE name like \'测试商品\';'
     sqlstr=sqlstr2str(sql)
     print(sqlstr)
