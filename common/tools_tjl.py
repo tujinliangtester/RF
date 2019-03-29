@@ -29,7 +29,7 @@ def sqlstr2str(sql):
 
 if __name__ == '__main__':
     # 注意，如果参数中有中文，则需要在替换后，手动改成中文
-    s = 'order_id=10001364&pay_method_id=1&pay_password=e26c26ab9ce74f8b0980bade0cd42d62&real_coin_amt=0&r=0.778164654777834'
+    s = 'site_id=35&gun_id=14403&direct_id=497&activity_id=500&platform_activity_id=&coupon_id=61918&org_amt=200&real_score_amt=0&real_coin_amt=120.00&nogas_amt=0&coupon_nogas_id=0&real_pay_amt=0&pay_password=3edbd487558d012b0a2af8a91fa8ac10&app_client_type=1&r=0.8897545249754606'
     s2 = str(str2dic(s))
     s2 = url_md_decoder(s2)
     s2 = s2.replace('\'', '\"')

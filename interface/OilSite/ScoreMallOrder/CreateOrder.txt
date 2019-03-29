@@ -30,6 +30,7 @@ createEntityScoreOrder
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
 
+    #   清空购物车
     interface post     ${ClearShoppingCartUrl}      {"site_id": "${site_id}"}     ${header}
 
     ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
@@ -225,6 +226,7 @@ createCouponScoreOrder_num2
     ${mobile}=      should match regexp   ${res}    mobile":"\\d+
     ${mobile}=      should match regexp   ${mobile}    \\d+
 
+    #   购物车处理
     ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${coupon_product_id}", "site_id": "${site_id}"}      ${header}
     should contain   ${res}     "code":1,
     ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${coupon_product_id}", "site_id": "${site_id}"}      ${header}

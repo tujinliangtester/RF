@@ -2,7 +2,7 @@
 *** Settings ***
 Library  ../../../lib/InterfaceRequest.py
 Library  ../../../lib/tools.py
-#Test Teardown       clear product
+Test Teardown       clear product
 
 
 *** Keywords ***
@@ -11,11 +11,11 @@ clear product
 
 *** Variables ***
 ${CreatePhysicalProductUrl}     /DrpScoreMallProduct/CreatePhysicalProduct
-${ProductName}      测试商品
+${ProductName}      tjl测试商品
 ${image_logo}       http://pic.energy.314pay.com/pic/2019/03/27/2019032715595170277.gif
 ${DjangoRawSqlFunUrl}        http://localhost:8000/polls/raw_sql_fun
 
-${sqlDelete}=    {"SQL":"DELETE${SPACE}FROM${SPACE}pit_score_mall_product${SPACE}WHERE${SPACE}name${SPACE}like${SPACE}'测试商品';"}
+${sqlDelete}=    {"SQL":"DELETE${SPACE}FROM${SPACE}pit_score_mall_product${SPACE}WHERE${SPACE}name${SPACE}like${SPACE}'tjl测试商品';"}
 
 *** Test Cases ***
 
@@ -34,7 +34,6 @@ CreatePhysicalProduct_ScoreAndMoney
 
 
 CreatePhysicalProduct_partSite
-
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
     ${res}=     pc interface post   ${CreatePhysicalProductUrl}    {"name": "${ProductName}", "image_logo": "${image_logo} ", "standard": "个", "summary": "测试", "use_score": "10", "use_money": "0", "site_ids": "35,37", "site_inventories": "100,200", "send_type": "0", "send_time": "", "is_all_site": "0"}   ${PcHeader}

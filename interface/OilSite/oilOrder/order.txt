@@ -14,7 +14,7 @@ Suite Teardown      teardowns
 
 *** Variables ***
 
-${url}  /OilOrder/Order
+${OilOrderOrderUrl}  /OilOrder/Order
 ${TicketListUrl}      /OilOrder/TicketList
 ${OilOrderPayOilUrl}   /OilOrder/PayOil
 ${DjangoRawSqlFunUrl}        http://localhost:8000/polls/raw_sql_fun
@@ -82,7 +82,7 @@ setups
 #临时的teardown
 teardowns
     sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
-    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=1${SPACE}WHERE${SPACE}id${SPACE}in${SPACE}(523);"}
+#    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=1${SPACE}WHERE${SPACE}id${SPACE}in${SPACE}(523);"}
 
 
 
@@ -100,14 +100,49 @@ order_tmplate
 
     #    从返回结果中，选择活动、优惠券等，这里暂直接选择最佳
     ${ReadyPayMoney}=   should match regexp     ${res}  "ReadyPayMoney":.+
+
     ${direct_id}=   should match regexp    ${ReadyPayMoney}      "direct_id":\\d+
     ${direct_id}=   should match regexp    ${direct_id}      \\d+
+
+    ${site_direct_cut_amt}=     should match regexp   ${ReadyPayMoney}      "site_direct_cut_amt":\\d+.\\d+
+    ${site_direct_cut_amt}=     should match regexp   ${site_direct_cut_amt}      \\d+.\\d+
 
     ${activity_id}=     should match regexp    ${ReadyPayMoney}      "activity_id":\\d+
     ${activity_id}=     should match regexp    ${activity_id}      \\d+
 
-#    ${platform_activity}=    should match regexp    ${ReadyPayMoney}      "platform_activity":.+
-#    ${platform_activity}=    should match regexp    ${platform_activity}      \\d+
+    ${site_activity_amt}=     should match regexp   ${ReadyPayMoney}      "site_activity_amt":\\d+.\\d+
+    ${site_activity_amt}=     should match regexp   ${site_activity_amt}      \\d+.\\d+
+
+    #   处理直降与满减/折扣的叠加限制
+
+
+#    Set Global Variable
+#
+#    使用范围：在所有测试套件中都可以使用该关键字定义的变量。
+#
+#
+#
+#Set Suite Variable
+#
+#    使用范围：使用此关键字设置的变量在当前执行的测试套件的范围内随处可用。
+#
+#Set Test Variable
+#
+#    使用范围：使用此关键字设置的变量在当前执行的测试用例的范围内随处可用
+#
+#Set Variable
+#
+#    使用范围：该关键字主要用于设置标量变量。此外，它可用于将包含列表的标量变量转换为列表变量或多个标量变量。建议在创建新列表时使用创建列表。使用此关键字创建的变量仅在创建它们的范围内可用
+
+    run keyword if      ${site_direct_cut_amt}==0     set test variable      ${direct_id}      ${EMPTY}
+    run keyword if      ${site_activity_amt}==0    set test variable      ${activity_id}      ${EMPTY}
+    log  ${direct_id}
+    log  ${activity_id}
+    #    run keyword if      ${site_direct_cut_amt}==0.00   set variable    ${direct_id}      ${EMPTY}
+    #    run keyword if      ${site_activity_amt}==0.00    set variable    ${activity_id}      ${EMPTY}
+
+    #    ${platform_activity}=    should match regexp    ${ReadyPayMoney}      "platform_activity":.+
+    #    ${platform_activity}=    should match regexp    ${platform_activity}      \\d+
 
 
     ${coupon_id}=   should match regexp    ${ReadyPayMoney}      "coupon_id":\\d+
@@ -125,8 +160,8 @@ order_tmplate
     ${real_coin_amt}=     should match regexp    ${ReadyPayMoney}      "real_coin_amt":\\d+
     ${real_coin_amt}=     should match regexp    ${real_coin_amt}      \\d+
 
-    ${real_pay_amt}=    should match regexp    ${ReadyPayMoney}      "real_pay_amt":\\d+
-    ${real_pay_amt}=    should match regexp    ${real_pay_amt}      \\d+
+    ${real_pay_amt}=    should match regexp    ${ReadyPayMoney}      "real_pay_amt":\\d+.\\d+
+    ${real_pay_amt}=    should match regexp    ${real_pay_amt}      \\d+.\\d+
 
     #   提交订单
     #password = md5(md5(md5(this.passwordToken) + md5(str2)) + md5(parseInt(this.realCoinAmt) + ''))
@@ -136,7 +171,7 @@ order_tmplate
     ${passwordToken}=   should match regexp    ${passwordToken}    \\w+
     ${pay_password}=    gzh pay password encode     ${passwordToken}    ${paypwd}     ${amt_after_reduce}
 
-    ${res}=     interface post     ${url}    {"site_id": "35", "gun_id": "${gun_id}", "direct_id": "${direct_id}", "activity_id": "${activity_id}", "platform_activity_id": "", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "real_score_amt": "${real_score_amt}", "real_coin_amt": "${amt_after_reduce}", "nogas_amt": "${nogas_amt}", "coupon_nogas_id": "${coupon_nogas_id}", "real_pay_amt": "${real_pay_amt}", "pay_password": "${pay_password}", "app_client_type": "1", "r": "0.8897545249754606"}    ${header}
+    ${res}=     interface post     ${OilOrderOrderUrl}    {"site_id": "35", "gun_id": "${gun_id}", "direct_id": "${direct_id}", "activity_id": "${activity_id}", "platform_activity_id": "", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "real_score_amt": "${real_score_amt}", "real_coin_amt": "${real_pay_amt}", "nogas_amt": "${nogas_amt}", "coupon_nogas_id": "${coupon_nogas_id}", "real_pay_amt": "${real_coin_amt}", "pay_password": "${pay_password}", "app_client_type": "1", "r": "0.8897545249754606"}    ${header}
     ${order_id}=     reg draw    ${res}      id
 
     #    支付订单
@@ -155,23 +190,26 @@ order_tmplate
 
 Class_01
     [Template]  order_tmplate
-#    1   1   0
-#    10  1   0
-#    20  1   0
-#    30  1   0
-#    50  1   15
+    1   1   0
+    10  1   0
+    20  1   0
+    30  1   0
+    50  1   15
     100     1   45
-#    200     1   105
-#    300     1   129
-#    400     1   110
-#    1   0   0
-#    10  0   0
-#    20  0   0
-#    30  0   0
-#    50  0   20
-#    100     0   60
-#    200     0   120
-#    300     0   189
-#    400     0   190
+    200     1   105
+    300     1   129
+    400     1   110
+
+Class_02
+    [Template]  order_tmplate
+    1   0   0
+    10  0   0
+    20  0   0
+    30  0   0
+    50  0   20
+    100     0   60
+    200     0   120
+    300     0   189
+    400     0   190
 
 

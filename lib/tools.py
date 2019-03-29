@@ -162,4 +162,4 @@ if __name__ == '__main__':
 
     t.alter('mobile', '19903281400')
     t.gzh_pay_password_encode(passwordToken='6d59db6e763d1d40', str2='123456', str3='45')
-    t.gzh_pay_password_encode(passwordToken='6d59db6e763d1d40', str2='123456', str3='0')
+    t.gzh_pay_password_encode(passwordToken='6d59db6e763d1d40', str2='123456', str3='10001405')

@@ -6,10 +6,29 @@ Library  ../../../lib/tools.py
 
 *** Variables ***
 ${ShoppingCartOperUrl}       /ScoreMallOrder/ShoppingCartOper
+${ClearShoppingCartUrl}     /ScoreMallOrder/ClearShoppingCart
+${ShoppingCartDetailUrl}   /ScoreMallOrder/ShoppingCartDetail
+
+
+${site_id}      35
+${entity_product_id}   6
+${coupon_product_id}   8
+
 
 *** Test Cases ***
 addEntityProduct
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
-    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "52", "site_id": "3501"}      ${header}
+
+    #   清空购物车
+    interface post     ${ClearShoppingCartUrl}      {"site_id": "${site_id}"}     ${header}
+
+    ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${entity_product_id}", "site_id": "${site_id}"}      ${header}
     should contain   ${res}     "code":1,
+
+    ${res}=     interface post      ${ShoppingCartDetailUrl}    {"site_id": "${site_id}"}   ${header}
+
+    #   清空购物车
+    interface post     ${ClearShoppingCartUrl}      {"site_id": "${site_id}"}     ${header}
+
+
