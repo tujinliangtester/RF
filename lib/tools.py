@@ -151,15 +151,5 @@ class tools(object):
 
 if __name__ == '__main__':
     t = tools()
-    mom = '{"code":1,"msg":"","data":{"site_name":"ttp-测试油站2","order_id":126,"order_no":"S1903201419273716871","products_type":0,"mobile":"19903201133","code":"7349"},"ext":null,"subcode":""}'
-    # reg='"code":\d+'
-    # t.reg_draw(mom=mom,key='id')
-    # res=t.read_data("mobile")
-    print(11)
-    print(t.read_config('PcHeader'))
-    reg = '"code":"\d+'
-    print(t.raw_reg_draw(mom=mom, re_str=reg))
-
-    t.alter('mobile', '19903281400')
-    t.gzh_pay_password_encode(passwordToken='6d59db6e763d1d40', str2='123456', str3='45')
-    t.gzh_pay_password_encode(passwordToken='6d59db6e763d1d40', str2='123456', str3='10001405')
+    t.gzh_pay_password_encode(passwordToken='a19734e0a9978e73', str2='123456', str3=0)
+    # t.gzh_pay_password_encode(passwordToken='6d59db6e763d1d40', str2='123456', str3='10001405')

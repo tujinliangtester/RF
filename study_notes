@@ -133,7 +133,7 @@ robotframework
          \    log   ${userLevel}
 
     8.相等判定
-        RF的相等，无需进行整型、浮点的转换等
+        RF的相等，仍然需要进行整型、浮点的转换等
 
     9.注意，可以在RF中导入包，如下，在最后一个位置是包
 
@@ -143,6 +143,10 @@ robotframework
     10.数据类型
         一定要用@{}来存储列表，否则RF会认为只是一个字符串变量
         字典仍然可以用 ${}来存储
+        从服务器响应中获取值时，最好先变成json或字典，然后再用键值对去取值
+    11.可以直接执行python语句：evaluate
+        ${growth_value_add_exp}=   evaluate    int(${org_oil_litre})
+
 
 
 

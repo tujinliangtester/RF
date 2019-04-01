@@ -92,8 +92,14 @@ teardowns
 #1.支付方式只有会员卡支付
 #2.订单状态只有待付款-已付款
 #3.油品只有汽油
+#4.包含了活动叠加的验证
+#5.预期结果只有积分、成长值、余额
 order_tmplate
     [Arguments]      ${org_amt}     ${is_allow_superimposed}      ${expect}
+
+    #程序限制不能频繁下单
+    sleep  10
+
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
     ${mobile}=      read config     mobile
@@ -101,8 +107,10 @@ order_tmplate
     pc_interface_post      ${UpdateMerchantSettingURL}    {"can_add_balance": "1", "can_use_coin": "1", "can_use_carnumber_pay": "1", "can_use_balance_pay": "1","can_use_coin_pay_notoil": "1", "is_allow_superimposed": "${is_allow_superimposed}", "can_use_score_mall": "1","can_use_fleet_card": "1"}     ${PcHeader}
 
     ${res}=     interface post      ${TicketListUrl}     {"site_id": "35", "gun_id": "14403", "org_amt": "${org_amt}", "nogas_amt": "", "app_client_type": "1", "r": "0.6673226578129476"}     ${header}
+    ${dic}=     evaluate  json.loads(u'${res}')   json
 
-    ${amt_after_reduce}=    reg draw     ${res}     amt_after_reduce
+    ${amt_after_reduce}=    set variable     ${dic}[data][ReadyPayMoney][amt_after_reduce]
+    ${expect}=  evaluate    float(${expect})
     should be equal     ${amt_after_reduce}    ${expect}
 
     #    从返回结果中，选择活动、优惠券等，这里暂直接选择最佳
@@ -150,6 +158,8 @@ order_tmplate
     ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
     ${dic}=     evaluate  json.loads(u'${res}')   json
     ${growth_level}     set variable     ${dic}[data][growth_level]
+    ${growth_value_before}     set variable     ${dic}[data][growth_value]
+    ${coin_balance_before}     set variable     ${dic}[data][coin_balance]
     ${score_balance_before}    set variable     ${dic}[data][score_balance]
 
     ${res}=     pc interface post   ${DrpConfigUserLevelListUrl}    ${EMPTY}    ${PcHeader}
@@ -167,7 +177,8 @@ order_tmplate
     ${passwordToken}=   should match regexp    ${res}    "password_token":"\\w+
     ${passwordToken}=   should match regexp    ${passwordToken}    :"\\w+
     ${passwordToken}=   should match regexp    ${passwordToken}    \\w+
-    ${pay_password}=    gzh pay password encode     ${passwordToken}    ${paypwd}     ${amt_after_reduce}
+    ${amt_after_reduce_for_pay}=    evaluate   int(${amt_after_reduce})
+    ${pay_password}=    gzh pay password encode     ${passwordToken}    ${paypwd}     ${amt_after_reduce_for_pay}
 
     ${res}=     interface post     ${OilOrderOrderUrl}    {"site_id": "35", "gun_id": "${gun_id}", "direct_id": "${direct_id}", "activity_id": "${activity_id}", "platform_activity_id": "", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "real_score_amt": "${real_score_amt}", "real_coin_amt": "${real_pay_amt}", "nogas_amt": "${nogas_amt}", "coupon_nogas_id": "${coupon_nogas_id}", "real_pay_amt": "${real_coin_amt}", "pay_password": "${pay_password}", "app_client_type": "1", "r": "0.8897545249754606"}    ${header}
     ${order_id}=     reg draw    ${res}      id
@@ -176,6 +187,18 @@ order_tmplate
 
     ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
     ${dic}=     evaluate  json.loads(u'${res}')   json
+    #余额判定
+    ${coin_balance_after}     set variable     ${dic}[data][coin_balance]
+    ${amt_after_reduce}=    evaluate   float(${amt_after_reduce})
+    ${coin_balance_add_exp}=   set variable     ${amt_after_reduce}
+    ${coin_balance_add_real}=   evaluate     ${coin_balance_before}-${coin_balance_after}
+    should be equal     ${coin_balance_add_exp}    ${coin_balance_add_real}
+
+
+    ${growth_value_after}     set variable     ${dic}[data][growth_value]
+    should be equal     ${growth_value_after}    ${growth_value_before}
+
+
     ${score_balance_after}    set variable     ${dic}[data][score_balance]
     should be equal     ${score_balance_after}      ${score_balance_before}
 
@@ -193,44 +216,48 @@ order_tmplate
     ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
     ${dic}=     evaluate  json.loads(u'${res}')   json
     ${score_balance_after}    set variable     ${dic}[data][score_balance]
+    ${growth_value_after}     set variable     ${dic}[data][growth_value]
+
 
     #预期增加积分，需要截断取整
     ${score_balance_add_exp}=   evaluate    int(${org_oil_litre}*${score_rate_qiyou})
     ${score_balance_add_real}=   evaluate    ${score_balance_after}-${score_balance_before}
     should be equal  ${score_balance_add_exp}   ${score_balance_add_real}
 
+    #成长值，汽油是乘以10，柴油乘以5
+    ${growth_value_add_exp}=   evaluate    int(${org_oil_litre}*10)
+    ${growth_value_add_real}=   evaluate    ${growth_value_after}-${growth_value_before}
+    should be equal  ${growth_value_add_exp}   ${growth_value_add_real}
 
-    #TODO 预期结果的校验
-    #订单流程
+    #余额判定
+    ${coin_balance_after}     set variable     ${dic}[data][coin_balance]
+    ${amt_after_reduce}=    evaluate   float(${amt_after_reduce})
+    ${coin_balance_add_exp}=   set variable     ${amt_after_reduce}
+    ${coin_balance_add_real}=   evaluate     ${coin_balance_before}-${coin_balance_after}
+    should be equal     ${coin_balance_add_exp}    ${coin_balance_add_real}
 
-    #状态迁移
 
-    #成长值
 
-    #优惠券状态迁移
-
-    #程序限制不能频繁下单
-    sleep  10
 *** Test Cases ***
-
-Class_01
-    [Template]  order_tmplate
-    1   1   0
-    10  1   0
-    20  1   0
-    30  1   0
-    50  1   15
-    100     1   45
-    200     1   105
-    300     1   129
-    400     1   110
+#
+#Class_01
+#    [Template]  order_tmplate
+#    1   1   0
+#    10  1   0
+#    20  1   0
+#    30  1   0
+#    50  1   15
+#    100     1   45
+#    200     1   105
+#    300     1   129
+#    400     1   110
 
 Class_02
     [Template]  order_tmplate
-    1   0   0
-    10  0   0
-    20  0   0
-    30  0   0
+#    1   0   0
+#    10  0   0
+#    20  0   0
+    30  0   0.5
     50  0   20
     100     0   60
     200     0   120
