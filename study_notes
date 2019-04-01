@@ -128,6 +128,23 @@ robotframework
     7.if
         run keyword if  +条件+关键字
 
+    7.5 for循环
+         :FOR    ${userLevel}    IN   ${dic}[data]
+         \    log   ${userLevel}
+
+    8.相等判定
+        RF的相等，无需进行整型、浮点的转换等
+
+    9.注意，可以在RF中导入包，如下，在最后一个位置是包
+
+        字符串转json
+        ${dic}=     evaluate  json.loads(u'${res}')   json
+        log     ${dic}[data]
+    10.数据类型
+        一定要用@{}来存储列表，否则RF会认为只是一个字符串变量
+        字典仍然可以用 ${}来存储
+
+
 
 
 由于后台是php，无法直接通过接口进行操作，所以，后台用selenium来进行操作，相关的断言结合用例，接口和selenium都需要进行
@@ -150,7 +167,7 @@ Python
     and %5D is ']'
     所以，如果发起请求时，参数中带有[]，系统会自动转换为%5B  %5D等，而在传参时，仍然要用[ 或 ] ！
 
-    加密有点问题，不过应该是比较好解决的
+    加密有点问题，不过应该是比较好解决的；已经解决
 
 
 
