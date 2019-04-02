@@ -9,7 +9,6 @@
 *** Settings ***
 Library  ../../../lib/InterfaceRequest.py
 Library  ../../../lib/tools.py
-Library  json
 Test Setup       setups
 Test Teardown      teardowns
 
@@ -86,7 +85,37 @@ setups
 teardowns
     sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
 
+UpdateMerchantSetting
+    [Arguments]     ${is_allow_superimposed}    ${PcHeader}
+    pc_interface_post      ${UpdateMerchantSettingURL}    {"can_add_balance": "1", "can_use_coin": "1", "can_use_carnumber_pay": "1", "can_use_balance_pay": "1","can_use_coin_pay_notoil": "1", "is_allow_superimposed": "${is_allow_superimposed}", "can_use_score_mall": "1","can_use_fleet_card": "1"}     ${PcHeader}
 
+TicketList
+    [Arguments]     ${org_amt}      ${header}
+    ${res}=     interface post      ${TicketListUrl}     {"site_id": "35", "gun_id": "14403", "org_amt": "${org_amt}", "nogas_amt": "", "app_client_type": "1", "r": "0.6673226578129476"}     ${header}
+    return from keyword    ${res}
+
+MyInfo
+    [Arguments]     ${header}
+    ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
+    return from keyword     ${res}
+
+DrpConfigUserLevelList
+    [Arguments]     ${PcHeader}
+    ${res}=     pc interface post   ${DrpConfigUserLevelListUrl}    ${EMPTY}    ${PcHeader}
+    return from keyword     ${res}
+
+
+payPassword
+    #password = md5(md5(md5(this.passwordToken) + md5(str2)) + md5(parseInt(this.realCoinAmt) + ''))
+    #password2 = md5(md5(md5(this.passwordToken) + md5(str2)) + md5(this.order_id + ''))
+    [Arguments]     ${str3}     ${header}
+    ${res}=   interface post      ${MyPayPasswordInfoUrl}   ${EMPTY}     ${header}
+    ${passwordToken}=   should match regexp    ${res}    "password_token":"\\w+
+    ${passwordToken}=   should match regexp    ${passwordToken}    :"\\w+
+    ${passwordToken}=   should match regexp    ${passwordToken}    \\w+
+    ${amt_after_reduce_for_pay}=    evaluate   int(${str3})
+    ${res}=     gzh pay password encode     ${passwordToken}    ${paypwd}     ${amt_after_reduce_for_pay}
+    return from keyword     ${res}
 
 #这个用例的限制包括：
 #1.支付方式只有会员卡支付
@@ -104,9 +133,9 @@ order_tmplate
     ${PcHeader}=    read config     PcHeader
     ${mobile}=      read config     mobile
 
-    pc_interface_post      ${UpdateMerchantSettingURL}    {"can_add_balance": "1", "can_use_coin": "1", "can_use_carnumber_pay": "1", "can_use_balance_pay": "1","can_use_coin_pay_notoil": "1", "is_allow_superimposed": "${is_allow_superimposed}", "can_use_score_mall": "1","can_use_fleet_card": "1"}     ${PcHeader}
+    UpdateMerchantSetting   ${is_allow_superimposed}    ${PcHeader}
 
-    ${res}=     interface post      ${TicketListUrl}     {"site_id": "35", "gun_id": "14403", "org_amt": "${org_amt}", "nogas_amt": "", "app_client_type": "1", "r": "0.6673226578129476"}     ${header}
+    ${res}=     TicketList      ${org_amt}      ${header}
     ${dic}=     evaluate  json.loads(u'${res}')   json
 
     ${amt_after_reduce}=    set variable     ${dic}[data][ReadyPayMoney][amt_after_reduce]
@@ -129,11 +158,8 @@ order_tmplate
     ${site_activity_amt}=     should match regexp   ${site_activity_amt}      \\d+.\\d+
 
     #   处理直降与满减/折扣的叠加限制
-
     run keyword if      ${site_direct_cut_amt}==0     set test variable      ${direct_id}      ${EMPTY}
     run keyword if      ${site_activity_amt}==0    set test variable      ${activity_id}      ${EMPTY}
-    log  ${direct_id}
-    log  ${activity_id}
 
 
     ${coupon_id}=   should match regexp    ${ReadyPayMoney}      "coupon_id":\\d+
@@ -155,37 +181,30 @@ order_tmplate
     ${real_pay_amt}=    should match regexp    ${real_pay_amt}      \\d+.\\d+
 
     #获取用户信息，验证积分，成长值
-    ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
+    ${res}=     MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${res}')   json
+
     ${growth_level}     set variable     ${dic}[data][growth_level]
     ${growth_value_before}     set variable     ${dic}[data][growth_value]
     ${coin_balance_before}     set variable     ${dic}[data][coin_balance]
     ${score_balance_before}    set variable     ${dic}[data][score_balance]
 
-    ${res}=     pc interface post   ${DrpConfigUserLevelListUrl}    ${EMPTY}    ${PcHeader}
+    ${res}=     DrpConfigUserLevelList    ${PcHeader}
     ${dic}=     evaluate  json.loads(u'${res}')   json
     @{tmp_list}=    evaluate  list(${dic}[data])
-
 
     :FOR    ${userLevel}    IN   @{tmp_list}
     \    run keyword if    ${userLevel}[growth_level]==${growth_level}      set test variable    ${score_rate_qiyou}     ${userLevel}[score_rate_qiyou]
 
-
     #   提交订单
-    #password = md5(md5(md5(this.passwordToken) + md5(str2)) + md5(parseInt(this.realCoinAmt) + ''))
-    ${res}=   interface post      ${mypaypasswordinfourl}   ${EMPTY}     ${header}
-    ${passwordToken}=   should match regexp    ${res}    "password_token":"\\w+
-    ${passwordToken}=   should match regexp    ${passwordToken}    :"\\w+
-    ${passwordToken}=   should match regexp    ${passwordToken}    \\w+
-    ${amt_after_reduce_for_pay}=    evaluate   int(${amt_after_reduce})
-    ${pay_password}=    gzh pay password encode     ${passwordToken}    ${paypwd}     ${amt_after_reduce_for_pay}
+    ${pay_password}=    payPassword     ${amt_after_reduce}     ${header}
 
     ${res}=     interface post     ${OilOrderOrderUrl}    {"site_id": "35", "gun_id": "${gun_id}", "direct_id": "${direct_id}", "activity_id": "${activity_id}", "platform_activity_id": "", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "real_score_amt": "${real_score_amt}", "real_coin_amt": "${real_pay_amt}", "nogas_amt": "${nogas_amt}", "coupon_nogas_id": "${coupon_nogas_id}", "real_pay_amt": "${real_coin_amt}", "pay_password": "${pay_password}", "app_client_type": "1", "r": "0.8897545249754606"}    ${header}
     ${order_id}=     reg draw    ${res}      id
     ${dic}=     evaluate  json.loads(u'${res}')   json
     ${org_oil_litre}   set variable     ${dic}[data][org_oil_litre]
 
-    ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
+    ${res}=     MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${res}')   json
     #余额判定
     ${coin_balance_after}     set variable     ${dic}[data][coin_balance]
@@ -193,7 +212,6 @@ order_tmplate
     ${coin_balance_add_exp}=   set variable     ${amt_after_reduce}
     ${coin_balance_add_real}=   evaluate     ${coin_balance_before}-${coin_balance_after}
     should be equal     ${coin_balance_add_exp}    ${coin_balance_add_real}
-
 
     ${growth_value_after}     set variable     ${dic}[data][growth_value]
     should be equal     ${growth_value_after}    ${growth_value_before}
@@ -203,17 +221,12 @@ order_tmplate
     should be equal     ${score_balance_after}      ${score_balance_before}
 
     #    支付订单
-    #password2 = md5(md5(md5(this.passwordToken) + md5(str2)) + md5(this.order_id + ''))
-    ${res}=   interface post      ${mypaypasswordinfourl}   ${EMPTY}     ${header}
-    ${passwordToken}=   should match regexp    ${res}    "password_token":"\\w+
-    ${passwordToken}=   should match regexp    ${passwordToken}    :"\\w+
-    ${passwordToken}=   should match regexp    ${passwordToken}    \\w+
-    ${pay_password}=    gzh pay password encode     ${passwordToken}    ${paypwd}     ${order_id}
+    ${pay_password}=    payPassword     ${order_id}     ${header}
 
     ${res}=     interface post   ${OilOrderPayOilUrl}     {"order_id": "${order_id}", "pay_method_id": "1", "pay_password": "${pay_password}", "real_coin_amt": "${amt_after_reduce}", "r": "0.778164654777834"}    ${header}
     should contain      ${res}      "code":1,
 
-    ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
+    ${res}=     MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${res}')   json
     ${score_balance_after}    set variable     ${dic}[data][score_balance]
     ${growth_value_after}     set variable     ${dic}[data][growth_value]
@@ -236,27 +249,25 @@ order_tmplate
     ${coin_balance_add_real}=   evaluate     ${coin_balance_before}-${coin_balance_after}
     should be equal     ${coin_balance_add_exp}    ${coin_balance_add_real}
 
-
-
 *** Test Cases ***
-#
-#Class_01
-#    [Template]  order_tmplate
-#    1   1   0
-#    10  1   0
-#    20  1   0
-#    30  1   0
-#    50  1   15
-#    100     1   45
-#    200     1   105
-#    300     1   129
-#    400     1   110
+
+Class_01
+    [Template]  order_tmplate
+    1   1   0
+    10  1   0
+    20  1   0
+    30  1   0
+    50  1   15
+    100     1   45
+    200     1   105
+    300     1   129
+    400     1   110
 
 Class_02
     [Template]  order_tmplate
-#    1   0   0
-#    10  0   0
-#    20  0   0
+    1   0   0
+    10  0   0
+    20  0   0
     30  0   0.5
     50  0   20
     100     0   60
