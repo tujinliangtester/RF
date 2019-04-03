@@ -173,6 +173,9 @@ robotframework
         ${growth_value_add_exp}=   evaluate    int(${org_oil_litre})
     12.自定义关键字可以返回值，但必须显示给出：
         return from keyword    ${res}
+    13.可以在一个txt或robot文件中创建关键字，然后再在另外的用例文件中引入
+        Resource          resource.robot
+
 
 
 

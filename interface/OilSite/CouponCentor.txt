@@ -11,7 +11,7 @@ ${header}    {"Cookie": "PHPSESSID=ag6bgta5p32coboagum9l7tub1; currentmoduleName
 
 
 *** Test Cases ***
-
-Class_01
-    ${res} =    pc interface post    ${coupon_url_add}    ${param_coupon_add}    ${header}
-    should contain    ${res}    "success":true
+#
+#Class_01
+#    ${res} =    pc interface post    ${coupon_url_add}    ${param_coupon_add}    ${header}
+#    should contain    ${res}    "success":true

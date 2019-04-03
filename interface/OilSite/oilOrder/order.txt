@@ -63,10 +63,13 @@ setups
     should contain   ${res}     "code":1,
 
 
-    #    充值(充值活动暂不考虑？)
+    #    充值(充值活动全部禁用)
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_member_coin_activity${SPACE}SET${SPACE}status=2;"}
     ${res}=     pc interface post  ${DrpMemberOffLineAddCoinOrderUrl}   {"user_id": "${userId}", "org_amt": "1000", "give_amt": "0", "active_id": "", "note": "", "pay_method_id": "1"}  ${PcHeader}
     should contain   ${res}     "code":1,
 
+    #清除用户优惠券
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_market_coupon_to_user${SPACE}SET${SPACE}is_invalid=1;"}
     #    领券
     interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id1}", "r": "0.465362035318329"}      ${header}
     should contain   ${res}     "code":1,
@@ -83,8 +86,10 @@ setups
 
 #临时的teardown
 teardowns
+    #油站活动重置为禁用
     sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
-
+    #清除用户优惠券
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_market_coupon_to_user${SPACE}SET${SPACE}is_invalid=1;"}
 UpdateMerchantSetting
     [Arguments]     ${is_allow_superimposed}    ${PcHeader}
     pc_interface_post      ${UpdateMerchantSettingURL}    {"can_add_balance": "1", "can_use_coin": "1", "can_use_carnumber_pay": "1", "can_use_balance_pay": "1","can_use_coin_pay_notoil": "1", "is_allow_superimposed": "${is_allow_superimposed}", "can_use_score_mall": "1","can_use_fleet_card": "1"}     ${PcHeader}

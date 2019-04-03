@@ -4,12 +4,12 @@
 Library  ../../lib/InterfaceRequest.py
 
 *** Test Cases ***
-Class_01
-    ${res} =    interface post    /OilSite/NearbyDiscountListV2    ${orderbyfield_pointdistance}
-    should contain    ${res}    "code":1
-Class_02
-    ${res} =    interface post    /OilSite/NearbyDiscountListV2    ${orderbyfield_price}
-    should contain    ${res}    "code":1
+#Class_01
+#    ${res} =    interface post    /OilSite/NearbyDiscountListV2    ${orderbyfield_pointdistance}
+#    should contain    ${res}    "code":1
+#Class_02
+#    ${res} =    interface post    /OilSite/NearbyDiscountListV2    ${orderbyfield_price}
+#    should contain    ${res}    "code":1
 
 
 

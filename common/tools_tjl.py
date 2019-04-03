@@ -35,6 +35,6 @@ if __name__ == '__main__':
     s2 = s2.replace('\'', '\"')
     print(s2)
 
-    sql='SELECT * FROM pit_score_mall_product WHERE name like \'测试商品\';'
+    sql='UPDATE pit_market_coupon_to_user SET is_invalid=1;'
     sqlstr=sqlstr2str(sql)
     print(sqlstr)
