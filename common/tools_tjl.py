@@ -35,6 +35,6 @@ if __name__ == '__main__':
     s2 = s2.replace('\'', '\"')
     print(s2)
 
-    sql='UPDATE pit_market_coupon_to_user SET is_invalid=1;'
+    sql='DELETE pit_market_coupon_to_user WHERE user_id=;'
     sqlstr=sqlstr2str(sql)
     print(sqlstr)

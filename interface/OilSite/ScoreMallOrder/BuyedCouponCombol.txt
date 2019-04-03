@@ -6,6 +6,7 @@ Library  ../../../lib/InterfaceRequest.py
 Library  ../../../lib/tools.py
 Test Setup  setups
 Test Teardown      teardowns
+Resource  ../userKeyWord.robot
 
 *** Variables ***
 ${org_amt}
@@ -34,15 +35,11 @@ setups
      #    准备活动
     sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
     sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=1${SPACE}WHERE${SPACE}id${SPACE}in${SPACE}(496,497,498,499,500,501);"}
-    #清除用户优惠券
-    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_market_coupon_to_user${SPACE}SET${SPACE}is_invalid=1;"}
-
+    clearUserCoupon
 teardowns
     #   重置活动
     sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
-    #清除用户优惠券
-    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_market_coupon_to_user${SPACE}SET${SPACE}is_invalid=1;"}
-
+    clearUserCoupon
 activity_com
     [Arguments]      ${org_amt}     ${is_allow_superimposed}      ${expect}
 

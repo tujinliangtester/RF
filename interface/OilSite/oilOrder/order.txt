@@ -1,17 +1,15 @@
 #注意，由于订单涉及到活动、优惠券等，为了方便统一，活动、优惠券用活动叠加用例中的活动和优惠券，
-#另外需要手动初始话用户及领取优惠券
+#另外需要手动初始话用户
 #1.先用老用户，再换新用户
 #2.将微信和pc的header写入config
 #3.运行mysite服务 python manage.py runserver
 
-
-
 *** Settings ***
 Library  ../../../lib/InterfaceRequest.py
 Library  ../../../lib/tools.py
-Test Setup       setups
-Test Teardown      teardowns
-
+Suite Setup         setups
+Suite Teardown     teardowns
+Resource    ../userKeyWord.robot
 *** Variables ***
 
 ${OilOrderOrderUrl}  /OilOrder/Order
@@ -68,59 +66,21 @@ setups
     ${res}=     pc interface post  ${DrpMemberOffLineAddCoinOrderUrl}   {"user_id": "${userId}", "org_amt": "1000", "give_amt": "0", "active_id": "", "note": "", "pay_method_id": "1"}  ${PcHeader}
     should contain   ${res}     "code":1,
 
-    #清除用户优惠券
-    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_market_coupon_to_user${SPACE}SET${SPACE}is_invalid=1;"}
-    #    领券
-    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id1}", "r": "0.465362035318329"}      ${header}
-    should contain   ${res}     "code":1,
-
-    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id2}", "r": "0.465362035318329"}      ${header}
-    should contain   ${res}     "code":1,
-
-    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id3}", "r": "0.465362035318329"}      ${header}
-    should contain   ${res}     "code":1,
-
-    interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id4}", "r": "0.465362035318329"}      ${header}
-    should contain   ${res}     "code":1,
+    drawCoupon  ${coupon_id1}
+    drawCoupon  ${coupon_id2}
+    drawCoupon  ${coupon_id3}
+    drawCoupon  ${coupon_id4}
 
 
 #临时的teardown
 teardowns
+    ${header}=      read config     header
+    ${PcHeader}=    read config     PcHeader
     #油站活动重置为禁用
     sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
-    #清除用户优惠券
-    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_market_coupon_to_user${SPACE}SET${SPACE}is_invalid=1;"}
-UpdateMerchantSetting
-    [Arguments]     ${is_allow_superimposed}    ${PcHeader}
-    pc_interface_post      ${UpdateMerchantSettingURL}    {"can_add_balance": "1", "can_use_coin": "1", "can_use_carnumber_pay": "1", "can_use_balance_pay": "1","can_use_coin_pay_notoil": "1", "is_allow_superimposed": "${is_allow_superimposed}", "can_use_score_mall": "1","can_use_fleet_card": "1"}     ${PcHeader}
 
-TicketList
-    [Arguments]     ${org_amt}      ${header}
-    ${res}=     interface post      ${TicketListUrl}     {"site_id": "35", "gun_id": "14403", "org_amt": "${org_amt}", "nogas_amt": "", "app_client_type": "1", "r": "0.6673226578129476"}     ${header}
-    return from keyword    ${res}
+    clearUserCoupon
 
-MyInfo
-    [Arguments]     ${header}
-    ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
-    return from keyword     ${res}
-
-DrpConfigUserLevelList
-    [Arguments]     ${PcHeader}
-    ${res}=     pc interface post   ${DrpConfigUserLevelListUrl}    ${EMPTY}    ${PcHeader}
-    return from keyword     ${res}
-
-
-payPassword
-    #password = md5(md5(md5(this.passwordToken) + md5(str2)) + md5(parseInt(this.realCoinAmt) + ''))
-    #password2 = md5(md5(md5(this.passwordToken) + md5(str2)) + md5(this.order_id + ''))
-    [Arguments]     ${str3}     ${header}
-    ${res}=   interface post      ${MyPayPasswordInfoUrl}   ${EMPTY}     ${header}
-    ${passwordToken}=   should match regexp    ${res}    "password_token":"\\w+
-    ${passwordToken}=   should match regexp    ${passwordToken}    :"\\w+
-    ${passwordToken}=   should match regexp    ${passwordToken}    \\w+
-    ${amt_after_reduce_for_pay}=    evaluate   int(${str3})
-    ${res}=     gzh pay password encode     ${passwordToken}    ${paypwd}     ${amt_after_reduce_for_pay}
-    return from keyword     ${res}
 
 #这个用例的限制包括：
 #1.支付方式只有会员卡支付

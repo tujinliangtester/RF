@@ -2,6 +2,9 @@
 *** Settings ***
 Library  ../../../lib/InterfaceRequest.py
 Library  ../../../lib/tools.py
+Resource  ../userKeyWord.robot
+Test Setup  setups
+Test Teardown   teardowns
 
 *** Variables ***
 ${CreateOrderUrl}       /ScoreMallOrder/CreateOrder
@@ -14,6 +17,7 @@ ${MyCouponList}   /My/CouponList
 ${ClearShoppingCartUrl}     /ScoreMallOrder/ClearShoppingCart
 ${PosServiceWriteScoreMallOffOrderUrl}   /PosService/WriteScoreMallOffOrder
 
+
 ${site_id}      35
 ${entity_product_id}   6
 ${coupon_product_id}   8
@@ -21,9 +25,10 @@ ${POSsign}  01fc97f80bbd9c3b5b8870fc90f406ba
 
 
 *** Keywords ***
-
-
-
+setups
+    clearUserCoupon
+teardowns
+    clearUserCoupon
 
 *** Test Cases ***
 createEntityScoreOrder
