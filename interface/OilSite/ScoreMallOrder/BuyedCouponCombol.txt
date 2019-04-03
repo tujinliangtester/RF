@@ -4,8 +4,8 @@
 *** Settings ***
 Library  ../../../lib/InterfaceRequest.py
 Library  ../../../lib/tools.py
-Test Setup  setups
-Test Teardown      teardowns
+Suite Setup     setups
+Suite Teardown     teardowns
 Resource  ../userKeyWord.robot
 
 *** Variables ***
