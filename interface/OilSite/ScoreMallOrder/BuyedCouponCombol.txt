@@ -1,10 +1,11 @@
-#'''
-#准备手机，准备活动
-#类生产 1.需要使用一个新号，2.有足够积分，来购买优惠券，再进行活动叠加验证  3.活动id 496,497,498,499,500,501
-#'''
+
+#类生产 1.需要使用一个新号,有足够积分
+
 *** Settings ***
 Library  ../../../lib/InterfaceRequest.py
 Library  ../../../lib/tools.py
+Test Setup  setups
+Test Teardown      teardowns
 
 *** Variables ***
 ${org_amt}
@@ -19,6 +20,7 @@ ${ShoppingCartDetailUrl}   /ScoreMallOrder/ShoppingCartDetail
 ${MyCouponList}   /My/CouponList
 ${ClearShoppingCartUrl}     /ScoreMallOrder/ClearShoppingCart
 ${PosServiceWriteScoreMallOffOrderUrl}   /PosService/WriteScoreMallOffOrder
+${DjangoRawSqlFunUrl}        http://localhost:8000/polls/raw_sql_fun
 
 ${site_id}      35
 ${coupon_product_id_1}   20
@@ -28,8 +30,13 @@ ${coupon_product_id_4}   23
 ${POSsign}  01fc97f80bbd9c3b5b8870fc90f406ba
 
 *** Keywords ***
-
-#[TEARDOWN]
+setups
+     #    准备活动
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=1${SPACE}WHERE${SPACE}id${SPACE}in${SPACE}(496,497,498,499,500,501);"}
+teardowns
+    #   重置活动
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
 
 activity_com
     [Arguments]      ${org_amt}     ${is_allow_superimposed}      ${expect}

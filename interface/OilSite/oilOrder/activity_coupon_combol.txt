@@ -1,21 +1,26 @@
 
-#由于已经在order.txt中已经对活动叠加进行了验证，所以这个脚本可以废弃了
-#'''
-#准备手机，准备活动
+#1.准备用户并获取相应优惠券
 #类生产 mobile=19903270953  活动id 496,497,498,499,500,501
-#'''
 *** Settings ***
 Library  ../../../lib/InterfaceRequest.py
 Library  ../../../lib/tools.py
+Test Setup  setups
+Test Teardown      teardowns
 
 *** Variables ***
 ${org_amt}
 ${url}      /OilOrder/TicketList
 ${UpdateMerchantSettingURL}     /DrpConfig/UpdateMerchantSetting
+${DjangoRawSqlFunUrl}        http://localhost:8000/polls/raw_sql_fun
 
 *** Keywords ***
-
-#[TEARDOWN]
+setups
+     #    准备活动
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=1${SPACE}WHERE${SPACE}id${SPACE}in${SPACE}(496,497,498,499,500,501);"}
+teardowns
+    #   重置活动
+    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
 
 activity_com
     [Arguments]      ${org_amt}     ${is_allow_superimposed}      ${expect}
