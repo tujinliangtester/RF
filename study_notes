@@ -175,6 +175,8 @@ robotframework
         return from keyword    ${res}
     13.可以在一个txt或robot文件中创建关键字，然后再在另外的用例文件中引入
         Resource          resource.robot
+    14.robot参数
+        重跑  -R --rerunfailed output
 
 
 
