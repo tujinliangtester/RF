@@ -177,6 +177,11 @@ robotframework
         Resource          resource.robot
     14.robot参数
         重跑  -R --rerunfailed output
+    15.python在计算浮点数相减时会导致精度丢失，可以使用bigdecimal，但为了简便，可以直接相减保留两位小数，如果为0，则认为相等
+        ${change_num}=      evaluate   round(${coin_balance_add_exp}-${coin_balance_add_real},2)
+        should be equal as numbers     ${change_num}    0
+
+        ps：should be equal as  有多种选择，有int  numbers（会忽略精度带来的影响）  string 可以进行相应的使用
 
 
 
