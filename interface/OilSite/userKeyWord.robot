@@ -1,6 +1,7 @@
 *** Settings ***
 Library  ../../lib/InterfaceRequest.py
 Library  ../../lib/tools.py
+Library     DateTime
 *** Variables ***
 ${OilOrderOrderUrl}  /OilOrder/Order
 ${TicketListUrl}      /OilOrder/TicketList
@@ -58,6 +59,13 @@ clearUserCoupon
     ${dic}=     evaluate  json.loads(u'${res}')   json
     ${userId}   set variable    ${dic}[data][id]
     sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"DELETE${SPACE}pit_market_coupon_to_user${SPACE}WHERE${SPACE}user_id=${userId};"}
+
+getUserId
+    ${header}=      read config     header
+    ${res}=     MyInfo      ${header}
+    ${dic}=     evaluate  json.loads(u'${res}')   json
+    ${userId}   set variable    ${dic}[data][id]
+    return from keyword     ${userId}
 
 
 drawCoupon

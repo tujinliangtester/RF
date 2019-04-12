@@ -3,7 +3,7 @@ linefeed	%0A
 creturn	%0D
 space	%20
 !	%21
-\"	%22
+\\"	%22
 #	%23
 $	%24
 %	%25
