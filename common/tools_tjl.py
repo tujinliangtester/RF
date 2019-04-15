@@ -45,12 +45,12 @@ def sqlstr2str(sql):
 
 if __name__ == '__main__':
     # 注意，如果参数中有中文，则需要在替换后，手动改成中文
-    s = 'user_id=2107&org_amt=1&active_id=0&note=&pay_method_id=1'
+    s = 'user_id=2107&org_amt=1&give_amt=1&active_id=72&note=&pay_method_id=1'
     s2 = str(str2dic(s))
     s2 = url_parse_decoder(s2)
     s2 = s2.replace('\'', '\"')
     print(s2)
 
-    sql = 'UPDATE pit_member_coin_activity SET	 status=2;'
+    sql = 'UPDATE pit_market_coupon SET is_trade=1 WHERE id in (653,652,651);'
     sqlstr = sqlstr2str(sql)
     print(sqlstr)
