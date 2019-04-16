@@ -169,6 +169,7 @@ order_tmplate
     ${dic}=     evaluate  json.loads(u'${res}')   json
     ${org_oil_litre}   set variable     ${dic}[data][org_oil_litre]
 
+    sleep   1
     ${res}=     MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${res}')   json
     #余额判定
@@ -192,6 +193,7 @@ order_tmplate
     ${res}=     interface post   ${OilOrderPayOilUrl}     {"order_id": "${order_id}", "pay_method_id": "1", "pay_password": "${pay_password}", "real_coin_amt": "${amt_after_reduce}", "r": "0.778164654777834"}    ${header}
     should contain      ${res}      "code":1,
 
+    sleep  1
     ${res}=     MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${res}')   json
     ${score_balance_after}    set variable     ${dic}[data][score_balance]
