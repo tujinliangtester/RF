@@ -14,6 +14,7 @@ ${MyDrawCouponUrl}   /My/DrawCoupon
 ${UpdateMerchantSettingURL}     /DrpConfig/UpdateMerchantSetting
 ${MyPayPasswordInfoUrl}      /My/PayPasswordInfo
 ${DrpConfigUserLevelListUrl}     /DrpConfig/UserLevelList
+${DrpYingxiaoSetActivityStatusUrl}    /DrpYingxiao/SetActivityStatus
 
 ${paypwd}   123456
 ${coupon_id1}   622
@@ -72,5 +73,11 @@ drawCoupon
     [Arguments]     ${coupon_id}
     ${header}=      read config     header
     interface post      ${MyDrawCouponUrl}      {"coupon_id": "${coupon_id}", "r": "0.465362035318329"}      ${header}
+
+handdleActivity
+    [Arguments]     ${coupon_id}    ${activity_status}
+    ${PcHeader}=    read config     PcHeader
+    pc interface post   ${DrpYingxiaoSetActivityStatusUrl}      {"id": "${coupon_id}", "activity_status": "${activity_status}"}    ${PcHeader}
+
 
 

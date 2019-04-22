@@ -79,10 +79,10 @@ class InterfaceRequest(object):
 
     #这里的sql调用的是Django的本机服务，调用时需要将完整的sql语句填写到url中
     def sql_interface_post_raw(self, url='', params='', header=''):
-        print('_config_reader_path', self._config_reader_path)
         params = self._str2json(params)
         header = self._str2json(header)
         response = requests.post(url, data=params, headers=header)
+        print('response',response)
         s=response.text
         res=s
         print(res)
