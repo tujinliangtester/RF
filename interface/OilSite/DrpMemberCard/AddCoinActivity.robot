@@ -53,7 +53,7 @@ coupon_01
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -78,7 +78,7 @@ coupon_01
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -118,7 +118,7 @@ coupon_02
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -165,7 +165,7 @@ give_coin_unlimited_times
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -198,7 +198,7 @@ give_coin_unlimited_times
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -246,7 +246,7 @@ give_coin_limited_times
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -280,7 +280,7 @@ give_coin_limited_times
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -328,7 +328,7 @@ give_coin_limited_times_item
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -362,7 +362,7 @@ give_coin_limited_times_item
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -410,7 +410,7 @@ give_coin_limited_times_item_twice
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -444,7 +444,7 @@ give_coin_limited_times_item_twice
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -478,7 +478,7 @@ give_coin_limited_times_item_twice
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -521,7 +521,7 @@ give_coupon_threshold_below_first
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -563,7 +563,7 @@ give_coupon_threshold_between_1_2
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -605,7 +605,7 @@ give_coupon_threshold_biggest
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json
@@ -647,7 +647,7 @@ give_coupon_threshold_two_same_item
     should contain      ${res}      "code":1,
 
     #验证结果
-    sleep  2
+    sleep  ${sleep_time}
     #余额
     ${MyInfo}=      MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${MyInfo}')   json

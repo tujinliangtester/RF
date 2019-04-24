@@ -16,9 +16,7 @@ ${DjangoRawSqlFunUrl}        http://localhost:8000/polls/raw_sql_fun
 
 *** Keywords ***
 setups
-     #    准备活动
-    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
-    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=1${SPACE}WHERE${SPACE}id${SPACE}in${SPACE}(496,497,498,499,500,501);"}
+    prepareActivity
     clearUserCoupon
      #    领券
     drawCoupon     ${coupon_id1}
@@ -27,10 +25,7 @@ setups
     drawCoupon     ${coupon_id4}
 
 teardowns
-    #   重置活动
-    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
-    ${header}=      read config     header
-    ${PcHeader}=    read config     PcHeader
+
     clearUserCoupon
 
 activity_com

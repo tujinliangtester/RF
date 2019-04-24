@@ -45,12 +45,12 @@ def sqlstr2str(sql):
 
 if __name__ == '__main__':
     # 注意，如果参数中有中文，则需要在替换后，手动改成中文
-    s = 'id=547&activity_status=0'
+    s = 'pagenumber=1&pagesize=20&site_id=&activity_type=&tag_ids=&send_method=&site_activity_type=&target_user_type=&method_type=&title_key=&status_text=%E8%BF%9B%E8%A1%8C%E4%B8%AD&jihua_status=1&start_time=&end_time='
     s2 = str(str2dic(s))
     s2 = url_parse_decoder(s2)
     s2 = s2.replace('\'', '\"')
     print(s2)
 
-    sql = 'SELECT id from pit_oil_site_activity;'
+    sql = 'SELECT cast(id as int) from pit_oil_site_activity;'
     sqlstr = sqlstr2str(sql)
     print(sqlstr)

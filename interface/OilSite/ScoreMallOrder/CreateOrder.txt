@@ -27,6 +27,8 @@ ${POSsign}  01fc97f80bbd9c3b5b8870fc90f406ba
 *** Keywords ***
 setups
     clearUserCoupon
+    handdleScoreProduct     ${entity_product_id}    true
+    handdleScoreProduct     ${coupon_product_id}    true
 teardowns
     clearUserCoupon
 

@@ -32,13 +32,15 @@ ${POSsign}  01fc97f80bbd9c3b5b8870fc90f406ba
 
 *** Keywords ***
 setups
-     #    准备活动
-    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
-    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=1${SPACE}WHERE${SPACE}id${SPACE}in${SPACE}(496,497,498,499,500,501);"}
+    prepareActivity
     clearUserCoupon
+
+    #准备商品
+    handdleScoreProduct     ${coupon_product_id_1}      true
+    handdleScoreProduct     ${coupon_product_id_2}      true
+    handdleScoreProduct     ${coupon_product_id_3}      true
+    handdleScoreProduct     ${coupon_product_id_4}      true
 teardowns
-    #   重置活动
-    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
     clearUserCoupon
 activity_com
     [Arguments]      ${org_amt}     ${is_allow_superimposed}      ${expect}

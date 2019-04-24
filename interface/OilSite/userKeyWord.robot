@@ -15,12 +15,19 @@ ${UpdateMerchantSettingURL}     /DrpConfig/UpdateMerchantSetting
 ${MyPayPasswordInfoUrl}      /My/PayPasswordInfo
 ${DrpConfigUserLevelListUrl}     /DrpConfig/UserLevelList
 ${DrpYingxiaoSetActivityStatusUrl}    /DrpYingxiao/SetActivityStatus
+${DrpScoreMallProductModifyProductIsUseUrl}     /DrpScoreMallProduct/ModifyProductIsUse
+${DrpYingxiaoJihuaUrl}   /DrpYingxiao/Jihua
 
 ${paypwd}   123456
 ${coupon_id1}   622
 ${coupon_id2}   623
 ${coupon_id3}   624
 ${coupon_id4}   625
+
+${activity_id_str}     [496,497,498,499,500,501]
+
+
+${sleep_time}    5
 *** Keywords ***
 UpdateMerchantSetting
     [Arguments]     ${is_allow_superimposed}    ${PcHeader}
@@ -79,5 +86,31 @@ handdleActivity
     ${PcHeader}=    read config     PcHeader
     pc interface post   ${DrpYingxiaoSetActivityStatusUrl}      {"id": "${coupon_id}", "activity_status": "${activity_status}"}    ${PcHeader}
 
+handdleScoreProduct
+    [Documentation]    ${is_use}取值为true或false；这个方法只对单个商品进行变更处理
+    [Arguments]     ${product_ids}    ${is_use}
+    ${PcHeader}=    read config     PcHeader
+    pc interface post   ${DrpScoreMallProductModifyProductIsUseUrl}      {"product_ids[0]": "${product_ids}", "is_use": "${is_use}"}    ${PcHeader}
 
+getJihuaActivtiyOngoingUsing
+    ${PcHeader}=    read config     PcHeader
+    ${res}=     pc interface post   ${DrpYingxiaoJihuaUrl}      {"pagenumber": "1", "pagesize": "2000", "site_id": "", "activity_type": "1", "tag_ids": "", "send_method": "", "site_activity_type": "", "target_user_type": "", "method_type": "", "title_key": "", "status_text": "进行中", "jihua_status": "1", "start_time": "", "end_time": ""}    ${PcHeader}
+    return from keyword     ${res}
+
+prepareActivity
+    ${header}=      read config     header
+    ${PcHeader}=    read config     PcHeader
+
+    #    准备活动-先禁用，再启用
+    ${res}=     getJihuaActivtiyOngoingUsing
+    ${dic}=     evaluate  json.loads(u'${res}')   json
+    ${list}     evaluate    str(${dic}[data][0][rows])
+    @{list}     evaluate   list(${list})
+    :FOR    ${row}    IN   @{list}
+    \    log     ${row}
+    \    handdleActivity     ${row}[id]       0
+
+    @{activity_id_list}   evaluate   list(${activity_id_str})
+    :FOR    ${activity_id}    IN   @{activity_id_list}
+    \    handdleActivity     ${activity_id}      1
 

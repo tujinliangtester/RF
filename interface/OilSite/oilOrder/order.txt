@@ -36,6 +36,7 @@ ${coupon_id2}   623
 ${coupon_id3}   624
 ${coupon_id4}   625
 
+${activity_id_str}     [496,497,498,499,500,501]
 ${gun_id}   14403
 
 
@@ -47,12 +48,7 @@ setups
     ${PcHeader}=    read config     PcHeader
     ${mobile}=      read config     mobile
 
-    #    准备活动
-    ${res}=     sql interface post raw     ${DjangoRawSqlFunUrl}    {"SQL":"SELECT${SPACE}id${SPACE}from${SPACE}pit_oil_site_activity;"}
-    #todo
-    :FOR    ${coupon_id}    IN   ${res}
-    \    handdleActivity     ${coupon_id}       0
-
+    prepareActivity
 
     #    获取用户id
     ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
@@ -77,10 +73,6 @@ setups
 
 #临时的teardown
 teardowns
-    ${header}=      read config     header
-    ${PcHeader}=    read config     PcHeader
-    #油站活动重置为禁用
-    sql interface post raw   ${DjangoRawSqlFunUrl}   {"SQL":"UPDATE${SPACE}pit_oil_site_activity${SPACE}SET${SPACE}activity_status=0"}
 
     clearUserCoupon
 
@@ -172,7 +164,7 @@ order_tmplate
     ${dic}=     evaluate  json.loads(u'${res}')   json
     ${org_oil_litre}   set variable     ${dic}[data][org_oil_litre]
 
-    sleep   2
+    sleep   ${sleep_time}
     ${res}=     MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${res}')   json
     #余额判定
@@ -196,7 +188,7 @@ order_tmplate
     ${res}=     interface post   ${OilOrderPayOilUrl}     {"order_id": "${order_id}", "pay_method_id": "1", "pay_password": "${pay_password}", "real_coin_amt": "${amt_after_reduce}", "r": "0.778164654777834"}    ${header}
     should contain      ${res}      "code":1,
 
-    sleep  2
+    sleep  ${sleep_time}
     ${res}=     MyInfo      ${header}
     ${dic}=     evaluate  json.loads(u'${res}')   json
     ${score_balance_after}    set variable     ${dic}[data][score_balance]
@@ -228,25 +220,25 @@ order_tmplate
 Class_01
     [Template]  order_tmplate
     1   1   0
-#    10  1   0
-#    20  1   0
-#    30  1   0
-#    50  1   15
-#    100     1   45
-#    200     1   105
-#    300     1   129
-#    400     1   110
-#
-#Class_02
-#    [Template]  order_tmplate
-#    1   0   0
-#    10  0   0
-#    20  0   0
-#    30  0   0.5
-#    50  0   20
-#    100     0   60
-#    200     0   120
-#    300     0   189
-#    400     0   190
+    10  1   0
+    20  1   0
+    30  1   0
+    50  1   15
+    100     1   45
+    200     1   105
+    300     1   129
+    400     1   110
+
+Class_02
+    [Template]  order_tmplate
+    1   0   0
+    10  0   0
+    20  0   0
+    30  0   0.5
+    50  0   20
+    100     0   60
+    200     0   120
+    300     0   189
+    400     0   190
 
 
