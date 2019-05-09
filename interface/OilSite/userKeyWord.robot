@@ -17,6 +17,10 @@ ${DrpConfigUserLevelListUrl}     /DrpConfig/UserLevelList
 ${DrpYingxiaoSetActivityStatusUrl}    /DrpYingxiao/SetActivityStatus
 ${DrpScoreMallProductModifyProductIsUseUrl}     /DrpScoreMallProduct/ModifyProductIsUse
 ${DrpYingxiaoJihuaUrl}   /DrpYingxiao/Jihua
+${MyFleetCardMyPrimaryCardUrl}   /MyFleetCard/MyPrimaryCard
+${MyFleetCardMySubCardUrl}   /MyFleetCard/MySubCard
+
+
 
 ${paypwd}   123456
 ${coupon_id1}   622
@@ -114,3 +118,30 @@ prepareActivity
     :FOR    ${activity_id}    IN   @{activity_id_list}
     \    handdleActivity     ${activity_id}      1
 
+MyPrimaryCard
+#    返回第一个主卡
+    ${pcHeader}    read config   PcHeader
+    ${header}   read config   header
+    ${res}=     interface post      ${MyFleetCardMyPrimaryCardUrl}     ""      ${header}
+    ${dic}      evaluate   json.loads(u'${res}')    json
+    ${primarycard_id}   evaluate   str(${dic}[data][0][id])
+    return from keyword   ${primarycard_id}
+
+MySubCard
+#    返回第一个子卡
+    ${pcHeader}    read config   PcHeader
+    ${header}   read config   header
+    ${res}=     interface post      ${MyFleetCardMySubCardUrl}     ""      ${header}
+    ${dic}      evaluate   json.loads(u'${res}')    json
+    ${primarycard_id}   evaluate   str(${dic}[data][0][id])
+    return from keyword   ${primarycard_id}
+
+
+MySubCard_ios
+#    返回第一个子卡
+    ${pcHeader}    read config   PcHeader
+    ${header}   read config   header_ios
+    ${res}=     interface post      ${MyFleetCardMySubCardUrl}     ""      ${header}
+    ${dic}      evaluate   json.loads(u'${res}')    json
+    ${primarycard_id}   evaluate   str(${dic}[data][0][id])
+    return from keyword   ${primarycard_id}

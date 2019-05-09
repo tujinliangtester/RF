@@ -11,6 +11,10 @@ class tools(object):
         self._split_char = '%tjl%'
 
     def gene_mobile(self):
+        '''
+        根据当前时间生成手机号
+        :return:
+        '''
         s = time.strftime("%Y%m%d%H%M", time.localtime())
         s = s[-8:]
         s = '199' + s
@@ -148,6 +152,17 @@ class tools(object):
         print(res)
         return res
 
+    def generate_cardNo_tool(self, old_cardNo):
+        old_cardNo=str(old_cardNo)
+        merchant=old_cardNo[:4]
+        cardnum=int(old_cardNo[4:])
+        cardnum_new=cardnum+1
+        cardnum_new_str=str(cardnum_new)
+        while(len(cardnum_new_str)<8):
+            cardnum_new_str='0'+cardnum_new_str
+        new_cardNo=str(merchant)+cardnum_new_str
+        print(new_cardNo)
+        return new_cardNo
 
 if __name__ == '__main__':
     t = tools()

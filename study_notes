@@ -154,7 +154,8 @@ robotframework
         run keyword if  +条件+关键字
 
     7.5 for循环
-         :FOR    ${userLevel}    IN   ${dic}[data]
+        @{tmp_list}=    evaluate  list(${dic}[data][fleetCards])
+         :FOR    ${userLevel}    IN   @{tmp_list}
          \    log   ${userLevel}
 
          注意，这里的in后面接的，需要是列表，如果返回的是字典内部包含列表的，需要用evaluate  list 进行显示转化
@@ -184,7 +185,8 @@ robotframework
         should be equal as numbers     ${change_num}    0
 
         ps：should be equal as  有多种选择，有int  numbers（会忽略精度带来的影响）  string 可以进行相应的使用
-
+    16.赋值
+        set_test_variable(self, name, *values):
 
 
 
