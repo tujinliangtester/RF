@@ -164,6 +164,14 @@ class tools(object):
         print(new_cardNo)
         return new_cardNo
 
+    def compare_str(self,s1,s2):
+        if(s1==s2):
+            print(True)
+            return True
+        else:
+            print(False)
+            return False
+
 if __name__ == '__main__':
     t = tools()
     t.gzh_pay_password_encode(passwordToken='a19734e0a9978e73', str2='123456', str3=0)

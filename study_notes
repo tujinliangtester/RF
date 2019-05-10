@@ -162,6 +162,7 @@ robotframework
 
     8.相等判定
         RF的相等，仍然需要进行整型、浮点的转换等
+        字符串的相等，单独写的方法用python进行，得到boole值然后再到robotframework中用==进行判定
 
     9.注意，可以在RF中导入包，如下，在最后一个位置是包
 
