@@ -180,7 +180,9 @@ robotframework
     13.可以在一个txt或robot文件中创建关键字，然后再在另外的用例文件中引入
         Resource          resource.robot
     14.robot参数
-        重跑  -R --rerunfailed output
+        重跑  robot -R output.xml  interface\OilSite\SubCard
+        指定用例    robot  --test  create_limits_money_per_day  interface\OilSite\SubCard
+
     15.python在计算浮点数相减时会导致精度丢失，可以使用bigdecimal，但为了简便，可以直接相减保留两位小数，如果为0，则认为相等
         ${change_num}=      evaluate   round(${coin_balance_add_exp}-${coin_balance_add_real},2)
         should be equal as numbers     ${change_num}    0
