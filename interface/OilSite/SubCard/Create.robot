@@ -62,6 +62,9 @@ create_and_fleetOrder
     ${header}   read config   header
     ${header_ios}   read config   header_ios
 
+    ${subcard_balance_before}   set variable  0
+    ${subcard_balance_after}   set variable  0
+
     ${card_no}      generateSubCardNo
     ${primarycard_id}   MyPrimaryCard
 
@@ -87,8 +90,22 @@ create_and_fleetOrder
 
     ${pay_password}     payPassword     ${pay_amt}      ${header_ios}
 
+    #获取第一张主卡余额，同时，由于子卡共享余额，默认子卡余额为0且不变
+    ${res}=     interface post      ${MyFleetCardMyPrimaryCardUrl}     ""      ${header}
+    ${dic}      evaluate   json.loads(u'${res}')    json
+    ${primarycard_balance_before}   evaluate   str(${dic}[data][0][balance])
+
     ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "${org_amt}", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should contain      ${res}      "code":1,
+
+    ${res}=     interface post      ${MyFleetCardMyPrimaryCardUrl}     ""      ${header}
+    ${dic}      evaluate   json.loads(u'${res}')    json
+    ${primarycard_balance_after}   evaluate   str(${dic}[data][0][balance])
+
+    ${primarycard_balance_change}   evaluate       ${primarycard_balance_before}-${primarycard_balance_after}
+    should be equal as numbers      ${primarycard_balance_change}   ${pay_amt}
+
+
 
 
 
