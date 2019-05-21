@@ -87,6 +87,8 @@ create_and_fleetOrder
     ${res}      interface post   ${oilorderfleetreadypaymoneyurl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "org_amt": "${org_amt}", "sub_card_id": "${sub_card_id}"}     ${header_ios}
     ${dic}      evaluate   json.loads(u'${res}')    json
     ${pay_amt}      set variable   ${dic}[data][pay_amt]
+    ${coupon_id}    set variable    ${dic}[data][coupon_id]
+    ${coupon_amt}   set variable    ${dic}[data][coupon_amt]
 
     ${pay_password}     payPassword     ${pay_amt}      ${header_ios}
 
@@ -95,7 +97,7 @@ create_and_fleetOrder
     ${dic}      evaluate   json.loads(u'${res}')    json
     ${primarycard_balance_before}   evaluate   str(${dic}[data][0][balance])
 
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "${org_amt}", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should contain      ${res}      "code":1,
 
     ${res}=     interface post      ${MyFleetCardMyPrimaryCardUrl}     ""      ${header}
@@ -110,7 +112,7 @@ create_and_fleetOrder
 
 
 create_manual_allocation
-    ${pcHeader}    read config   PcHeader
+    ${header_ios}    read config   PcHeader
     ${header}   read config   header
 
     ${card_no}      generateSubCardNo
@@ -149,10 +151,12 @@ create_limits_license_plate
     ${res}      interface post   ${oilorderfleetreadypaymoneyurl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "org_amt": "${org_amt}", "sub_card_id": "${sub_card_id}"}     ${header_ios}
     ${dic}      evaluate   json.loads(u'${res}')    json
     ${pay_amt}      set variable   ${dic}[data][pay_amt]
+    ${coupon_id}    set variable    ${dic}[data][coupon_id]
+    ${coupon_amt}   set variable    ${dic}[data][coupon_amt]
 
     ${pay_password}     payPassword     ${pay_amt}      ${header_ios}
 
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "${org_amt}", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should contain      ${res}      "code":1,
 
 create_limits_oilsite
@@ -182,10 +186,13 @@ create_limits_oilsite
     ${res}      interface post   ${oilorderfleetreadypaymoneyurl}   {"site_id": "${limit_site_id}", "gun_id": "${gun_id_DongGuang}", "org_amt": "${org_amt}", "sub_card_id": "${sub_card_id}"}     ${header_ios}
     ${dic}      evaluate   json.loads(u'${res}')    json
     ${pay_amt}      set variable   ${dic}[data][pay_amt]
+    ${coupon_id}    set variable    ${dic}[data][coupon_id]
+    ${coupon_amt}   set variable    ${dic}[data][coupon_amt]
+
 
     ${pay_password}     payPassword     ${pay_amt}      ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
 
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${limit_site_id}", "gun_id": "${gun_id_DongGuang}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "${org_amt}", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should not contain      ${res}      "code":1,
 
 
@@ -279,20 +286,23 @@ create_limits_times_per_day
     ${res}      interface post   ${oilorderfleetreadypaymoneyurl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "org_amt": "${limit_money_bigger}", "sub_card_id": "${sub_card_id}"}     ${header_ios}
     ${dic}      evaluate   json.loads(u'${res}')    json
     ${pay_amt}      set variable   ${dic}[data][pay_amt]
+    ${coupon_id}    set variable    ${dic}[data][coupon_id]
+    ${coupon_amt}   set variable    ${dic}[data][coupon_amt]
+
 
     ${pay_password}     payPassword     ${pay_amt}      ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
 
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "${org_amt}", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should contain      ${res}      "code":1,
 
     sleep  12
 
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "${org_amt}", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should contain      ${res}      "code":1,
 
     sleep  12
 
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "${org_amt}", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "${org_amt}", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should not contain      ${res}      "code":1,
 
 create_limits_times_per_month
@@ -322,20 +332,22 @@ create_limits_times_per_month
     ${res}      interface post   ${oilorderfleetreadypaymoneyurl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "org_amt": "${limit_money_bigger}", "sub_card_id": "${sub_card_id}"}     ${header_ios}
     ${dic}      evaluate   json.loads(u'${res}')    json
     ${pay_amt}      set variable   ${dic}[data][pay_amt]
+    ${coupon_id}    set variable    ${dic}[data][coupon_id]
+    ${coupon_amt}   set variable    ${dic}[data][coupon_amt]
+
 
     ${pay_password}     payPassword     ${pay_amt}      ${header_ios}
-
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "${org_amt}", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "${limit_money_bigger}", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should contain      ${res}      "code":1,
 
     sleep  12
 
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "${org_amt}", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "${limit_money_bigger}", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should contain      ${res}      "code":1,
 
     sleep  12
 
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "${org_amt}", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "${limit_money_bigger}", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should not contain      ${res}      "code":1,
 
 
@@ -366,18 +378,21 @@ create_limits_money_per_day
     ${res}      interface post   ${oilorderfleetreadypaymoneyurl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "org_amt": "50", "sub_card_id": "${sub_card_id}"}     ${header_ios}
     ${dic}      evaluate   json.loads(u'${res}')    json
     ${pay_amt}      set variable   ${dic}[data][pay_amt]
+    ${coupon_id}    set variable    ${dic}[data][coupon_id]
+    ${coupon_amt}   set variable    ${dic}[data][coupon_amt]
+
 
     ${pay_password}     payPassword     ${pay_amt}      ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "50", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
 
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "50", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should contain      ${res}      "code":1,
 
     sleep  12
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "50", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "50", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should contain      ${res}      "code":1,
 
     sleep  12
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "50", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "50", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should not contain      ${res}      "code":1,
 
 create_limits_money_per_month
@@ -407,18 +422,21 @@ create_limits_money_per_month
     ${res}      interface post   ${oilorderfleetreadypaymoneyurl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "org_amt": "50", "sub_card_id": "${sub_card_id}"}     ${header_ios}
     ${dic}      evaluate   json.loads(u'${res}')    json
     ${pay_amt}      set variable   ${dic}[data][pay_amt]
+    ${coupon_id}    set variable    ${dic}[data][coupon_id]
+    ${coupon_amt}   set variable    ${dic}[data][coupon_amt]
+
 
     ${pay_password}     payPassword     ${pay_amt}      ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "50", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
 
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "50", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should contain      ${res}      "code":1,
 
     sleep  12
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "50", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "50", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should contain      ${res}      "code":1,
 
     sleep  12
-    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "0", "org_amt": "50", "coupon_amt": "0", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
+    ${res}      interface post   ${OilOrderFleetOrderUrl}   {"site_id": "${site_id}", "gun_id": "${gun_id}", "sub_card_id": "${sub_card_id}", "coupon_id": "${coupon_id}", "org_amt": "50", "coupon_amt": "${coupon_amt}", "pay_amt": "${pay_amt}", "pay_password": "${pay_password}", "r": "0.7270126540158686"}     ${header_ios}
     should not contain      ${res}      "code":1,
 
 
