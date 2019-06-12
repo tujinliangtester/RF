@@ -39,18 +39,23 @@ def sqlstr2str(sql):
     s = sql
     s=s.replace('\t','')
     s = s.replace(' ', '${SPACE}')
+    #去掉中括号，去掉 dbo.
+    s = s.replace('[dbo].', '')
+    s = s.replace('[', '')
+    s = s.replace(']', '')
     str = '{"SQL":"' + s + '"}'
+
     return str
 
 
 if __name__ == '__main__':
     # 注意，如果参数中有中文，则需要在替换后，手动改成中文
-    s = 'site_id=35&gun_id=14381&direct_id=&activity_id=499&platform_activity_id=0&coupon_id=0&org_amt=10&real_score_amt=0&real_coin_amt=16&nogas_amt=11&coupon_nogas_id=0&real_pay_amt=0&pay_password=ecec0b5a825c9332f3ccf8a7a5c87aea&app_client_type=1&r=0.12694016000542518'
+    s = 'ts=2019-06-03%2013%3A39%3A46&sign=7e3c30fcf11e1940dc0bc7f6196336d2&goods_amt=99.0&oil_trade_list=%5B%7B%22trade_log_id%22%3A0%2C%22oil_id%22%3A13%2C%22price%22%3A6%2C%22litre%22%3A16.67%2C%22ori_amt%22%3A100%7D%5D&mobile=19905301024&uuid=47fa69c6158155abfb7aba00623b0a04&postoken=16704af1-4079-46cd-bd06-ee938f57de5c&coupon_code='
     s2 = str(str2dic(s))
     s2 = url_parse_decoder(s2)
     s2 = s2.replace('\'', '\"')
     print(s2)
 
-    sql = ' SELECT top 1 card_no from  pit_fleetcard_subcard WHERE merchant_id=13 order  BY card_no desc;'
+    sql = "DELETE from  pit_market_coupon_to_user 	WHERE user_id in (	SELECT id FROM pit_member_user WHERE mobile ='19905301024');"
     sqlstr = sqlstr2str(sql)
     print(sqlstr)
