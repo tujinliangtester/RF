@@ -164,6 +164,18 @@ class tools(object):
         print(new_cardNo)
         return new_cardNo
 
+    def generate_sub_cardNo_tool(self, old_cardNo):
+        old_cardNo=str(old_cardNo)
+        merchant=old_cardNo[:4]
+        cardnum=int(old_cardNo[4:])
+        cardnum_new=cardnum+1
+        cardnum_new_str=str(cardnum_new)
+        while(len(cardnum_new_str)<8):
+            cardnum_new_str='0'+cardnum_new_str
+        new_cardNo=str(merchant)+cardnum_new_str
+        print(new_cardNo)
+        return new_cardNo
+
     def compare_str(self,s1,s2):
         if(s1==s2):
             print(True)
