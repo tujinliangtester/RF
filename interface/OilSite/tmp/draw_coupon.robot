@@ -7,7 +7,7 @@ Resource    ../userKeyWord.robot
 
 *** Test Cases ***
 #类生产
-class
+#class
 #    @{activity_id_list}   evaluate   list(${activity_id_str})
 #    :FOR    ${activity_id}    IN   @{activity_id_list}
 #    \    handdleActivity     ${activity_id}      0

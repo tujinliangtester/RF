@@ -126,7 +126,7 @@ createEntityCouponScoreOrder
     ${mobile}=      should match regexp   ${mobile}    \\d+
 
     ${res}=     interface post      ${MyCouponList}     {"pagesize": "100", "pagenumber": "1", "is_use": "0", "is_expire": "0", "packID": "0", "r": "0.42419922061968296"}     ${header}
-    ${coupon_num_before}=  should match regexp     ${res}  "Coupon":\\d+
+    ${coupon_num_before}=  should match regexp     ${res}  "Coupon":"\\d+
     ${coupon_num_before}=  should match regexp     ${coupon_num_before}  \\d+
 
     ${res}=     interface post      ${ShoppingCartOperUrl}      {"type": "0", "product_id": "${coupon_product_id}", "site_id": "${site_id}"}      ${header}
@@ -161,7 +161,7 @@ createEntityCouponScoreOrder
     should be equal  ${score_balance_cost}  ${use_score_sum}
 
     ${res}=     interface post      ${MyCouponList}     {"pagesize": "100", "pagenumber": "1", "is_use": "0", "is_expire": "0", "packID": "0", "r": "0.42419922061968296"}  ${header}
-    ${coupon_num_after}=  should match regexp     ${res}  "Coupon":\\d+
+    ${coupon_num_after}=  should match regexp     ${res}  "Coupon":"\\d+
     ${coupon_num_after}=  should match regexp     ${coupon_num_after}  \\d+
 
     ${coupon_num_change}=   math reduce     ${coupon_num_after}     ${coupon_num_before}
@@ -175,7 +175,7 @@ createCouponScoreOrder
     interface post     ${ClearShoppingCartUrl}      {"site_id": "${site_id}"}     ${header}
 
     ${res}=     interface post      ${MyCouponList}     {"pagesize": "100", "pagenumber": "1", "is_use": "0", "is_expire": "0", "packID": "0", "r": "0.42419922061968296"}     ${header}
-    ${coupon_num_before}=  should match regexp     ${res}  "Coupon":\\d+
+    ${coupon_num_before}=  should match regexp     ${res}  "Coupon":"\\d+
     ${coupon_num_before}=  should match regexp     ${coupon_num_before}  \\d+
 
     ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
@@ -210,7 +210,7 @@ createCouponScoreOrder
     should be equal  ${score_balance_cost}  ${use_score_sum}
 
     ${res}=     interface post      ${MyCouponList}     {"pagesize": "100", "pagenumber": "1", "is_use": "0", "is_expire": "0", "packID": "0", "r": "0.42419922061968296"}  ${header}
-    ${coupon_num_after}=  should match regexp     ${res}  "Coupon":\\d+
+    ${coupon_num_after}=  should match regexp     ${res}  "Coupon":"\\d+
     ${coupon_num_after}=  should match regexp     ${coupon_num_after}  \\d+
 
     ${coupon_num_change}=   math reduce     ${coupon_num_after}     ${coupon_num_before}
@@ -225,7 +225,7 @@ createCouponScoreOrder_num2
     interface post     ${ClearShoppingCartUrl}      {"site_id": "${site_id}"}     ${header}
 
     ${res}=     interface post      ${MyCouponList}     {"pagesize": "100", "pagenumber": "1", "is_use": "0", "is_expire": "0", "packID": "0", "r": "0.42419922061968296"}     ${header}
-    ${coupon_num_before}=  should match regexp     ${res}  "Coupon":\\d+
+    ${coupon_num_before}=  should match regexp     ${res}  "Coupon":"\\d+
     ${coupon_num_before}=  should match regexp     ${coupon_num_before}  \\d+
 
     ${res}=     interface post      ${MyInfoUrl}    {"r":"0.3490340368105973"}      ${header}
@@ -263,7 +263,7 @@ createCouponScoreOrder_num2
     should be equal  ${score_balance_cost}  ${use_score_sum}
 
     ${res}=     interface post      ${MyCouponList}     {"pagesize": "100", "pagenumber": "1", "is_use": "0", "is_expire": "0", "packID": "0", "r": "0.42419922061968296"}  ${header}
-    ${coupon_num_after}=  should match regexp     ${res}  "Coupon":\\d+
+    ${coupon_num_after}=  should match regexp     ${res}  "Coupon":"\\d+
     ${coupon_num_after}=  should match regexp     ${coupon_num_after}  \\d+
 
     ${coupon_num_change}=   math reduce     ${coupon_num_after}     ${coupon_num_before}

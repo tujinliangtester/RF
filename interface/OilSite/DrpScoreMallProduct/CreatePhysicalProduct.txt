@@ -23,18 +23,18 @@ CreatePhysicalProduct_onlyScore
 
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
-    ${res}=     pc interface post   ${CreatePhysicalProductUrl}    {"name": "${ProductName}", "image_logo": "${image_logo} ", "standard": "个", "summary": "测试", "use_score": "10", "use_money": "0", "site_ids": "0", "site_inventories": "", "send_type": "0", "send_time": "", "is_all_site": "1", "single_site_inventory": "100"}   ${PcHeader}
+    ${res}=     pc interface post   ${CreatePhysicalProductUrl}    {"name": "${ProductName}", "image_logo": "${image_logo} ", "standard": "个", "summary": "测试", "use_score": "10", "use_money": "0", "site_ids": "0", "site_inventories": "", "send_type": "0", "send_time": "", "is_all_site": "1", "single_site_inventory": "100","use_channel": "1"}   ${PcHeader}
     should contain  ${res}   "code":1
 
 CreatePhysicalProduct_ScoreAndMoney
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
-    ${res}=     pc interface post   ${CreatePhysicalProductUrl}    {"name": "${ProductName}", "image_logo": "${image_logo} ", "standard": "个", "summary": "测试", "use_score": "10", "use_money": "1", "site_ids": "0", "site_inventories": "", "send_type": "0", "send_time": "", "is_all_site": "1", "single_site_inventory": "100"}   ${PcHeader}
+    ${res}=     pc interface post   ${CreatePhysicalProductUrl}    {"name": "${ProductName}", "image_logo": "${image_logo} ", "standard": "个", "summary": "测试", "use_score": "10", "use_money": "1", "site_ids": "0", "site_inventories": "", "send_type": "0", "send_time": "", "is_all_site": "1", "single_site_inventory": "100","use_channel": "1"}   ${PcHeader}
     should contain  ${res}   "code":1
 
 
 CreatePhysicalProduct_partSite
     ${header}=      read config     header
     ${PcHeader}=    read config     PcHeader
-    ${res}=     pc interface post   ${CreatePhysicalProductUrl}    {"name": "${ProductName}", "image_logo": "${image_logo} ", "standard": "个", "summary": "测试", "use_score": "10", "use_money": "0", "site_ids": "35,37", "site_inventories": "100,200", "send_type": "0", "send_time": "", "is_all_site": "0"}   ${PcHeader}
+    ${res}=     pc interface post   ${CreatePhysicalProductUrl}    {"name": "${ProductName}", "image_logo": "${image_logo} ", "standard": "个", "summary": "测试", "use_score": "10", "use_money": "0", "site_ids": "35,37", "site_inventories": "100,200", "send_type": "0", "send_time": "", "is_all_site": "0","use_channel": "1"}   ${PcHeader}
     should contain  ${res}   "code":1

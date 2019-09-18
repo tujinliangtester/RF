@@ -50,12 +50,12 @@ def sqlstr2str(sql):
 
 if __name__ == '__main__':
     # 注意，如果参数中有中文，则需要在替换后，手动改成中文
-    s = 'ts=2019-06-03%2013%3A39%3A46&sign=7e3c30fcf11e1940dc0bc7f6196336d2&goods_amt=99.0&oil_trade_list=%5B%7B%22trade_log_id%22%3A0%2C%22oil_id%22%3A13%2C%22price%22%3A6%2C%22litre%22%3A16.67%2C%22ori_amt%22%3A100%7D%5D&mobile=19905301024&uuid=47fa69c6158155abfb7aba00623b0a04&postoken=16704af1-4079-46cd-bd06-ee938f57de5c&coupon_code='
+    s = 'code=6507&new_password=e10adc3949ba59abbe56e057f20f883e&confirm_password=e10adc3949ba59abbe56e057f20f883e'
     s2 = str(str2dic(s))
     s2 = url_parse_decoder(s2)
     s2 = s2.replace('\'', '\"')
     print(s2)
 
-    sql = "DELETE from  pit_market_coupon_to_user 	WHERE user_id in (	SELECT id FROM pit_member_user WHERE mobile ='19905301024');"
+    sql = "SELECT TOP 1 code  from pit_member_sms ORDER BY id desc ;"
     sqlstr = sqlstr2str(sql)
     print(sqlstr)
