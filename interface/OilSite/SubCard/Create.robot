@@ -301,12 +301,8 @@ create_limits_times_per_day
     ${header}   read config   header
     ${header_ios}   read config   header_ios
 
-    #创建一个没有优惠的主卡
-    createNewPrimaryCard_no_preferential
+    ${primarycard_id}   MyPrimaryCard
 
-    ${primarycard_id}   MyPrimaryCardLatest
-    #充值
-    ManualRecharge      ${primarycard_id}
 
     ${res}=  interface post  ${SubCardGetNewSubCardUrl}  {"primarycard_id": "${primarycard_id}"}    ${header}
     ${dic}      evaluate   json.loads(u'${res}')    json
@@ -357,6 +353,9 @@ create_limits_times_per_month
 
     ${primarycard_id}   MyPrimaryCard
 
+
+
+
     ${res}=  interface post  ${SubCardGetNewSubCardUrl}  {"primarycard_id": "${primarycard_id}"}    ${header}
     ${dic}      evaluate   json.loads(u'${res}')    json
     ${card_no}       set variable   ${dic}[data][card_no]
@@ -404,7 +403,12 @@ create_limits_money_per_day
     ${header}   read config   header
     ${header_ios}   read config   header_ios
 
-    ${primarycard_id}   MyPrimaryCard
+    #创建一个没有优惠的主卡
+    createNewPrimaryCard_no_preferential
+
+    ${primarycard_id}   MyPrimaryCardLatest
+    #充值
+    ManualRecharge      ${primarycard_id}
 
     ${res}=  interface post  ${SubCardGetNewSubCardUrl}  {"primarycard_id": "${primarycard_id}"}    ${header}
     ${dic}      evaluate   json.loads(u'${res}')    json
@@ -451,7 +455,12 @@ create_limits_money_per_month
     ${header}   read config   header
     ${header_ios}   read config   header_ios
 
-    ${primarycard_id}   MyPrimaryCard
+    #创建一个没有优惠的主卡
+    createNewPrimaryCard_no_preferential
+
+    ${primarycard_id}   MyPrimaryCardLatest
+    #充值
+    ManualRecharge      ${primarycard_id}
 
     ${res}=  interface post  ${SubCardGetNewSubCardUrl}  {"primarycard_id": "${primarycard_id}"}    ${header}
     ${dic}      evaluate   json.loads(u'${res}')    json
