@@ -19,6 +19,8 @@ ${DrpScoreMallProductModifyProductIsUseUrl}     /DrpScoreMallProduct/ModifyProdu
 ${DrpYingxiaoJihuaUrl}   /DrpYingxiao/Jihua
 ${MyFleetCardMyPrimaryCardUrl}   /MyFleetCard/MyPrimaryCard
 ${MyFleetCardMySubCardUrl}   /MyFleetCard/MySubCard
+${DrpRechargeManualRechargeUrl}      /DrpRecharge/ManualRecharge
+${DrpPrimaryCardCreateUrl}      /DrpPrimaryCard/Create
 
 
 
@@ -127,6 +129,18 @@ MyPrimaryCard
     ${primarycard_id}   evaluate   str(${dic}[data][0][id])
     return from keyword   ${primarycard_id}
 
+MyPrimaryCardLatest
+#    返回最新的主卡
+    ${pcHeader}    read config   PcHeader
+    ${header}   read config   header
+    ${primarycard_id}   set variable  0
+    ${res}=     interface post      ${MyFleetCardMyPrimaryCardUrl}     ""      ${header}
+    ${dic}      evaluate   json.loads(u'${res}')    json
+    @{tmp_list}=    evaluate  list(${dic}[data])
+    :FOR    ${item}    IN   @{tmp_list}
+    \      ${primarycard_id}   evaluate   str(${item}[id])
+    return from keyword   ${primarycard_id}
+
 MySubCard
 #    返回第一个子卡
     ${pcHeader}    read config   PcHeader
@@ -145,3 +159,29 @@ MySubCard_ios
     ${dic}      evaluate   json.loads(u'${res}')    json
     ${primarycard_id}   evaluate   str(${dic}[data][0][id])
     return from keyword   ${primarycard_id}
+
+ManualRecharge
+    [Arguments]     ${primarycard_id}
+    ${pcHeader}    read config   PcHeader
+    ${header}   read config   header
+
+    ${res}=     pc interface post    ${DrpRechargeManualRechargeUrl}        {"primarycard_id": "${primarycard_id}", "recharge_amt": "1000", "gift_amt": "100", "recharge_method": "1", "note": ""}     ${pcHeader}
+    should contain   ${res}     "code":1
+
+generatePrimaryCardNo
+    ${res}=     sql interface post raw      ${DjangoRawSqlFunUrl}      ${top1PrimaryCardNo}
+    ${old_cardNo}=     should match regexp   ${res}    \\d+
+    ${new_cardNo}=      generate cardNo tool     ${old_cardNo}
+    return from keyword   ${new_cardNo}
+
+createNewPrimaryCard_no_preferential
+    ${pcHeader}    read config   PcHeader
+    ${header}   read config   header
+    ${card_no}    generatePrimaryCardNo
+    ${myInfo}   MyInfo      ${header}
+    ${dic}=     evaluate  json.loads(u'${myInfo}')   json
+    ${member_user_id}   set variable    ${dic}[data][id]
+    ${res}=     pc interface post   ${DrpPrimaryCardCreateUrl}      {"fleet_name": "涂金良玛莎拉蒂车队", "company_name": "涂氏集团", "contact_mobile": "", "discount_type": "1", "fall_value": "", "discount_value": "", "member_user_id": "${member_user_id}", "card_no": "${card_no}"}    ${pcHeader}
+    should contain   ${res}     "code":1
+
+

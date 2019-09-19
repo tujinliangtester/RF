@@ -15,6 +15,16 @@ generatePrimaryCardNo
     ${new_cardNo}=      generate cardNo tool     ${old_cardNo}
     return from keyword   ${new_cardNo}
 
+createNewPrimaryCard_no_preferential
+    ${pcHeader}    read config   PcHeader
+    ${header}   read config   header
+    ${card_no}    generatePrimaryCardNo
+    ${myInfo}   MyInfo      ${header}
+    ${dic}=     evaluate  json.loads(u'${myInfo}')   json
+    ${member_user_id}   set variable    ${dic}[data][id]
+    ${res}=     pc interface post   ${DrpPrimaryCardCreateUrl}      {"fleet_name": "涂金良玛莎拉蒂车队", "company_name": "涂氏集团", "contact_mobile": "", "discount_type": "1", "fall_value": "", "discount_value": "", "member_user_id": "${member_user_id}", "card_no": "${card_no}"}    ${pcHeader}
+    should contain   ${res}     "code":1
+
 *** Test Cases ***
 
 createNewPrimaryCard_no_preferential

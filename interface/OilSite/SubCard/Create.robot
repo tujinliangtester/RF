@@ -15,6 +15,7 @@ ${MyFleetCardUpdatePasswordByCodeUrl}    /MyFleetCard/UpdatePasswordByCode
 
 
 ${subCardNoSQL}     {"SQL":"SELECT${SPACE}top${SPACE}1${SPACE}card_no${SPACE}from${SPACE}${SPACE}pit_fleetcard_subcard${SPACE}WHERE${SPACE}merchant_id=13${SPACE}order${SPACE}${SPACE}BY${SPACE}id${SPACE}desc;"}
+${top1PrimaryCardNo}    {"SQL":"${SPACE}SELECT${SPACE}top${SPACE}1${SPACE}card_no${SPACE}from${SPACE}${SPACE}pit_fleetcard_primarycard${SPACE}WHERE${SPACE}card_no${SPACE}like${SPACE}'0013%'${SPACE}order${SPACE}${SPACE}BY${SPACE}card_no${SPACE}desc"}
 
 
 
@@ -300,7 +301,12 @@ create_limits_times_per_day
     ${header}   read config   header
     ${header_ios}   read config   header_ios
 
-    ${primarycard_id}   MyPrimaryCard
+    #创建一个没有优惠的主卡
+    createNewPrimaryCard_no_preferential
+
+    ${primarycard_id}   MyPrimaryCardLatest
+    #充值
+    ManualRecharge      ${primarycard_id}
 
     ${res}=  interface post  ${SubCardGetNewSubCardUrl}  {"primarycard_id": "${primarycard_id}"}    ${header}
     ${dic}      evaluate   json.loads(u'${res}')    json
