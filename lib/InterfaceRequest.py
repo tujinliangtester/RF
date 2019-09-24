@@ -115,5 +115,11 @@ class InterfaceRequest(object):
 if __name__ == '__main__':
     IR = InterfaceRequest()
     # IR.sql_interface_post_raw(url='http://localhost:8000/polls/raw_sql_fun',params='{"SQL":"SELECT * from pit_member_score_balance WHERE user_id in (SELECT id FROM pit_member_user WHERE mobile =\'19903260905\') ORDER BY id desc;"}')
-    IR.pc_interface_post(url='/DrpMemberCard/AddCoinActivity',
-                         params='{"name": "tjl1441", "start_time": "2019-04-11 00:00:00", "end_time": "2019-04-13 23:59:59", "discount_type": "1", "max_count": "0", "status": "1", "activity_type": "1", "activity_item": "[{"amt":"","zs_value":"","max_count":0}]", "coupon_item": "[{"amt":"1","coupon_id":651,"num":"1"},{"amt":"2","coupon_id":652,"num":"2"}]"}')
+
+    for i in range(1000):
+        mobile=18809231000+i
+        params_str='{"site_id": "", "mobile": "'+str(mobile)+'", "score": "1", "level": "0", "note": "1"}'
+        IR.pc_interface_post(url='/DrpMemberOffline/CreateUser',
+                             params=params_str,
+                             header='{"Cookie": "ASP.NET_SessionId=1cjtiwyhwxnhus3r0mdnuyu2; bizweb_UserMember=userID=hqbk2gPbDbU="}')
+

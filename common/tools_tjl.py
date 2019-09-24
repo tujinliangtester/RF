@@ -50,7 +50,7 @@ def sqlstr2str(sql):
 
 if __name__ == '__main__':
     # 注意，如果参数中有中文，则需要在替换后，手动改成中文
-    s = 'code=6507&new_password=e10adc3949ba59abbe56e057f20f883e&confirm_password=e10adc3949ba59abbe56e057f20f883e'
+    s = 'site_id=&mobile=19909231733&score=1&level=0&note=1'
     s2 = str(str2dic(s))
     s2 = url_parse_decoder(s2)
     s2 = s2.replace('\'', '\"')
