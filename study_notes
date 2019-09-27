@@ -158,6 +158,8 @@ robotframework
         @{tmp_list}=    evaluate  list(${dic}[data][fleetCards])
          :FOR    ${userLevel}    IN   @{tmp_list}
          \    log   ${userLevel}
+         :FOR   ${num}   IN RANGE  130
+         \    log   ${userLevel}
 
          注意，这里的in后面接的，需要是列表，如果返回的是字典内部包含列表的，需要用evaluate  list 进行显示转化
 
