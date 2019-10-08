@@ -16,6 +16,7 @@ class tools(object):
         :return:
         '''
         s = time.strftime("%Y%m%d%H%M", time.localtime())
+        # s = time.strftime("%Y%m%d%H%S", time.localtime())
         s = s[-8:]
         s = '199' + s
         print(s)

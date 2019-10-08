@@ -1,0 +1,488 @@
+一、针对不同的页面对象，有不同的方法，其中
+
+文本框
+	element.send_keys（str）
+	element.send_keys( Keys.ARROW_DOWN)
+	element.clear()
+
+单选框（复选框）
+	element = driver.find_element_by_xpath("//select[@name='name']")  #找到select
+	all_options = element.find_elements_by_tag_name("option")					#找到option
+	for option in all_options:																				#逐一循环打印、点击
+    print("Value is: %s" % option.get_attribute("value"))
+    option.click()
+    
+  from selenium.webdriver.support.ui import Select					#Select导入
+	select = Select(driver.find_element_by_name('name'))			#找到选框区域
+	select.select_by_index(index)															#根据不同的方法进行对选框进行选取
+	select.select_by_visible_text("text")
+	select.select_by_value(value)
+
+	select.deselect_all()																			#所有选框均不选	
+	all_selected_options = select.all_selected_options				#返回所有已选框对象
+	options = select.options																	#返回所有选框对象
+	
+提交：
+	driver.find_element_by_id("submit").click()
+	
+	element.submit()																					#根据element，查找最近的submit()并进行提交
+
+
+
+Drag and drop（拖拽）：
+	from selenium.webdriver import ActionChains								#导入ActionChains
+	action_chains = ActionChains(driver)											#构造动作对象
+	action_chains.drag_and_drop(element, target).perform()		#动作对象执行动作
+	
+窗口或框架间切换
+	driver.switch_to_window("windowName")
+	driver.switch_to_frame("frameName")
+	driver.switch_to_frame("frameName.0.child")
+	driver.switch_to_default_content()												#回到父级框架
+	
+弹窗：
+	alert = driver.switch_to_alert()
+	
+网页的前进、后退
+	driver.forward()
+	driver.back()			
+	
+Cookies：
+	cookie = {‘name’ : ‘foo’, ‘value’ : ‘bar’}							#cookie是json字符串
+	driver.add_cookie(cookie)
+	driver.get_cookies()
+	
+上传文件
+	对于input标签：
+		调用对象的send_keys方法，将文件url传入，注意符号的转义，如\\
+		
+
+
+
+二、元素定位：
+	1.find_element_by
+	2.find_elements_by
+
+	3.Locating by XPath
+		<html>
+		 <body>
+		  <form id="loginForm">
+		   <input name="username" type="text" />
+		   <input name="password" type="password" />
+		   <input name="continue" type="submit" value="Login" />
+		   <input name="continue" type="button" value="Clear" />
+		  </form>
+		</body>
+		<html>
+
+		login_form = driver.find_element_by_xpath("/html/body/form[1]")         #绝对路径
+		login_form = driver.find_element_by_xpath("//form[1]")									#相对路径，根据索引
+		login_form = driver.find_element_by_xpath("//form[@id='loginForm']")		#相对路径，根据包含的有ID或name的DOM	
+		
+		username = driver.find_element_by_xpath("//form[input/@name='username']")
+		username = driver.find_element_by_xpath("//form[@id='loginForm']/input[1]") #根据id找form，再相对路径找第一个input
+		username = driver.find_element_by_xpath("//input[@name='username']")
+		
+		clear_button = driver.find_element_by_xpath("//input[@name='continue'][@type='button']") #根据name找到input，再根据找到的两个input用type进行区分（@符号有点类似索引的意义）
+		clear_button = driver.find_element_by_xpath("//form[@id='loginForm']/input[4]")   #首先找form，再在form中根据索引找input
+		
+		模态框根据文字查找等
+		el=self.driver.find_element_by_xpath('.//*[normalize-space(text()) and normalize-space(.)="取消"]')
+		
+		根据现实文字定位
+		from selenium.webdriver.support.select import Select
+		Select(self.driver.find_element_by_name('campuses')).select_by_visible_text('tjl0408')
+		
+	4.定位超链接：
+			<html>
+			 <body>
+			  <p>Are you sure you want to do this?</p>
+			  <a href="continue.html">Continue</a>
+			  <a href="cancel.html">Cancel</a>
+			</body>
+			<html>
+
+			continue_link = driver.find_element_by_link_text('Continue')						#链接内容
+			continue_link = driver.find_element_by_partial_link_text('Conti')				#部分链接内容
+			
+	5.通过html标签进行定位（js标签等也可以？）
+		heading1 = driver.find_element_by_tag_name('h1')
+		
+	6.通过Class Name定位
+	
+	7.根据 CSS定位
+			
+三、Waits
+	分显式和隐式
+	1.显式：
+		WebDriverWait in combination with ExpectedCondition is one way this can be accomplished.
+		
+			from selenium import webdriver
+			from selenium.webdriver.common.by import By
+			from selenium.webdriver.support.ui import WebDriverWait
+			from selenium.webdriver.support import expected_conditions as EC
+
+			driver = webdriver.Firefox()
+			driver.get("http://somedomain/url_that_delays_loading")
+			try:
+			    element = WebDriverWait(driver, 10).until(
+			        EC.presence_of_element_located((By.ID, "myDynamicElement"))
+			    )
+			finally:
+			    driver.quit()
+				
+		This waits up to 10 seconds before throwing a TimeoutException unless it finds the element to return within 10 seconds.
+		
+			Expected Conditions：
+				title_is
+				title_contains
+				presence_of_element_located
+				visibility_of_element_located
+				visibility_of
+				presence_of_all_elements_located
+				text_to_be_present_in_element
+				text_to_be_present_in_element_value
+				frame_to_be_available_and_switch_to_it
+				invisibility_of_element_located
+				element_to_be_clickable
+				staleness_of
+				element_to_be_selected
+				element_located_to_be_selected
+				element_selection_state_to_be
+				element_located_selection_state_to_be
+				alert_is_present		
+				
+			from selenium.webdriver.support import expected_conditions as EC
+
+			wait = WebDriverWait(driver, 10)
+			element = wait.until(EC.element_to_be_clickable((By.ID, 'someid')))
+			
+		
+	2.隐式
+		from selenium import webdriver
+
+		driver = webdriver.Firefox()
+		driver.implicitly_wait(10) # seconds，Once set, the implicit wait is set for the life of the WebDriver object.
+		driver.get("http://somedomain/url_that_delays_loading")
+		myDynamicElement = driver.find_element_by_id("myDynamicElement")			
+					
+四、Page Objects（暂时没有看懂，等以后需要了可以再进行研究）
+	Benefits of using page object pattern:
+
+	Creating reusable code that can be shared across multiple test cases
+	Reducing the amount of duplicated code
+	If the user interface changes, the fix needs changes in only one place
+	
+	1.Test case			
+			
+五、WebDriver API（官方API   https://seleniumhq.github.io/selenium/docs/api/py/api.html）
+	没有太仔细的看，毕竟API更多的是在使用的时候进行查询。
+	另外，需要输入特殊符号时（如回车符等），可以用Keys输入
+			
+注意：所有断言的地方，都应该先等待一下，否则可能因为过快导致获取的数据为之前的数据			
+
+
+
+******************************************************************************************************************************************************************
+
+查找页面元素的方法
+http://www.cnblogs.com/qingchunjun/p/4208159.html
+
+注意：1. 元素的xpath绝对路径可通过firebug直接查询。2. 一般不推荐使用绝对路径的写法，因为一旦页面结构发生变化，该路径也随之失效，必须重新写。3. 绝对路径以单/号表示，而下面要讲的相对路径则以//表示，这个区别非常重要。另外需要多说一句的是，当xpath的路径以/开头时，表示让Xpath解析引擎从文档的根节点开始解析。当xpath路径以//开头时，则表示让xpath引擎从文档的任意符合的元素节点开始进行解析。而当/出现在xpath路径中时，则表示寻找父节点的直接子节点，当//出现在xpath路径中时，表示寻找父节点下任意符合条件的子节点，不管嵌套了多少层级（这些下面都有例子，大家可以参照来试验）。弄清这个原则，就可以理解其实xpath的路径可以绝对路径和相对路径混合在一起来进行表示，想怎么玩就怎么玩。
+
+ 
+
+下面是相对路径的引用写法：
+
+查找页面根元素：//
+
+查找页面上所有的input元素：//input
+
+查找页面上第一个form元素内的直接子input元素(即只包括form元素的下一级input元素，使用绝对路径表示，单/号)：//form[1]/input
+
+查找页面上第一个form元素内的所有子input元素(只要在form元素内的input都算，不管还嵌套了多少个其他标签，使用相对路径表示，双//号)：//form[1]//input
+
+查找页面上第一个form元素：//form[1]
+
+查找页面上id为loginForm的form元素：//form[@id='loginForm']
+
+查找页面上具有name属性为username的input元素：//input[@name='username']
+
+查找页面上id为loginForm的form元素下的第一个input元素：//form[@id='loginForm']/input[1]
+
+查找页面具有name属性为contiune并且type属性为button的input元素：//input[@name='continue'][@type='button']
+
+查找页面上id为loginForm的form元素下第4个input元素：//form[@id='loginForm']/input[4]
+
+这段代码中的“退出”这个超链接，没有标准id元素，只有一个rel和href，不是很好定位。不妨我们就用xpath的几种模糊匹配模式来定位它吧，主要有三种方式，举例如下。
+
+a. 用contains关键字，定位代码如下：
+
+1 driver.findElement(By.xpath(“//a[contains(@href, ‘logout’)]”));
+这句话的意思是寻找页面中href属性值包含有logout这个单词的所有a元素，由于这个退出按钮的href属性里肯定会包含logout，所以这种方式是可行的，也会经常用到。其中@后面可以跟该元素任意的属性名。
+
+b. 用start-with，定位代码如下：
+
+1 driver.findElement(By.xpath(“//a[starts-with(@rel, ‘nofo’)]));
+这句的意思是寻找rel属性以nofo开头的a元素。其中@后面的rel可以替换成元素的任意其他属性。
+
+c. 用Text关键字，定位代码如下：
+
+1 driver.findElement(By.xpath(“//*[text()=’退出’]));
+这个方法可谓相当霸气啊。直接查找页面当中所有的退出二字，根本就不用知道它是个a元素了。这种方法也经常用于纯文字的查找。
+
+另外，如果知道超链接元素的文本内容，也可以用
+
+1 driver.findElement(By.xpath(“//a[contains(text(), ’退出’)]));
+py的写法
+driver.find_element_by_xpath('//p[contains(@text, "北京")]')
+这种方式一般用于知道超链接上显示的部分或全部文本信息时，可以使用。
+
+ 
+
+最后，关于xpath这种定位方式，webdriver会将整个页面的所有元素进行扫描以定位我们所需要的元素，所以这是一个非常费时的操作，如果你的脚本中大量使用xpath做元素定位的话，将导致你的脚本执行速度大大降低，所以请慎用。
+
+
+
+xpath查找元素可以用轴，即
+父亲：parent::或用..
+前面的兄弟：preceding-sibling::
+后面的兄弟：following-sibling::
+
+
+
+By.cssSelector()
+
+cssSelector这种元素定位方式跟xpath比较类似，但执行速度较快，而且各种浏览器对它的支持都相当到位，所以功能也是蛮强大的。
+
+下面是一些常见的cssSelector的定位方式：
+
+定位id为flrs的div元素，可以写成：#flrs     注：相当于xpath语法的//div[@id=’flrs’]
+
+定位id为flrs下的a元素，可以写成 #flrs > a  注：相当于xpath语法的//div[@id=’flrs’]/a
+
+定位id为flrs下的href属性值为/forexample/about.html的元素，可以写成： #flrs > a[href=”/forexample/about.html”]
+
+如果需要指定多个属性值时，可以逐一加在后面，如#flrs > input[name=”username”][type=”text”]。
+
+ 
+
+明白基本语法后，我们来尝试用cssSelector方式来引用图（3）中选中的那个input对象，代码如下：
+
+WebElement password = driver.findElement(By.cssSelector("#J_login_form>dl>dt>input[id=’ J_password’]"));
+同样必须注意层级关系，这个不能省略。
+
+ 
+
+cssSelector还有一个用处是定位使用了复合样式表的元素，之前在第4种方式className里面提到过。现在我们就来看看如何通过cssSelector来引用到第4种方式中提到的那个button。button代码如下：
+
+<button id="J_sidebar_login" class="btn btn_big btn_submit" type="submit">登录</button>
+cssSelector引用元素代码如下：
+
+driver.findElement(By.cssSelector("button.btn.btn_big.btn_submit"))
+。这样就可以顺利引用到使用了复合样式的元素了。
+
+ 
+
+此外，cssSelector还有一些高级用法，如果熟练后可以更加方便地帮助我们定位元素，如我们可以利用^用于匹配一个前缀，$用于匹配一个后缀，*用于匹配任意字符。例如：
+
+匹配一个有id属性，并且id属性是以”id_prefix_”开头的超链接元素：a[id^='id_prefix_']
+
+匹配一个有id属性，并且id属性是以”_id_sufix”结尾的超链接元素：a[id$='_id_sufix']
+
+匹配一个有id属性，并且id属性中包含”id_pattern”字符的超链接元素：a[id*='id_pattern']
+
+ 
+
+最后再总结一下，各种方式在选择的时候应该怎么选择：
+
+1. 当页面元素有id属性时，最好尽量用id来定位。但由于现实项目中很多程序员其实写的代码并不规范，会缺少很多标准属性，这时就只有选择其他定位方法。
+
+2. xpath很强悍，但定位性能不是很好，所以还是尽量少用。如果确实少数元素不好定位，可以选择xpath或cssSelector。
+
+3. 当要定位一组元素相同元素时，可以考虑用tagName或name。
+
+4. 当有链接需要定位时，可以考虑linkText或partialLinkText方式。
+
+
+
+已获取一个元素时，查找其他元素
+
+在通过selenium使用xpath选择节点的时候，可能会遇到这么一种情况：在指定的当前节点下搜索满足要求的节点。
+
+node = driver.find_element_by_xpath("//div[@class='WB_cardwrap S_bg2 clearfix']")
+BZNC = node.find_element_by_xpath("//div[@class='feed_content wbcon']/a[@class='W_texta W_fb']").text
+BZZY = node.find_element_by_xpath("//div[@class='feed_content wbcon']/a[@class='W_texta W_fb']").get_attribute("href")
+1
+2
+3
+以上代码有什么错误吗？貌似没有，一切都很完美。 
+先拿到node节点，然后在node节点的子节点中搜索满足条件的节点并取出text及属性。 
+but！运行的结果却是把整个html中所有满足条件的节点都找出来了，而并非是node节点下的！！！
+
+仔细想一想，”//div”貌似就是搜索整个html下的div，即使是node下的find_element_by_xpath方法！ 
+所以，只需要在”//”前面加上表示当前路径的”.”既可，也就是node.find_element_by_xpath(“.//div”)
+
+
+web UI自动化定位策略顺序：
+1.id、name
+2.class
+3.属性
+	el=driver.find_element_by_xpath('//*[@title="我的"]')
+4.执行js语句 （需要好好学下js的查找元素,主要是js手册中的HTML DOM Document 和css选择器）
+	js="return document.querySelector('.order-info p').innerText"
+	dr.execute_script(js)
+	其中：.order-info p即为css选择器
+	
+	http://www.runoob.com/cssref/css-selectors.html
+4.5
+	selenium根据显示文字
+	el = cms_driver.find_element_by_xpath('.//*[normalize-space(text()) and normalize-space(.)="确定"]')
+
+5.xpath（包括selenium文件夹中的查找页面元素方法，包括contains的text等）
+6.点击屏幕位置（终极办法）
+	actions = TouchAction(driver)
+  actions.tap(x=x, y=y)
+  actions.perform()
+
+pc端，建议直接录制脚本即可
+
+******************************************************************************************************************************************************************
+
+appium
+
+查看程序的启动activity
+adb shell
+monkey -p 包名 -v -v -v 1
+
+appium下载地址：
+https://github.com/appium/appium/releases/
+
+app切换context到webview
+
+首先手机得装chrome浏览器，然后appium目录下的chromedriver需要跟手机上的chrome匹配（注意，跟电脑的chrome无关！而且无需再去下载chrome，因为安卓自带了chrome，只需要去下载对应的chromedriver即可）
+然后就可以正常切换了，用web的定位方式，进行脚本、用例的编写
+(电脑目录：C:\Users\Administrator\AppData\Roaming\npm\node_modules\appium\node_modules\_appium-chromedriver@3.3.0@appium-chromedriver\chromedriver\win  
+注意，可以在appium的日志中找到 )
+
+要充分理解切换context的本质：
+1.首先得应用有native和webview的context ，如 微信dubugx5.qq.com 开启inspector调试
+2.给webdriver添加chrome选项，即  desired_caps['chromeOptions'] = {'androidProcess': 'com.tencent.mm:tools'}
+3.切换
+
+
+关于Chrome和chromedriver的官方解释：
+
+Unfortunately, with each update to Chromedriver there is an increase in the minimum supported version of Chrome, such that older devices are often unable to be automated with the bundled version. In the Appium server logs there will be an error like:
+
+An unknown server-side error occurred while processing the command.
+Original error: unknown error: Chrome version must be >= 55.0.2883.0
+To get around this, Appium can be configured to use a particular Chromedriver version, either at install time, by either passing the --chromedriver_version config property, e.g.,
+
+npm install appium --chromedriver_version="2.16"
+Or specifying the version in the CHROMEDRIVER_VERSION environment variable, e.g,
+
+CHROMEDRIVER_VERSION=2.20 npm install appium
+
+
+
+定位元素时，有空格的处理（但是这个在selenium可以，appium也行不通。。。。。）：
+
+如
+el=self.driver.find_element_by_class_name('weui-flex-item buy-now')
+
+应改为：
+el=self.driver.find_element_by_class_name('weui-flex-item.buy-now')
+
+
+
+注意：
+即便是按照id来定位元素，也可能会重复！！！（因为编码不规范。。。。）
+如果提示找不到元素或
+
+
+注意，在xhjx微信内测试订单时，无法定位到出货订单，这是个问题！！！
+
+
+注意，在使用python的过程中，某个函数方法内部的变量或对象，不能在另外一个文件中引用，所以，如果需要进行使用，只能讲该变量、对象放在文件的函数外部、类外部（直接用   文件名.变量  进行使用）
+
+touchaction:
+from appium.webdriver.common.touch_action import TouchAction
+
+
+20180528
+遗留问题
+selenium.common.exceptions.WebDriverException: Message: unknown error: Element <a class="vc-tab vc-actived" data-tab="network" id="__vc_tab_network">...</a> is not clickable at point (165, 153). Other element would receive the click: <dd class="vc-table-col vc-table-col-4">...</dd>
+  (Session info: chrome=58.0.3029.83)
+
+
+chrome not reachable  为什么会提示两个不一样的chrome？可能是由于电脑未重启，在某些地方还保留着不适合的版本插件，下次重启电脑、重启手机尝试
+
+
+swipe与drag的区别：
+	swipe是对整个页面的上滑、下滑
+	drag是对某个部件的移动、拖拽
+	
+from appium.webdriver.common.touch_action import TouchAction
+
+
+python 异常处理
+        try:
+            el = driver.find_element_by_class_name('buy-now')
+            el.click()
+        except Exception as e:
+            print(e)
+            vc_tools.move_vc()
+
+selenium.common.exceptions.WebDriverException: Message: Method has not yet been implemented
+
+原因是在H5页面做了一些其他的原生操作  比如swip tap操作
+
+
+注意：如果通过各种方式都无法定位元素时，可以用终极杀手锏：根据屏幕位置定位
+
+
+web UI自动化定位策略顺序：
+1.id、name
+2.class
+3.属性
+	el=driver.find_element_by_xpath('//*[@title="我的"]')
+4.执行js语句 （需要好好学下js的查找元素,主要是js手册中的HTML DOM Document 和css选择器）
+	js="return document.querySelector('.order-info p').innerText"
+	dr.execute_script(js)
+	其中：.order-info p即为css选择器
+	
+	http://www.runoob.com/cssref/css-selectors.html
+4.5
+	selenium根据显示文字
+	el = cms_driver.find_element_by_xpath('.//*[normalize-space(text()) and normalize-space(.)="确定"]')
+
+5.xpath（包括selenium文件夹中的查找页面元素方法，包括contains的text等）
+6.点击屏幕位置（终极办法）
+	actions = TouchAction(driver)
+  actions.tap(x=x, y=y)
+  actions.perform()
+
+pc端，建议直接录制脚本即可
+
+
+验证元素是否找到：
+打印text
+点击
+长按
+
+******************************************************************************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+

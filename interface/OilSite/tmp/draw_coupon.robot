@@ -6,6 +6,8 @@
 Resource    ../userKeyWord.robot
 
 *** Test Cases ***
+哈哈
+    log  1111
 #类生产
 #class
 #    @{activity_id_list}   evaluate   list(${activity_id_str})

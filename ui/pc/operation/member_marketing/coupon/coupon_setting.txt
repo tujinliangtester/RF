@@ -1,6 +1,4 @@
 
-
-
 *** Settings ***
 #方便IDE调试，不添加无法找到关键字定义
 Library    browsermanagement
@@ -23,83 +21,163 @@ Library     SeleniumLibrary
 
 *** Variables ***
 ${undefined}    https://www.katalon.com/
+${baseUrl}  http://b.gas.314pay.net/html/#/Index
 
-
-*** Keywords ***
 
 
 *** Test Cases ***
-class_01
-    open browser    http://www.ytny.demo/sjytadmin/index.php/index/index
-    set browser implicit wait  10
+demo
+    登录yypc
 
-    sleep  10
-Test Case
-    go to    http://www.ytny.demo/sjytadmin/index.php/index/index
-    click element    id=10000553
-    click element    link=会员营销
-    click element    xpath=//li[7]/ul/li[3]/a/span
-    click element    xpath=//li[7]/ul/li[3]/ul/li/a/span
-    select frame    index=1
-    click element    xpath=//b
-    click element    xpath=//li[3]
-    click element    xpath=//input[@value='查询']
-    click element    link=编辑
-    select frame    index=0
-    click element    xpath=//form[@id='form']/div/ul/li[16]/div/div/a/span
-    click element    xpath=//form[@id='form']/div/ul/li[16]/div/div/div/ul/li[3]
-    click element    xpath=//button[@type='submit']
-    click element    xpath=//div[@id='layui-layer2']/span/a
-    click element    name=username
-    input text    name=username    admin
-    input text    xpath=//input[@type='password']    123456
-    input text    name=checkcode    2596
-    click element    xpath=//button[@type='submit']
-    click element    id=10000553
-    click element    xpath=//li[7]/a/span
-    click element    link=优惠券设置
-    click element    xpath=//li[7]/ul/li[3]/ul/li/a/span
-    select frame    index=1
-    click element    link=添加优惠券
-    select frame    index=0
-    click element    name=md[name]
-    input text    name=md[name]    优惠券auto0220
-    click element    name=md[use_limit_desc]
-    input text    name=md[use_limit_desc]    自动生成优惠券
-    click element    xpath=//div[@id='discount_container']/li/div/div/a/span
-    click element    xpath=//div[@id='discount_container']/li/div/div/div/ul/li[2]
-    click element    xpath=//div[@id='discount_container']/li[2]/div/div/a/span
-    click element    xpath=//div[@id='discount_container']/li[2]/div/div/div/ul/li[2]
-    click element    name=md[face_value]
-    input text    name=md[face_value]    100
-    click element    xpath=//form[@id='form']/div/ul/li[8]/div/span/div/a/span
-    click element    xpath=//form[@id='form']/div/ul/li[8]/div/span/div/div/ul/li[2]
-    click element    xpath=//form[@id='form']/div/ul/li[8]/div/span[2]/div/a/span
-    click element    xpath=//form[@id='form']/div/ul/li[8]/div/span[2]/div/div/ul/li[2]
-    click element    id=dp1550648777154
-    click element    link=20
-    click element    id=end_time
-    click element    link=28
-    click element    name=md[count_max_send]
-    input text    name=md[count_max_send]    100
-    click element    xpath=//form[@id='form']/div/ul/li[12]/div/div/a/span
-    click element    xpath=//form[@id='form']/div/ul/li[12]/div/div/div/ul/li[2]
-    click element    id=productCategory
-    select from list    id=productCategory    汽油
-    click element    xpath=(//option[@value='1'])[7]
-    click element    id=productTypeId
-    select from list    id=productTypeId    92#汽油
-    click element    xpath=//option[@value='10']
-    click element    id=md_use_model__2
-    click element    id=md_use_model__1
-    click element    xpath=//span[@id='md_valid_time_type']/span/label
-    click element    id=dp1550648777155
-    click element    link=20
-    click element    id=md_valid_end_time
-    click element    link=28
-    click element    xpath=//div[@id='teshuxianzhi_chosen']/a/span
-    click element    xpath=//div[@id='teshuxianzhi_chosen']/div/ul/li[2]
-    click element    xpath=//form[@id='form']/div/ul/li[17]/div/div/a/span
-    click element    xpath=//form[@id='form']/div/ul/li[17]/div/div/div/ul/li[2]
-    click element    id=md_tag_is_enable__0
-    click element    xpath=//button[@type='submit']
+
+*** Keywords ***
+登录yypc
+#    [Setup]  Run Keywords  Open Browser  ${baseUrl}  ${BROWSER}
+    open browser    ${baseUrl}
+    type    xpath=(.//input[@placeholder="手机号"])    17000000000
+    type    xpath=(.//input[@placeholder="密码"])    123456
+    click    xpath=//button[@type='button']
+#    [Teardown]  Close Browser
+
+open
+    [Arguments]    ${element}
+    Go To          ${element}
+
+clickAndWait
+    [Arguments]    ${element}
+    Click Element  ${element}
+
+click
+    [Arguments]    ${element}
+    Click Element  ${element}
+
+sendKeys
+    [Arguments]    ${element}    ${value}
+    Press Keys     ${element}    ${value}
+
+submit
+    [Arguments]    ${element}
+    Submit Form    ${element}
+
+type
+    [Arguments]    ${element}    ${value}
+    Input Text     ${element}    ${value}
+
+selectAndWait
+    [Arguments]        ${element}  ${value}
+    Select From List   ${element}  ${value}
+
+select
+    [Arguments]        ${element}  ${value}
+    Select From List   ${element}  ${value}
+
+verifyValue
+    [Arguments]                  ${element}  ${value}
+    Element Should Contain       ${element}  ${value}
+
+verifyText
+    [Arguments]                  ${element}  ${value}
+    Element Should Contain       ${element}  ${value}
+
+verifyElementPresent
+    [Arguments]                  ${element}
+    Page Should Contain Element  ${element}
+
+verifyVisible
+    [Arguments]                  ${element}
+    Page Should Contain Element  ${element}
+
+verifyTitle
+    [Arguments]                  ${title}
+    Title Should Be              ${title}
+
+verifyTable
+    [Arguments]                  ${element}  ${value}
+    Element Should Contain       ${element}  ${value}
+
+assertConfirmation
+    [Arguments]                  ${value}
+    Alert Should Be Present      ${value}
+
+assertText
+    [Arguments]                  ${element}  ${value}
+    Element Should Contain       ${element}  ${value}
+
+assertValue
+    [Arguments]                  ${element}  ${value}
+    Element Should Contain       ${element}  ${value}
+
+assertElementPresent
+    [Arguments]                  ${element}
+    Page Should Contain Element  ${element}
+
+assertVisible
+    [Arguments]                  ${element}
+    Page Should Contain Element  ${element}
+
+assertTitle
+    [Arguments]                  ${title}
+    Title Should Be              ${title}
+
+assertTable
+    [Arguments]                  ${element}  ${value}
+    Element Should Contain       ${element}  ${value}
+
+waitForText
+    [Arguments]                  ${element}  ${value}
+    Element Should Contain       ${element}  ${value}
+
+waitForValue
+    [Arguments]                  ${element}  ${value}
+    Element Should Contain       ${element}  ${value}
+
+waitForElementPresent
+    [Arguments]                  ${element}
+    Page Should Contain Element  ${element}
+
+waitForVisible
+    [Arguments]                  ${element}
+    Page Should Contain Element  ${element}
+
+waitForTitle
+    [Arguments]                  ${title}
+    Title Should Be              ${title}
+
+waitForTable
+    [Arguments]                  ${element}  ${value}
+    Element Should Contain       ${element}  ${value}
+
+doubleClick
+    [Arguments]           ${element}
+    Double Click Element  ${element}
+
+doubleClickAndWait
+    [Arguments]           ${element}
+    Double Click Element  ${element}
+
+goBack
+    Go Back
+
+goBackAndWait
+    Go Back
+
+runScript
+    [Arguments]         ${code}
+    Execute Javascript  ${code}
+
+runScriptAndWait
+    [Arguments]         ${code}
+    Execute Javascript  ${code}
+
+setSpeed
+    [Arguments]           ${value}
+    Set Selenium Timeout  ${value}
+
+setSpeedAndWait
+    [Arguments]           ${value}
+    Set Selenium Timeout  ${value}
+
+verifyAlert
+    [Arguments]              ${value}
+    Alert Should Be Present  ${value}
+
