@@ -1,4 +1,3 @@
-backspace	8%
 linefeed	%0A
 creturn	%0D
 space	%20
@@ -170,3 +169,4 @@ z	%7A
 ÷	%F7
 ø	%F8
 ù	%F9
+backspace	8%

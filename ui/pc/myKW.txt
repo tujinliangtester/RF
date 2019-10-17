@@ -1,0 +1,10 @@
+*** Settings ***
+Library  SeleniumLibrary
+Library  browsermanagement
+
+*** Keywords ***
+打开浏览器
+    open browser  https://www.cnblogs.com/simple-free/archive/2019/03/24/10591202.html
+*** Test Cases ***
+demo
+    打开浏览器

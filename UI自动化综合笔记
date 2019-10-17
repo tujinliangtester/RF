@@ -297,6 +297,7 @@ driver.findElement(By.cssSelector("button.btn.btn_big.btn_submit"))
 最后再总结一下，各种方式在选择的时候应该怎么选择：
 
 1. 当页面元素有id属性时，最好尽量用id来定位。但由于现实项目中很多程序员其实写的代码并不规范，会缺少很多标准属性，这时就只有选择其他定位方法。
+    或根据有id的元素的xpath来定位，尽量不允许出现索引等下标来定位
 
 2. xpath很强悍，但定位性能不是很好，所以还是尽量少用。如果确实少数元素不好定位，可以选择xpath或cssSelector。
 
