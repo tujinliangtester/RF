@@ -209,6 +209,46 @@ robotframework
 
 
 
+RobotFrameworkUserGuide学习
+    2.1.2   测试数据模块（test data section）
+        Settings
+        Variables
+        Test Cases
+        Tasks
+        Keywords
+        Comments
+    2.1.3   文件格式
+        txt和robot
+            一行一行的解析，当一行过长时，可以用 (...) 进行换行
+            如果是non-ASCII characters，必须用UTF-8 encoding进行保存
+            resource files建议用.resource作为后缀
+        tsv
+        reStructuredText (reST)  类似于plain text markup syntax
+    2.1.4   解析数据规则
+        会忽略以下的数据：
+            任何在test data section之前的数据
+            Comments中的数据
+            空行
+            一行中最后的空格，除非是转义过的 \
+            单个\，如果不是用来转义，则会忽略
+            #之后的，相当于注释
+        这些被忽略的数据，如果需要在报告中显示，可以用documentation or other metadata，也可以调用关键字Log or Comment输出到log中
+
+        转义
+            \可以转义，${EMPTY} and ${SPACE}也可以用作转义
+            空元素：可以用\ 后面不接东西  或  ${EMPTY} 表示
+    2.2 创建测试数据 TODO
+
+    2.6.2 变量，大小写敏感，忽略空格和下划线
+        纯量变量
+        列表变量
+        字典变量
+        环境变量
+    2.8.2 变量文件，可以动态创建，可以包含任何对象。有两种创建方式
+        直接创建
+            直接创建时，可以直接用key=value，可以是任何类型的对象，包括列表、字典等
+        通过一个特殊的函数获取
+    4.可以创建测试库，RF内核自带了很多的库，但有时候也需要自己创建，这其实就是扩展了吧？所以，其他任何的单独py文件，其实都是没有必要的？
 
 
 

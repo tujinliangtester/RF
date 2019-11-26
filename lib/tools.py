@@ -187,5 +187,6 @@ class tools(object):
 
 if __name__ == '__main__':
     t = tools()
-    t.gzh_pay_password_encode(passwordToken='a19734e0a9978e73', str2='123456', str3=0)
+    # t.gzh_pay_password_encode(passwordToken='a19734e0a9978e73', str2='123456', str3=0)
     # t.gzh_pay_password_encode(passwordToken='6d59db6e763d1d40', str2='123456', str3='10001405')
+    t.gene_mobile()

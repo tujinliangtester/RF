@@ -6,8 +6,8 @@
 Resource    ../userKeyWord.robot
 
 *** Test Cases ***
-哈哈
-    log  1111
+#哈哈
+#    log  1111
 #类生产
 #class
 #    @{activity_id_list}   evaluate   list(${activity_id_str})
@@ -30,25 +30,25 @@ Resource    ../userKeyWord.robot
 #    drawCoupon  711
 
 #    测试环境
-#class
-##    sql interface post raw     ${DjangoRawSqlFunUrl}     {"SQL":"DELETE${SPACE}from${SPACE}${SPACE}pit_market_coupon_to_user${SPACE}WHERE${SPACE}user_id${SPACE}in${SPACE}(SELECT${SPACE}id${SPACE}FROM${SPACE}pit_member_user${SPACE}WHERE${SPACE}mobile${SPACE}='19905301024');"}
-#
-##    @{activity_id_list}   evaluate   list(${activity_id_str})
-##    :FOR    ${activity_id}    IN   @{activity_id_list}
-##    \    handdleActivity     ${activity_id}      1
-#
-#    drawCoupon  850
-#    drawCoupon  849
-#    drawCoupon  848
-#    drawCoupon  847
-#    drawCoupon  846
-#    drawCoupon  845
-#    drawCoupon  844
-#    drawCoupon  843
-#    drawCoupon  842
-#    drawCoupon  841
-#    drawCoupon  840
-#    drawCoupon  839
+class
+#    sql interface post raw     ${DjangoRawSqlFunUrl}     {"SQL":"DELETE${SPACE}from${SPACE}${SPACE}pit_market_coupon_to_user${SPACE}WHERE${SPACE}user_id${SPACE}in${SPACE}(SELECT${SPACE}id${SPACE}FROM${SPACE}pit_member_user${SPACE}WHERE${SPACE}mobile${SPACE}='19905301024');"}
+
+#    @{activity_id_list}   evaluate   list(${activity_id_str})
+#    :FOR    ${activity_id}    IN   @{activity_id_list}
+#    \    handdleActivity     ${activity_id}      1
+
+    drawCoupon  850
+    drawCoupon  849
+    drawCoupon  848
+    drawCoupon  847
+    drawCoupon  846
+    drawCoupon  845
+    drawCoupon  844
+    drawCoupon  843
+    drawCoupon  842
+    drawCoupon  841
+    drawCoupon  840
+    drawCoupon  839
 
 
 #prepare_activity

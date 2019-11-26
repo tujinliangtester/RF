@@ -3,7 +3,9 @@ import sys,os
 
 cf_obj = configparser.ConfigParser()
 
-fpath=os.path.abspath('.')+'\\setting.ini'
+# 这个地方使用相对路径时，会报找不到section的错误，具体什么原因也不知道，网上只找到使用绝对路径的
+# fpath=os.path.abspath('.')+'\\setting.ini'
+fpath='E:\\tjl\\RF\\config\\setting.ini'
 cf_obj.read(fpath,encoding='UTF-8')
 
 
@@ -18,22 +20,22 @@ def sec():
     print(li)
     return li
 
-
 if __name__ == '__main__':
-    # actions = {'get': get, 'help': help}
-    # try:
-    #     action = sys.argv[1]
-    # except IndexError:
-    #     action = 'help'
-    # args = sys.argv[2:]
-    # try:
-    #     actions[action](*args)
-    # except (KeyError, TypeError):
-    #     help()
+    actions = {'get': get, 'help': help}
+    try:
+        action = sys.argv[1]
+    except IndexError:
+        action = 'help'
+    args = sys.argv[2:]
+    try:
+        actions[action](*args)
+    except (KeyError, TypeError):
+        help()
 
 
-    # cf=configparser.ConfigParser()
-    # cf.read('setting.ini')
+    cf=configparser.ConfigParser()
+    cf.read('setting.ini')
+    '''
     cf=cf_obj
 
     secs=cf.sections()
@@ -51,3 +53,4 @@ if __name__ == '__main__':
 
     base_url=cf.get('interface','baseurl')
     print('base_url',base_url)
+    '''
