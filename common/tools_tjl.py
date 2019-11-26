@@ -50,7 +50,7 @@ def sqlstr2str(sql):
 
 if __name__ == '__main__':
     # 注意，如果参数中有中文，则需要在替换后，手动改成中文
-    s = 'money=&finance_id=1&account_address=%E6%B6%82%E6%B0%8F%E4%B8%AD%E5%A4%AE%E9%93%B6%E8%A1%8C&account_name=%E5%B0%B1%E6%98%AF%E6%9C%89%E9%92%B1&account_id=8888&actionPath=%2Fapi%2FActivity%2FOrderForBank'
+    s = 'password=e10adc3949ba59abbe56e057f20f883e&user_account=0307&ts=2019-11-26%2016%3A36%3A48&sign=f3baeeb40b8ec277a52a71a8a23bd481&shift_id=1&pos_id=17&uuid=47fa69c6158155abfb7aba00623b0a04'
     s2 = str(str2dic(s))
     s2 = url_parse_decoder(s2)
     s2 = s2.replace('\'', '\"')
