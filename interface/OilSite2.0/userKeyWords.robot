@@ -3,12 +3,14 @@
 Library     DatabaseLibrary
 Library     RequestsLibrary
 Library     DateTime
+Library     Collections
 *** Keywords ***
 order pos goods cash
     [Arguments]     ${posLoginParam}
     #首先，需要确认环境是否正确
     change pos env
     pos login   ${posLoginParam}
+    return from keyword  111
 
 
 
@@ -19,8 +21,9 @@ order pos goods cash
 pos login
     [Arguments]  ${posLoginParam}
     ${sess}    create session  pos     http://192.168.10.249:8080
-    LOG  ${sess}
-    post request    pos     /PosService/PosLogin    data=${posLoginParam}
+    LOG  ${sess},${posLoginParam}
+    ${res}    post request    pos     /PosService/PosLogin         data=${posLoginParam}
+    Log Many  ${res.json()}
 
 
 
@@ -38,6 +41,6 @@ change pos env
 demo
     ${ts}=   Get Current Date   exclude_millis=True
     LOG  ${ts}
-    #登录有问题 todo
-    ${res}=    order pos goods cash    {"password":"e10adc3949ba59abbe56e057f20f883e","user_account":"0307","ts":"${ts}","sign":"f3baeeb40b8ec277a52a71a8a23bd481","shift_id":"1","pos_id":"17","uuid":"47fa69c6158155abfb7aba00623b0a04"}
-    LOG  ${res}
+    #登录有问题 todo 签名还有错误，需要根据具体的逻辑，通过创建自己的测试库进行处理
+    ${data}=     Create Dictionary   password=e10adc3949ba59abbe56e057f20f883e   user_account=0307   ts=${ts}   sign=f3baeeb40b8ec277a52a71a8a23bd481   shift_id=1  pos_id=17   uuid=47fa69c6158155abfb7aba00623b0a04
+    ${res}=    order pos goods cash    ${data}
