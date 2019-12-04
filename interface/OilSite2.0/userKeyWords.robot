@@ -5,6 +5,7 @@ Library     RequestsLibrary
 Library     DateTime
 Library     Collections
 Library     ../../lib/myTestLib.py
+Library     CSVLib
 *** Keywords ***
 order pos goods cash
     [Arguments]     ${posLoginParam}
@@ -17,30 +18,31 @@ order pos goods cash
 
 pos login
     [Arguments]  ${posLoginParam}
-    ${sess}    create session  pos     http://192.168.10.249:8080
-    LOG  ${sess},${posLoginParam}
+    ${posSess}    create session  pos     http://192.168.10.249:8080
+    log  ${posLoginParam}
     ${res}    post request    pos     /PosService/PosLogin         data=${posLoginParam}
-    Log Many  ${res.json()}
     ${res}  evaluate    str(${res.json()})
-    should not contain  ${res}  'code': -2
-
+    should not contain any  ${res}  'code': -2  'code': -1
 
 
 change pos env
     #这里必须写绝对路径，否则会报错
     Connect To Database    dbConfigFile=E:\\tjl\\RF\\config\\retailDB.cfg
     #变成类生产环境
-    Execute Sql String    UPDATE base_config set config_value='http://b.gas.314pay.net' WHERE config_key in ('yyxt_drp_site_spare_url','yyxt_drp_site_url');
+    ${csvDic}=   read csv test data  interface/OilSite2.0/demo.csv    change pos env    isSql=True
+    Execute Sql String    ${csvDic}[sql_str]
     Disconnect from Database
+
 
 *** Test Cases ***
 demo
     ${ts}=   Get Current Date   exclude_millis=True
-    LOG  ${ts}
-    #登录有问题 todo 签名还有错误，需要根据具体的逻辑，通过创建自己的测试库进行处理
-    #    今天整了好久，还是不对。。。  c#中的ToMd5（）和签名字符串的拼接都经过验证已经正确了，目前找到的原因，可能是在发起请求时，对参数的url编码不正确，可能需要进行指定
-    ${toSign}=      Create Dictionary   password=e10adc3949ba59abbe56e057f20f883e   user_account=0307   ts=2019-12-03 16:29:33  sign=362fdd8c40dec02f4249cf261adf4c73   shift_id=1  pos_id=17   uuid=47fa69c6158155abfb7aba00623b0a04
-    log many  ${toSign}
-    ${sign}=        mySign  ${toSign}
-    ${data}=     Create Dictionary   password=e10adc3949ba59abbe56e057f20f883e   user_account=0307   ts=${ts}   sign=${sign}   shift_id=1  pos_id=17   uuid=47fa69c6158155abfb7aba00623b0a04
+    #    终于成功了，其实在这里浪费的时间有点多了，在做了c#的单元测试之后，应该一步一步的进行校验，理清一个思路出来，其实也是一种测试思想
+    #注意，下面参数中的password是123456加密之后的，这一块暂时不实现加密了，等以后需要了再进行
+    ${toSignDic}=   read csv test data  interface/OilSite2.0/demo.csv    pos login
+    set to dictionary   ${toSignDic}    ts=${ts}
+    ${sign}=        mySign  ${toSignDic}
+    ${data}=     set to dictionary   ${toSignDic}    sign=${sign}
     ${res}=    order pos goods cash    ${data}
+
+

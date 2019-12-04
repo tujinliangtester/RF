@@ -1,5 +1,5 @@
 import hashlib
-
+import csv
 
 def mySign(toSignDic):
     toSignStr = ''
@@ -16,11 +16,41 @@ def mySign(toSignDic):
 
     return sign_md5.lower()
 
+def read_csv_test_data(csv_file, key_word_name, isSql=False, delimiter='\n'):
+    '''
+    读取csv文件，查找给定的关键字名称对应的参数
+    :param csv_file:csv文件名称
+    :param key_word_name:关键字名称
+    :param isSql:如果去的测试数据是sql语句的，需要单独进行处理，
+                当然，如果其他类型的参数中，带有 , 符号的，也会出现，具体遇到了再处理
+    :param delimiter:对csv文件的分隔符，默认是换行符，即一行一行的分割
+    :return:csv文件中，该关键字对应的参数和值的字典
+    '''
+    print(isSql)
+    file = open(csv_file, 'r')
+    csvfile = csv.reader(file, delimiter=delimiter)
+    output = {}
+    for row in csvfile:
+        if(isSql==False):
+            #row的分布为：关键字名称	参数名称	参数值
+            inner_row=row[0].split(',')
+            if(inner_row[0]==key_word_name):
+                output[inner_row[1]]=inner_row[2]
+        else:
+            inner_row = row[0].split(',')
+            if (inner_row[0] == key_word_name):
+                tmp_lenth=len(key_word_name)+1+len(inner_row[1])+1
+                #注意，csv在处理字符串时，如果字符串本身带有 , ，则会自动加上双引号
+                if(row[0][tmp_lenth:][0]=='"'):
+                    output[inner_row[1]] = row[0][tmp_lenth:][1:-1]
+                else:
+                    output[inner_row[1]] = row[0][tmp_lenth:]
+    file.close()
+    return output
 
 if __name__ == '__main__':
-    tmpdic = {'password': 'e10adc3949ba59abbe56e057f20f883e', 'user_account': '0307', 'ts': '2019-12-03 17:22:44',  'shift_id': '1', 'pos_id': '17', 'uuid': '47fa69c6158155abfb7aba00623b0a04'}
-    res = mySign(tmpdic)
+    csv_file='E:\\tjl\\RF\\interface\\OilSite2.0\\demo.csv'
+    key_word_name='change pos env'
+    res=read_csv_test_data(csv_file, key_word_name, isSql=True)
     print(res)
-#     真实登录
-#     password=e10adc3949ba59abbe56e057f20f883e&user_account=0307&ts=2019-12-03%2017%3A22%3A44&sign=143d88bfceb77fc75832ab1d8e234f6f&shift_id=1&pos_id=17&uuid=47fa69c6158155abfb7aba00623b0a04
-# password=e10adc3949ba59abbe56e057f20f883e&user_account=0307&ts=2019-12-03 17:22:44&sign=143d88bfceb77fc75832ab1d8e234f6f&shift_id=1&pos_id=17&uuid=47fa69c6158155abfb7aba00623b0a04
+

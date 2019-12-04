@@ -368,9 +368,11 @@ RobotFrameworkUserGuide学习
                     2.去C:\ProgramData\Anaconda3\Lib\site-packages这个路径下，（包安装的原始地址）
 
                     把tornado-4.5.1-py3.6.egg-这个文件和tornado文件夹干掉就好了
+    5.2Test data documentation tool (Testdoc)
+        好像暂时用不到
 
-
-
+How to write good test cases using Robot Framework学习
+    最重要的是，保持用例尽可能的简单，并且容易维护
 
 
 
