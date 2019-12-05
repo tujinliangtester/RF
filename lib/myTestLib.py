@@ -7,6 +7,7 @@ def mySign(toSignDic):
     toSignList=sorted(toSignDic.items(),key=lambda toSignDic:toSignDic[0],reverse=False)
     for item in toSignList:
         toSignStr += item[0] + '=' + item[1] + '&'
+    #注意，这里的appKey是从数据库中取来写死的
     appKey='sjyt_jg_2017kmkf'
     toSignStr+="key=" + appKey
 
