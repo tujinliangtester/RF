@@ -22,15 +22,11 @@ pos login
     ${posSess}    create session  posSess     http://192.168.10.249:8080
     ${res}    post request    posSess     /PosService/PosLogin         data=${posLoginParam}
 
-        #todo 对响应的处理有问题，始终没办法处理成json或dict 不好整啊。。。
+    ${res_list}     deal http response  ${res}      data
+    set test variable  ${poslogin_json}   ${res_list}[0]
+    set test variable  ${poslogin_data_json}   ${res_list}[1]
+    should be equal as numbers  ${res.json()['code']}  -3
 
-    log  ${res.text}
-    ${res3}     replace string  ${res.text}     null    None
-    log  ${res3}
-    ${res2}  evaluate   json.loads(${res3})    json
-    log  ${res2}
-
-    should not contain any  ${res.json()}  'code': -2  'code': -1
 
 
 change pos env

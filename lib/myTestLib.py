@@ -1,5 +1,6 @@
 import hashlib
 import csv
+import simplejson
 
 def mySign(toSignDic):
     toSignStr = ''
@@ -47,6 +48,24 @@ def read_csv_test_data(csv_file, key_word_name, isSql=False, delimiter='\n'):
                     output[inner_row[1]] = row[0][tmp_lenth:]
     file.close()
     return output
+
+
+def deal_http_response(http_response,*kwargs):
+    '''
+    由于标准库、扩展库及第三方库的处理都不理想，尝试自己写个函数来处理
+    :param http_response:http的响应
+    :param response_key:响应中，body里要查找的键（因为一次json的变化可能对子json不起作用）
+    :return:响应中的body，json格式
+    '''
+    http_res_text=http_response.text
+    http_res_json=simplejson.loads(http_res_text)
+    if(len(kwargs)==0):
+        tmp_list=[http_res_json]
+        return tmp_list
+    response_key=kwargs[0]
+    http_res_data=http_res_json[response_key]
+    http_res_data_json=simplejson.loads(http_res_data)
+    return http_res_json,http_res_data_json
 
 if __name__ == '__main__':
     csv_file='E:\\tjl\\RF\\interface\\OilSite2.0\\demo.csv'
