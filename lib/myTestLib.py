@@ -50,6 +50,15 @@ def read_csv_test_data(csv_file, key_word_name, isSql=False, delimiter='\n'):
     file.close()
     return output
 
+def get_response_header(http_response):
+    '''
+    获取相应头，并返回为字典
+    :param http_response: 响应
+    :return: 头部字典
+    '''
+    http_res_header=http_response.headers
+    return http_res_header
+
 
 def deal_http_response(http_response,*kwargs):
     '''
@@ -65,12 +74,49 @@ def deal_http_response(http_response,*kwargs):
         return tmp_list
     response_key=kwargs[0]
     http_res_data=http_res_json[response_key]
+    if(isinstance(http_res_data,dict)):
+        return http_res_json,http_res_data
     http_res_data_json=simplejson.loads(http_res_data)
     return http_res_json,http_res_data_json
 
-if __name__ == '__main__':
-    csv_file='E:\\tjl\\RF\\interface\\OilSite2.0\\demo.csv'
-    key_word_name='change pos env'
-    res=read_csv_test_data(csv_file, key_word_name, isSql=True)
-    print(res)
+#todo des加密、解密有问题，登录直接给header算了
+def des_decrypt(data ,KEY ):
+    from binascii import b2a_hex, a2b_hex
+    import base64
+    from pyDes import des
+    n = len(data) % 8
+    if (n != 0):
+        data = data + ' ' * n
+    k=des(KEY)
+    d=k.decrypt(data)
+    return b2a_hex(d)
 
+def des_encryption(data ,KEY ):
+    from binascii import b2a_hex, a2b_hex
+    import base64
+    from pyDes import des
+    n = len(data) % 8
+    if (n != 0):
+        data = data + ' ' * n
+    k = des(KEY)
+    d = k.encrypt(data)
+    return b2a_hex(d)
+
+
+#todo
+def gzh_pay_password(password,password_token,real_coin_amt):
+    '''
+    支付密码 = md5(md5(md5(password_token)+md5(password))+md5((int)real_coin_amt))
+    :param pwd: 明文密码
+    :return: 加密后的密码
+    '''
+
+
+if __name__ == '__main__':
+    data='wuYhYatkiuo='
+
+    key='sjyt_des'
+    d=des_decrypt(data,key)
+    print(d)
+    res_encrypt=des_encryption(data=d,KEY=key)
+    print(res_encrypt)
