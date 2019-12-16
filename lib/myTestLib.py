@@ -103,20 +103,45 @@ def des_encryption(data ,KEY ):
     return b2a_hex(d)
 
 
-#todo
-def gzh_pay_password(password,password_token,real_coin_amt):
+def gzh_pay_password(password,password_token,real_coin_amt,order_id,type):
     '''
-    支付密码 = md5(md5(md5(password_token)+md5(password))+md5((int)real_coin_amt))
-    :param pwd: 明文密码
-    :return: 加密后的密码
+    支付密码加密 md5(md5(md5(password_token)+md5(password))+md5((int)real_coin_amt))
+    :param password: 明文密码
+    :param password_token: 服务器接口tickelist中的password_token
+    :param real_coin_amt: 会员卡实付金额
+    :param order_id: 订单id，order接口中返回
+    :param type: 为0时，代表是提交订单，用实付金额加密；非0代表支付订单，用订单id加密
+    :return: 支付密码加密之后的密文
     '''
+    m1=hashlib.md5()
+    m2=hashlib.md5()
+    m3=hashlib.md5()
+    m4=hashlib.md5()
+    m6=hashlib.md5()
 
+    m1.update(password_token.encode('utf-8'))
+    tmp1=m1.hexdigest()
+
+    m2.update(password.encode('utf-8'))
+    tmp2=m2.hexdigest()
+    if(str(type)!='0'):
+        print('为0时，代表是提交订单，用实付金额加密')
+        m3.update(str(int(real_coin_amt)).encode('utf-8'))
+        tmp3=m3.hexdigest()
+    else:
+        m3.update(str(order_id).encode('utf-8'))
+        tmp3 = m3.hexdigest()
+    tmp4=tmp1+tmp2
+    m4.update(tmp4.encode('utf-8'))
+    tmp5=m4.hexdigest()
+
+
+    tmp6=tmp5+tmp3
+    m6.update(tmp6.encode('utf-8'))
+    tmp7=m6.hexdigest()
+    return tmp7
 
 if __name__ == '__main__':
-    data='wuYhYatkiuo='
-
-    key='sjyt_des'
-    d=des_decrypt(data,key)
-    print(d)
-    res_encrypt=des_encryption(data=d,KEY=key)
-    print(res_encrypt)
+    # 1dc2964308e55024d3e18d889de3175b
+    res=gzh_pay_password('111111','e366ac82c6f76fae',93.07,0,0)
+    print(res)
