@@ -55,7 +55,8 @@ md5 gzh pay password
 
 
 TicketList
-    ${requestData}=     read csv test data  interface/OilSite2.0/OilOrder/Order.csv    Class_01_TicketList
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
     ${gzhSess}    create session  gzhSess     http://testbiz.314pay.net
 
     ${tmp_header}=     read csv test data  interface/OilSite2.0/OilOrder/Order.csv    Class_01_TicketList_header
@@ -88,17 +89,35 @@ TicketList
 
 
 ReadyPayMoney
-    ${requestData}=     read csv test data  interface/OilSite2.0/OilOrder/Order.csv    Class_01_ReadyPayMoney
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data  ${csv_path}    ${test_name_kw_name}
     ${gzhSess}    create session  gzhSess     http://testbiz.314pay.net
     set to dictionary  ${requestData}   site_id=${site_id}  gun_id=${gun_id}    platform_activity_id=${platform_activity_id}
-    set to dictionary  ${requestData}   coupon_id=${coupon_id}  coin_amt=${coin_amt}    score_amt=${score_amt}
+    set to dictionary  ${requestData}   coupon_id=${coupon_id}  coin_amt=${coin_amt}
     set to dictionary  ${requestData}   org_amt=${org_amt}  nogas_amt=${nogas_amt}    coupon_nogas_id=${coupon_nogas_id}
     set to dictionary  ${requestData}   coupon_all_id=${coupon_all_id}  app_client_type=${app_client_type}
     ${res}    post request    gzhSess     /OilOrder/ReadyPayMoney         data=${requestData}  headers=${headerGZH}
 
+    ${res_list}     deal http response  ${res}      data
+    set test variable  ${coupon_id}    ${res_list}[1][coupon_id]
+    set test variable  ${coin_amt}     ${res_list}[1][coin_amt]
+    set test variable  ${score_amt}    ${res_list}[1][score_amt]
+    #    set test variable  vouchers    ${res_list}[1][ReadyPayMoney][score_amt]
+    set test variable  ${org_amt}  ${res_list}[1][org_amt]
+    set test variable  ${nogas_amt}    ${res_list}[1][nogas_amt]
+    set test variable  ${coupon_nogas_id}  ${res_list}[1][coupon_nogas_id]
+    set test variable  ${coupon_all_id }   ${res_list}[1][coupon_all_id]
+    set test variable  ${app_client_type}  ${res_list}[1][app_client_type]
+    set test variable  ${direct_id}  ${res_list}[1][direct_id]
+    set test variable  ${activity_id}  ${res_list}[1][activity_id]
+    set test variable  ${real_score_amt}  ${res_list}[1][real_score_amt]
+    set test variable  ${real_coin_amt}  ${res_list}[1][real_coin_amt]
+    set test variable  ${real_pay_amt}  ${res_list}[1][real_pay_amt]
+
 
 order
-    ${requestData}=     read csv test data  interface/OilSite2.0/OilOrder/Order.csv    Class_01_order
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data  ${csv_path}    ${test_name_kw_name}
     ${gzhSess}    create session  gzhSess     http://testbiz.314pay.net
     set to dictionary  ${requestData}   site_id=${site_id}  gun_id=${gun_id}    direct_id=${direct_id}
     set to dictionary  ${requestData}   activity_id=${activity_id}  platform_activity_id=${platform_activity_id}    coupon_id=${coupon_id}
@@ -112,14 +131,25 @@ order
     md5 gzh pay password    password=${userInfo}[password]    password_token=${password_token}     real_coin_amt=${real_pay_amt}   order_id=0   type=1
 
     set to dictionary  ${requestData}   pay_password=${gzh_pay_password}
+
+    MyInfo
+    set test variable    ${coin_before}  float(${MyInfo}[0][ext][finance][coin_balance])
+    set test variable    ${score_before}  float(${MyInfo}[0][ext][finance][score_balance])
+
     ${res}    post request    gzhSess     /OilOrder/order         data=${requestData}  headers=${headerGZH}
 
     ${res_list}     deal http response  ${res}      data
     set test variable    ${order_id}  ${res_list}[1][id]
     set test variable    ${pay_method_id}  ${res_list}[1][pay_method_id]
 
+    MyInfo
+    set test variable    ${score_after}  float(${MyInfo}[0][ext][finance][score_balance])
+    ${score_change_real}     evaluate   ${score_before}-${score_after}
+    should be equal as numbers  ${score_change_real}    ${real_score_amt}
+
 PayOil
-    ${requestData}=     read csv test data  interface/OilSite2.0/OilOrder/Order.csv    Class_01_PayOil
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data  ${csv_path}    ${test_name_kw_name}
     ${gzhSess}    create session  gzhSess     http://testbiz.314pay.net
     set to dictionary  ${requestData}   order_id=${order_id}    real_coin_amt=${real_pay_amt}
 
@@ -130,6 +160,22 @@ PayOil
     ${res}    post request    gzhSess     /OilOrder/PayOil         data=${requestData}  headers=${headerGZH}
     ${res_list}     deal http response  ${res}
     should be equal as numbers  ${res_list}[0][code]   1
+
+    MyInfo
+    set test variable    ${coin_after}  float(${MyInfo}[0][ext][finance][coin_balance])
+
+    ${coin_change_real}     evaluate   ${coin_before}-${coin_after}
+    should be equal as numbers  ${coin_change_real}     ${real_pay_amt}
+
+MyInfo
+    sleep  1
+    ${MyInfoRequestData}=     read csv test data  interface/OilSite2.0/userInfo.csv    userInfo
+    ${res}    post request    gzhSess     /My/Info         data=${MyInfoRequestData}  headers=${headerGZH}
+    ${res_list}     deal http response  ${res}
+    set test variable  ${MyInfo}    ${res_list}
+
+
+
 
 #*** Test Cases ***
 #demo

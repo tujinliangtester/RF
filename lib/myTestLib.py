@@ -110,7 +110,7 @@ def gzh_pay_password(password,password_token,real_coin_amt,order_id,type):
     :param password_token: 服务器接口tickelist中的password_token
     :param real_coin_amt: 会员卡实付金额
     :param order_id: 订单id，order接口中返回
-    :param type: 为0时，代表是提交订单，用实付金额加密；非0代表支付订单，用订单id加密
+    :param type: 为非0时，代表是提交订单，用实付金额加密；0代表支付订单，用订单id加密
     :return: 支付密码加密之后的密文
     '''
     m1=hashlib.md5()
