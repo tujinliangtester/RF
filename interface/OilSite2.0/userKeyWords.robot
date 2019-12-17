@@ -7,6 +7,11 @@ Library     Collections
 Library     ../../lib/myTestLib.py
 Library     CSVLib
 Library     String
+
+*** Variables ***
+${gzhBaseUrl}   http://testbiz.314pay.net
+${yypcBaseUrl}  http://b.gas.314pay.net
+${yypcLoginCSV}  E:/tjl/RF/interface/OilSite2.0/DrpAccount/login.csv
 *** Keywords ***
 order pos goods cash
     [Arguments]     ${posLoginParam}
@@ -53,16 +58,19 @@ md5 gzh pay password
     ${gzh_pay_password_tmp}=    gzh pay password    password=${password}    password_token=${password_token}     real_coin_amt=${real_coin_amt}     order_id=${order_id}     type=${type}
     set test variable  ${gzh_pay_password}  ${gzh_pay_password_tmp}
 
+md5 yypc login
+    [Arguments]     ${pwd}  ${mobile}  ${ts}
+    log many  ${pwd}  ${mobile}  ${ts}
+    ${md5_yypc_login_tmp}=    yypc login password    pwd=${pwd}    mobile=${mobile}     ts=${ts}
+    set test variable  ${md5_yypc_login_pwd}  ${md5_yypc_login_tmp}
 
 TicketList
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
-    ${gzhSess}    create session  gzhSess     http://testbiz.314pay.net
 
-    ${tmp_header}=     read csv test data  interface/OilSite2.0/OilOrder/Order.csv    Class_01_TicketList_header
-    set to dictionary    ${tmp_header}      Content-Type=application/x-www-form-urlencoded
-    set test variable  ${headerGZH}    ${tmp_header}
+    read test user info
 
+    ${gzhSess}    create session  gzhSess     ${gzhBaseUrl}
     ${res}    post request    gzhSess     /OilOrder/TicketList         data=${requestData}  headers=${headerGZH}
 
     ${res_list}     deal http response  ${res}      data
@@ -170,22 +178,183 @@ PayOil
 MyInfo
     sleep  1
     ${MyInfoRequestData}=     read csv test data  interface/OilSite2.0/userInfo.csv    userInfo
+    ${gzhSess}    create session  gzhSess     http://testbiz.314pay.net
     ${res}    post request    gzhSess     /My/Info         data=${MyInfoRequestData}  headers=${headerGZH}
     ${res_list}     deal http response  ${res}
     set test variable  ${MyInfo}    ${res_list}
 
+SiteSubFleetList
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    read test user info
+    ${requestData}=     read csv test data  ${csv_path}    ${test_name_kw_name}
+    set test variable   ${site_id}  ${requestData}[site_id]
+
+    ${gzhSess}    create session  gzhSess     ${gzhBaseUrl}
+    ${res}    post request    gzhSess     /OilSite/SiteSubFleetList      data=${requestData}        headers=${headerGZH}
+
+    ${res_list}     deal http response  ${res}
+
+    should be equal as numbers  ${res_list}[0][code]    1
+
+    #这里直接写死的取返回结果中的第一个子卡
+    set test variable  ${sub_card_id}    ${res_list}[0][data][0][id]
 
 
 
-#*** Test Cases ***
-#demo
-#    ${ts}=   Get Current Date   exclude_millis=True
-#    #    终于成功了，其实在这里浪费的时间有点多了，在做了c#的单元测试之后，应该一步一步的进行校验，理清一个思路出来，其实也是一种测试思想
-#    #注意，下面参数中的password是123456加密之后的，这一块暂时不实现加密了，等以后需要了再进行
-#    ${toSignDic}=   read csv test data  interface/OilSite2.0/demo.csv    pos login
-#    set to dictionary   ${toSignDic}    ts=${ts}
-#    ${sign}=        mySign  ${toSignDic}
-#    ${data}=     set to dictionary   ${toSignDic}    sign=${sign}
-#    ${res}=    order pos goods cash    ${data}
+FleetReadyPayMoney
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    read test user info
+    ${requestData}=     read csv test data  ${csv_path}    ${test_name_kw_name}
+    set test variable   ${gun_id}   ${requestData}[gun_id]
+    set test variable   ${org_amt}   ${requestData}[org_amt]
+
+    set to dictionary  ${requestData}   site_id=${site_id}      sub_card_id=${sub_card_id}
 
 
+    ${gzhSess}    create session  gzhSess     ${gzhBaseUrl}
+    ${res}    post request    gzhSess     /OilOrder/FleetReadyPayMoney         data=${requestData}  headers=${headerGZH}
+
+    ${res_list}     deal http response  ${res}      data
+
+    should be equal as numbers  ${res_list}[0][code]    1
+    set test variable   ${coupon_id}    ${res_list}[1][coupon_id]
+    set test variable   ${coupon_amt}    ${res_list}[1][coupon_amt]
+    set test variable   ${pay_amt}    ${res_list}[1][pay_amt]
+    set test variable   ${password_token}    ${res_list}[0][ext][password_token]
+
+FleetOrder
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    read test user info
+
+    ${requestData}=     read csv test data  ${csv_path}    ${test_name_kw_name}
+    set to dictionary  ${requestData}   site_id=${site_id}      gun_id=${gun_id}    sub_card_id=${sub_card_id}
+    set to dictionary  ${requestData}   coupon_id=${coupon_id}      org_amt=${org_amt}    coupon_amt=${coupon_amt}
+    set to dictionary  ${requestData}   pay_amt=${pay_amt}
+
+    md5 gzh pay password    password=${fleetPassword}    password_token=${password_token}     real_coin_amt=${pay_amt}    order_id=0    type=2
+    set to dictionary  ${requestData}   pay_password=${gzh_pay_password}
+
+    ${gzhSess}    create session  gzhSess     ${gzhBaseUrl}
+    ${res}    post request    gzhSess     /OilOrder/FleetOrder         data=${requestData}  headers=${headerGZH}
+
+    ${res_list}     deal http response  ${res}
+    should be equal as numbers  ${res_list}[0][code]    1
+
+
+
+read test user info
+    ${MyInfoRequestData}=     read csv test data  interface/OilSite2.0/userInfo.csv    userInfo
+    ${gzhHeadersRequestData}=     read csv test data  interface/OilSite2.0/userInfo.csv    gzhHeaders
+    set test variable  ${headerGZH}     ${gzhHeadersRequestData}
+    set test variable  ${password}     ${MyInfoRequestData}[password]
+    set test variable  ${fleetPassword}     ${MyInfoRequestData}[fleetPassword]
+
+
+ProductSettlement
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+
+    read test user info
+
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    ${gzhSess}    create session  gzhSess     http://testbiz.314pay.net
+
+    ${res}    post request    gzhSess     /OilOrder/ProductSettlement         data=${requestData}  headers=${headerGZH}
+    ${res_list}     deal http response  ${res}      data
+    set test variable  ${site_id}   ${res_list}[1][ReadyPayMoney][site_id]
+    set test variable  ${feiyou_amt}   ${res_list}[1][ReadyPayMoney][feiyou_amt]
+    set test variable  ${password_token}   ${res_list}[0][ext][password_token]
+
+
+
+FeiyouReadyPayMoney
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    ${gzhSess}    create session  gzhSess     http://testbiz.314pay.net
+    set to dictionary  ${requestData}   site_id=${site_id}      feiyou_amt=${feiyou_amt}
+
+    ${res}    post request    gzhSess     /OilOrder/FeiyouReadyPayMoney         data=${requestData}  headers=${headerGZH}
+    ${res_list}     deal http response  ${res}      data
+    set test variable    ${real_score_amt}  ${res_list}[1][real_score_amt]
+    set test variable    ${real_pay_amt}  ${res_list}[1][real_pay_amt]
+
+FeiyouOrder
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    ${gzhSess}    create session  gzhSess     http://testbiz.314pay.net
+    set to dictionary   ${requestData}     site_id=${site_id}      real_score_amt=${real_score_amt}     real_coin_amt=${real_pay_amt}
+    set to dictionary   ${requestData}      feiyou_amt=${feiyou_amt}      app_client_type=1
+
+    ${userInfo}=     read csv test data  interface/OilSite2.0/userInfo.csv    userInfo
+    md5 gzh pay password    password=${userInfo}[password]    password_token=${password_token}     real_coin_amt=${real_pay_amt}   order_id=0   type=1
+    set to dictionary  ${requestData}   pay_password=${gzh_pay_password}
+
+    MyInfo
+    set test variable    ${coin_before}  float(${MyInfo}[0][ext][finance][coin_balance])
+    set test variable    ${score_before}  float(${MyInfo}[0][ext][finance][score_balance])
+
+    ${res}    post request    gzhSess     /OilOrder/FeiyouOrder         data=${requestData}  headers=${headerGZH}
+    ${res_list}     deal http response  ${res}      data
+    set test variable    ${order_id}  ${res_list}[1][id]
+
+yypc login
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${headers}  create dictionary    Content-Type=application/x-www-form-urlencoded
+
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+
+    servertimestamp
+    set to dictionary   ${requestData}  timestamp=${timestamp}
+
+    md5 yypc login  ${requestData}[password]      ${requestData}[mobile]    ${timestamp}
+
+    set to dictionary  ${requestData}   password=${md5_yypc_login_pwd}
+
+    ${gzhSess}    create session  yypcSess     ${yypcBaseUrl}
+    ${res}    post request    yypcSess     /DrpAccount/login       data=${requestData}  headers=${headers}
+    ${res_list}     deal http response  ${res}
+    check code      ${res_list}
+
+    set cookie  ${res}
+
+servertimestamp
+    ${requestData}      create dictionary     mobile=17000000000
+    ${headers}  create dictionary    Content-Type=application/x-www-form-urlencoded
+
+    set to dictionary  ${requestData}
+    ${gzhSess}    create session  yypcSess     ${yypcBaseUrl}
+    ${res}    post request    yypcSess     /DrpAccount/servertimestamp       data=${requestData}    headers=${headers}
+    ${res_list}     deal http response  ${res}
+    check code  ${res_list}
+
+    set test variable   ${timestamp}    ${res_list}[0][data]
+
+check code
+    [Arguments]  ${res_list}
+    should be equal as numbers  ${res_list}[0][code]    1
+
+#${res}是http响应
+set cookie
+    [Arguments]  ${res}
+    ${rowTmp}   create list
+    ${rowTmps}   create list
+    draw from str   ${res.headers}[Set-Cookie]  bizweb_UserMember
+    append to list  ${rowTmp}   yypc_header     Cookie      ${res.headers}[Set-Cookie]
+    log list  ${rowTmp}
+    append to list  ${rowTmps}  ${rowTmp}
+    write to csv    ${yypcLoginCSV}     ${rowTmps}
+
+
+ALLOrders
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    set yypc headers    ${yypcLoginCSV}     yypc_header
+
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+
+    ${yypcSess}    create session  yypcSess     ${yypcBaseUrl}
+    ${res}    post request    yypcSess     /GasTradeOrder/ALLOrders      data=${requestData}    headers=${yypcHeaders}
+
+
+set yypc headers
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    set test variable  ${yypcHeaders}   ${requestData}

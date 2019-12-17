@@ -50,6 +50,17 @@ def read_csv_test_data(csv_file, key_word_name, isSql=False, delimiter='\n'):
     file.close()
     return output
 
+def write_to_csv(fileName,rows):
+    '''
+    写入到csv文件
+    :param fileName:csv文件名称
+    :param rows: 需要写入的数据，注意，这里是一个二维数组
+    :return: 成功
+    '''
+    with open(fileName,'a+',newline='') as f:
+        csv_writer = csv.writer(f)
+        csv_writer.writerows(rows)
+
 def get_response_header(http_response):
     '''
     获取相应头，并返回为字典
@@ -74,6 +85,7 @@ def deal_http_response(http_response,*kwargs):
         return tmp_list
     response_key=kwargs[0]
     http_res_data=http_res_json[response_key]
+    print('http_res_data:',http_res_data)
     if(isinstance(http_res_data,dict)):
         return http_res_json,http_res_data
     http_res_data_json=simplejson.loads(http_res_data)
@@ -141,7 +153,48 @@ def gzh_pay_password(password,password_token,real_coin_amt,order_id,type):
     tmp7=m6.hexdigest()
     return tmp7
 
+
+def yypc_login_password(pwd,mobile,ts):
+    '''
+    #md5(md5(md5(pwd)+ md5(mobile))+ md5(ts + mobile))
+    :param pwd:明文密码
+    :param mobile:登录手机号
+    :param ts:时间戳
+    :return:登录加密后的密码
+    '''
+    m1=hashlib.md5()
+    m1.update(str(pwd).encode('utf-8'))
+    md5_pwd=m1.hexdigest()
+
+    m2=hashlib.md5()
+    m2.update(str(mobile).encode('utf-8'))
+    md5_mobile=m2.hexdigest()
+
+    m3=hashlib.md5()
+    m3.update((str(ts)+str(mobile)).encode('utf-8'))
+    md5_mobile_ts=m3.hexdigest()
+
+    m4 = hashlib.md5()
+    m4.update((md5_pwd+md5_mobile).encode('utf-8'))
+    md5_1 = m4.hexdigest()
+    print('md5_1:',md5_1)
+    m5 = hashlib.md5()
+    m5.update((md5_1 + md5_mobile_ts).encode('utf-8'))
+    md5_res = m5.hexdigest()
+
+    return md5_res
+#todo
+def draw_from_str(baseStr,targetStr):
+    '''
+    由于返回的数据，存入csv时，逗号会成为一个分隔符，导致处理出错，需要单独写一个方法来进行处理，提取出想要的字符串
+    :param baseStr:
+    :param targetStr:
+    :return:想要的字符串
+    '''
+    pass
+
 if __name__ == '__main__':
     # 1dc2964308e55024d3e18d889de3175b
-    res=gzh_pay_password('111111','e366ac82c6f76fae',93.07,0,0)
+    #cc555c0a078159d6f3cf3b4437e9ccd3
+    res=yypc_login_password('123456','17000000000','2019121710104344424',)
     print(res)

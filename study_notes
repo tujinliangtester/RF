@@ -279,7 +279,7 @@ RobotFrameworkUserGuide学习
             缺点是模块名（文件名）必须与类名称一致
     2.5.3 库别名
     2.5.4 标准库
-        具体有待学习 todo
+        具体有待学习
     2.5.5 扩展库
         开源社区有许多库，具体可以查找http://robotframework.org
         自己创建的库，后续会有介绍

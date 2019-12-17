@@ -1,0 +1,8 @@
+说明：本测试数据文件是根据用例名+关键字来作为主键的，如果一个用例中同一个关键字使用了多次，且数据不同值时，可以在后面加上编号，并且rf用例中留意调整,,
+用例名+关键字名称,参数名称,参数值
+Login_yypc_login,mobile,17000000000
+Login_yypc_login,password,123456
+yypc_header,Content-Type,application/x-www-form-urlencoded
+yypc_header,Cookie,"ASP.NET_SessionId=ug3hpd43neqnannvfcaaqggg; path=/; HttpOnly, bizweb_UserMember=userID=hqbk2gPbDbU=; expires=Wed, 18-Dec-2019 09:40:37 GMT; path=/"
+yypc_header,Cookie,"ASP.NET_SessionId=w1jlsfswpi05plotp2auify1; path=/; HttpOnly, bizweb_UserMember=userID=hqbk2gPbDbU=; expires=Wed, 18-Dec-2019 09:40:53 GMT; path=/"
+yypc_header,Cookie,"ASP.NET_SessionId=sga1ipcbj3ujhsdy3du5cy4o; path=/; HttpOnly, bizweb_UserMember=userID=hqbk2gPbDbU=; expires=Wed, 18-Dec-2019 09:56:59 GMT; path=/"

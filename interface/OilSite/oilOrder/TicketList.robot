@@ -14,7 +14,6 @@ Suite Setup    setUps
 
 *** Keywords ***
 setUps
-    #todo
     #准备活动的启用停用，重置活动，由于在当前的环境下，暂不需要准备活动，后续要补充上
     resetActivity
     #重置优惠券，并领取
