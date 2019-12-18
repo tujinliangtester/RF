@@ -1,7 +1,7 @@
 
 *** Settings ***
 Resource  ../userKeyWords.robot
-Test Setup     pos login
+Test Setup     mySetUp
 *** Variables ***
 ${SynchroOrderCSV}  interface/OilSite2.0/PosService/SynchroOrder.csv
 

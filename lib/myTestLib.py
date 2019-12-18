@@ -6,7 +6,7 @@ def mySign(toSignDic):
     toSignStr = ''
     toSignList=sorted(toSignDic.items(),key=lambda toSignDic:toSignDic[0],reverse=False)
     for item in toSignList:
-        toSignStr += item[0] + '=' + item[1] + '&'
+        toSignStr += str(item[0]) + '=' + str(item[1]) + '&'
     #注意，这里的appKey是从数据库中取来写死的
     appKey='sjyt_jg_2017kmkf'
     toSignStr+="key=" + appKey
@@ -183,7 +183,44 @@ def yypc_login_password(pwd,mobile,ts):
 
     return md5_res
 
+def my_md5(pwd):
+    '''
+    对字符串md5加密
+    :param pwd:明文字符串
+    :return: md5加密后的字符串
+    '''
+    m1 = hashlib.md5()
+    m1.update(str(pwd).encode('utf-8'))
+    md5_pwd = m1.hexdigest()
+    return md5_pwd
+
+def get_dict_from_list(my_list,my_key,my_val):
+    '''
+    从多个字典组成的列表中，查找给定键和值匹配的字典，并返回
+    :param my_list: 查找的列表
+    :param my_key: 目标键
+    :param my_val: 目标值
+    :return: 找到的字典
+    '''
+    for l in list(my_list):
+        if(str(l[my_key])==str(my_val)):
+            return l
+
+def cal_litre(ori_amt,price):
+    '''
+    专门为计算升数实现的函数
+    :param ori_amt: 加油金额
+    :param price: 油品价格
+    :return: 加油升数，业务上的逻辑是保留两位小数并直接舍掉第三位
+    '''
+    ori_amt=float(ori_amt)
+    price=float(price)
+    ori_amt=100*ori_amt
+    res=round(ori_amt/price,0)
+    return res/100
+
 
 if __name__ == '__main__':
-    res=read_csv_test_data('E:/tjl/RF/interface/OilSite2.0/DrpAccount/login.csv','yypc_header')
-    print(res)
+    tmp_list=[{"oil_gun_id":50,"oil_machine_id":1,"oil_id":13,"oil_tank_id":3,"gun_number":2,"auth_method":1,"gun_name":"2号油枪","gun_code":"2","status":1,"third_code":None,"machine_name":"1号加油机","machine_number":"JYJ001","oil_code":"92","oil_name":"92#","oil_short_name":"92#汽油","oil_type_code":"92","oil_type_name":"92#号汽油"}]
+    l=get_dict_from_list(tmp_list,'gun_number',2)
+    print(l)

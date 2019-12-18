@@ -15,6 +15,10 @@ ${yypcLoginCSV}  E:/tjl/RF/interface/OilSite2.0/DrpAccount/login.csv
 ${loginCSVpath}     interface/OilSite2.0/DrpAccount/login.csv
 ${posBaseUrl}   http://192.168.10.249:8080
 ${myUuid}     47fa69c6158155abfb7aba00623b0a04
+${BosLoginCSV}   interface/OilSite2.0/BosService/BosLogin.csv
+${BosBaseUrl}   http://192.168.10.249:8080
+
+
 *** Keywords ***
 order pos goods cash
     [Arguments]     ${posLoginParam}
@@ -53,6 +57,8 @@ pos login data
     #    终于成功了，其实在这里浪费的时间有点多了，在做了c#的单元测试之后，应该一步一步的进行校验，理清一个思路出来，其实也是一种测试思想
     #注意，下面参数中的password是123456加密之后的，这一块暂时不实现加密了，等以后需要了再进行
     ${toSignDic}=   read csv test data  interface/OilSite2.0/demo.csv    pos login
+    ${password}     my md5  ${toSignDic}[password]
+    set to dictionary   ${toSignDic}    password=${password}
     set test variable   ${uuid}       ${myUuid}
     set to dictionary   ${toSignDic}    ts=${ts}
     set to dictionary   ${toSignDic}    uuid=${uuid}
@@ -378,6 +384,7 @@ QueryOnlienUser
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${ts}=   Get Current Date   exclude_millis=True
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    set test variable  ${user_mobile}   ${requestData}[mobile]
     set to dictionary  ${requestData}   ts=${ts}    postoken=${postoken}    uuid=${uuid}
     ${sign}=     mySign  ${requestData}
     set to dictionary  ${requestData}   sign=${sign}
@@ -386,22 +393,41 @@ QueryOnlienUser
     ${res}    post request    posSess     PosService/QueryOnlienUser       data=${requestData}
 
 
+#todo 报系统错误，但没法定位问题的具体位置，可能需要开发人员协助
 CalcOilCoupon
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${ts}=   Get Current Date   exclude_millis=True
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
     set to dictionary  ${requestData}   ts=${ts}    postoken=${postoken}    uuid=${uuid}
-
+    set to dictionary  ${requestData}   oil_trade_list=${oil_trade_list}    mobile=${user_mobile}
 
     ${sign}=     mySign  ${requestData}
     set to dictionary  ${requestData}   sign=${sign}
 
-#todo 这里的油品价格、油枪id等，可能还是需要调用BOS的接口进行查询
+    ${posSess}    create session  posSess     ${posBaseUrl}
+    ${res}    post request    posSess     PosService/CalcOilCoupon       data=${requestData}
+
+    ${res_list}     deal http response  ${res}  data
+    check code  ${res_list}
+
 oilTradeList
     [Arguments]  ${csv_path}    ${test_name_kw_name}
-    GetOilGunList
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
 
+    GetOilGunList
+    ${oilTradeDic}     get dict from list   ${GunList}   gun_number   ${requestData}[gun_number]
+    set to dictionary  ${requestData}  oil_id=${oilTradeDic}[oil_id]
+
+    GetOilPriceList
+    ${OilPriceDic}     get dict from list  ${bosOilPriceList}  oil_id  ${oilTradeDic}[oil_id]
+    set to dictionary  ${requestData}  price=${OilPriceDic}[price]
+
+    ${litre}    cal litre  ${requestData}[ori_amt]    ${requestData}[price]
+    set to dictionary  ${requestData}  litre=${litre}
+
+    ${myOilTradeList}   create list
+    append to list  ${myOilTradeList}   ${requestData}
+    set test variable  ${oil_trade_list}    ${myOilTradeList}
 
 GetOilGunList
     ${requestData}  create dictionary
@@ -414,6 +440,55 @@ GetOilGunList
     ${posSess}    create session  posSess     ${posBaseUrl}
     ${res}    post request    posSess     PosService/GetOilGunList       data=${requestData}
 
-    ${res_list}     deal http response  ${res}
+    ${res_list}     deal http response  ${res}  data
     check code  ${res_list}
     set test variable  ${GunList}   ${res_list}[1]
+
+
+BosLogin
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    ${password}     my md5  ${requestData}[password]
+    set to dictionary   ${requestData}    password=${password}
+
+    ${ts}=   Get Current Date   exclude_millis=True
+    set to dictionary  ${requestData}   ts=${ts}
+    ${sign}=     mySign  ${requestData}
+    set to dictionary  ${requestData}   sign=${sign}
+
+    bosHeaders  ${BosLoginCSV}  bos_header
+
+    ${bosSess}    create session  bosSess     ${BosBaseUrl}
+    ${res}    post request    bosSess     BosService/BosLogin       data=${requestData}     headers=${bosHeaders}
+    ${res_list}     deal http response  ${res}  data
+    check code  ${res_list}
+
+    set test variable  ${bosToken}  ${res_list}[1][token]
+
+bosHeaders
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    set test variable  ${bosHeaders}    ${requestData}
+
+
+GetOilPriceList
+    ${requestData}      create dictionary
+    ${ts}=   Get Current Date   exclude_millis=True
+    set to dictionary  ${requestData}   ts=${ts}
+    set to dictionary  ${requestData}   token=${bosToken}
+
+    ${sign}=     mySign  ${requestData}
+    set to dictionary  ${requestData}   sign=${sign}
+
+    ${bosSess}    create session  bosSess     ${BosBaseUrl}
+    ${res}    post request    bosSess     BosService/GetOilPriceList       data=${requestData}     headers=${bosHeaders}
+
+    ${res_list}     deal http response  ${res}  data
+    check code  ${res_list}
+    set test variable  ${bosOilPriceList}   ${res_list}[1]
+
+
+mySetUp
+    pos login
+    boslogin    ${BosLoginCSV}  BosLogin_BosLogin
+    yypc login  ${loginCSVpath}     Login_yypc_login
