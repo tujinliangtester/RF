@@ -4,5 +4,4 @@ pos login,password,e10adc3949ba59abbe56e057f20f883e
 pos login,user_account,0307
 pos login,shift_id,1
 pos login,pos_id,17
-pos login,uuid,47fa69c6158155abfb7aba00623b0a04
 change pos env,sql_str,"UPDATE base_config set config_value='http://b.gas.314pay.net' WHERE config_key in ('yyxt_drp_site_spare_url','yyxt_drp_site_url');"

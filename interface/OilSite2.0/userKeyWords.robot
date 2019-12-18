@@ -14,6 +14,7 @@ ${yypcBaseUrl}  http://b.gas.314pay.net
 ${yypcLoginCSV}  E:/tjl/RF/interface/OilSite2.0/DrpAccount/login.csv
 ${loginCSVpath}     interface/OilSite2.0/DrpAccount/login.csv
 ${posBaseUrl}   http://192.168.10.249:8080
+${myUuid}     47fa69c6158155abfb7aba00623b0a04
 *** Keywords ***
 order pos goods cash
     [Arguments]     ${posLoginParam}
@@ -32,7 +33,9 @@ pos login
     ${res_list}     deal http response  ${res}      data
     set test variable  ${poslogin_json}   ${res_list}[0]
     set test variable  ${poslogin_data_json}   ${res_list}[1]
+    set test variable  ${postoken}  ${res_list}[1][postoken]
     should be equal as numbers  ${res.json()['code']}  -3
+
 
 
 
@@ -50,7 +53,9 @@ pos login data
     #    终于成功了，其实在这里浪费的时间有点多了，在做了c#的单元测试之后，应该一步一步的进行校验，理清一个思路出来，其实也是一种测试思想
     #注意，下面参数中的password是123456加密之后的，这一块暂时不实现加密了，等以后需要了再进行
     ${toSignDic}=   read csv test data  interface/OilSite2.0/demo.csv    pos login
+    set test variable   ${uuid}       ${myUuid}
     set to dictionary   ${toSignDic}    ts=${ts}
+    set to dictionary   ${toSignDic}    uuid=${uuid}
     ${sign}=        mySign  ${toSignDic}
     ${data}=     set to dictionary   ${toSignDic}    sign=${sign}
     return from keyword  ${data}
@@ -335,6 +340,7 @@ check code
     [Arguments]  ${res_list}
     should be equal as numbers  ${res_list}[0][code]    1
 
+#todo 将这个方法调整一下，改成传四个参数，分别是csv文件路径，名称，键，值
 #${res}是http响应
 set cookie
     [Arguments]  ${res}
@@ -344,15 +350,7 @@ set cookie
     log list  ${rowTmp}
     append to list  ${rowTmps}  ${rowTmp}
     write to csv    ${yypcLoginCSV}     ${rowTmps}
-#todo 将这个方法调整一下，改成传四个参数，分别是csv文件路径，名称，键，值
-set pos cookie
-    [Arguments]  ${res}
-    ${rowTmp}   create list
-    ${rowTmps}   create list
-    append to list  ${rowTmp}   pos_login     Cookie      ${res.headers}[Set-Cookie]
-    log list  ${rowTmp}
-    append to list  ${rowTmps}  ${rowTmp}
-    write to csv    ${yypcLoginCSV}     ${rowTmps}
+
 
 ALLOrders
     [Arguments]  ${csv_path}    ${test_name_kw_name}
@@ -377,7 +375,45 @@ Login
 
 
 QueryOnlienUser
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${ts}=   Get Current Date   exclude_millis=True
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    set to dictionary  ${requestData}   ts=${ts}    postoken=${postoken}    uuid=${uuid}
+    ${sign}=     mySign  ${requestData}
+    set to dictionary  ${requestData}   sign=${sign}
+
+    ${posSess}    create session  posSess     ${posBaseUrl}
+    ${res}    post request    posSess     PosService/QueryOnlienUser       data=${requestData}
 
 
+CalcOilCoupon
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${ts}=   Get Current Date   exclude_millis=True
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    set to dictionary  ${requestData}   ts=${ts}    postoken=${postoken}    uuid=${uuid}
 
+
+    ${sign}=     mySign  ${requestData}
+    set to dictionary  ${requestData}   sign=${sign}
+
+#todo 这里的油品价格、油枪id等，可能还是需要调用BOS的接口进行查询
+oilTradeList
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    GetOilGunList
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+
+
+GetOilGunList
+    ${requestData}  create dictionary
+    ${ts}=   Get Current Date   exclude_millis=True
+    set to dictionary  ${requestData}   ts=${ts}    postoken=${postoken}    uuid=${uuid}
+
+    ${sign}=     mySign  ${requestData}
+    set to dictionary  ${requestData}   sign=${sign}
+
+    ${posSess}    create session  posSess     ${posBaseUrl}
+    ${res}    post request    posSess     PosService/GetOilGunList       data=${requestData}
+
+    ${res_list}     deal http response  ${res}
+    check code  ${res_list}
+    set test variable  ${GunList}   ${res_list}[1]
