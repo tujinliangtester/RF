@@ -1,7 +1,7 @@
 
 *** Settings ***
 Resource  ../userKeyWords.robot
-
+Test Setup     Login
 
 *** Test Cases ***
 

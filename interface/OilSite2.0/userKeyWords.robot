@@ -12,6 +12,8 @@ Library     String
 ${gzhBaseUrl}   http://testbiz.314pay.net
 ${yypcBaseUrl}  http://b.gas.314pay.net
 ${yypcLoginCSV}  E:/tjl/RF/interface/OilSite2.0/DrpAccount/login.csv
+${loginCSVpath}     interface/OilSite2.0/DrpAccount/login.csv
+${posBaseUrl}   http://192.168.10.249:8080
 *** Keywords ***
 order pos goods cash
     [Arguments]     ${posLoginParam}
@@ -24,13 +26,14 @@ order pos goods cash
 
 pos login
     ${posLoginParam}    pos login data
-    ${posSess}    create session  posSess     http://192.168.10.249:8080
+    ${posSess}    create session  posSess    ${posBaseUrl}
     ${res}    post request    posSess     /PosService/PosLogin         data=${posLoginParam}
 
     ${res_list}     deal http response  ${res}      data
     set test variable  ${poslogin_json}   ${res_list}[0]
     set test variable  ${poslogin_data_json}   ${res_list}[1]
     should be equal as numbers  ${res.json()['code']}  -3
+
 
 
 
@@ -337,12 +340,19 @@ set cookie
     [Arguments]  ${res}
     ${rowTmp}   create list
     ${rowTmps}   create list
-    draw from str   ${res.headers}[Set-Cookie]  bizweb_UserMember
     append to list  ${rowTmp}   yypc_header     Cookie      ${res.headers}[Set-Cookie]
     log list  ${rowTmp}
     append to list  ${rowTmps}  ${rowTmp}
     write to csv    ${yypcLoginCSV}     ${rowTmps}
-
+#todo 将这个方法调整一下，改成传四个参数，分别是csv文件路径，名称，键，值
+set pos cookie
+    [Arguments]  ${res}
+    ${rowTmp}   create list
+    ${rowTmps}   create list
+    append to list  ${rowTmp}   pos_login     Cookie      ${res.headers}[Set-Cookie]
+    log list  ${rowTmp}
+    append to list  ${rowTmps}  ${rowTmp}
+    write to csv    ${yypcLoginCSV}     ${rowTmps}
 
 ALLOrders
     [Arguments]  ${csv_path}    ${test_name_kw_name}
@@ -353,8 +363,21 @@ ALLOrders
     ${yypcSess}    create session  yypcSess     ${yypcBaseUrl}
     ${res}    post request    yypcSess     /GasTradeOrder/ALLOrders      data=${requestData}    headers=${yypcHeaders}
 
+    ${res_list}     deal http response  ${res}
+    check code  ${res_list}
 
 set yypc headers
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
     set test variable  ${yypcHeaders}   ${requestData}
+
+
+Login
+    yypc login      ${loginCSVpath}     Login_yypc_login
+
+
+QueryOnlienUser
+    ${ts}=   Get Current Date   exclude_millis=True
+
+
+

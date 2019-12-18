@@ -18,30 +18,29 @@ def mySign(toSignDic):
 
     return sign_md5.lower()
 
-def read_csv_test_data(csv_file, key_word_name, isSql=False, delimiter='\n'):
+def read_csv_test_data(csv_file, key_word_name, isSql=False):
     '''
     读取csv文件，查找给定的关键字名称对应的参数
     :param csv_file:csv文件名称
     :param key_word_name:关键字名称
     :param isSql:如果去的测试数据是sql语句的，需要单独进行处理，
                 当然，如果其他类型的参数中，带有 , 符号的，也会出现，具体遇到了再处理
-    :param delimiter:对csv文件的分隔符，默认是换行符，即一行一行的分割
+    :param delimiter:不设置值，默认安装excel的方式来进行读取
     :return:csv文件中，该关键字对应的参数和值的字典
     '''
     print(isSql)
     file = open(csv_file, 'r')
-    csvfile = csv.reader(file, delimiter=delimiter)
+    csvfile = csv.reader(file)
     output = {}
     for row in csvfile:
         if(isSql==False):
             #row的分布为：关键字名称	参数名称	参数值
-            inner_row=row[0].split(',')
-            if(inner_row[0]==key_word_name):
-                output[inner_row[1]]=inner_row[2]
+            if(row[0]==key_word_name):
+                output[row[1]]=row[2]
         else:
             inner_row = row[0].split(',')
-            if (inner_row[0] == key_word_name):
-                tmp_lenth=len(key_word_name)+1+len(inner_row[1])+1
+            if (row[0] == key_word_name):
+                tmp_lenth=len(key_word_name)+1+len(row[1])+1
                 #注意，csv在处理字符串时，如果字符串本身带有 , ，则会自动加上双引号
                 if(row[0][tmp_lenth:][0]=='"'):
                     output[inner_row[1]] = row[0][tmp_lenth:][1:-1]
@@ -183,18 +182,8 @@ def yypc_login_password(pwd,mobile,ts):
     md5_res = m5.hexdigest()
 
     return md5_res
-#todo
-def draw_from_str(baseStr,targetStr):
-    '''
-    由于返回的数据，存入csv时，逗号会成为一个分隔符，导致处理出错，需要单独写一个方法来进行处理，提取出想要的字符串
-    :param baseStr:
-    :param targetStr:
-    :return:想要的字符串
-    '''
-    pass
+
 
 if __name__ == '__main__':
-    # 1dc2964308e55024d3e18d889de3175b
-    #cc555c0a078159d6f3cf3b4437e9ccd3
-    res=yypc_login_password('123456','17000000000','2019121710104344424',)
+    res=read_csv_test_data('E:/tjl/RF/interface/OilSite2.0/DrpAccount/login.csv','yypc_header')
     print(res)
