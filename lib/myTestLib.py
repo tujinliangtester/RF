@@ -219,6 +219,14 @@ def cal_litre(ori_amt,price):
     res=round(ori_amt/price,0)
     return res/100
 
+def dic_has_key(my_dic,my_key):
+    '''
+    判定字典是否有给定的key，ps，官方的字典函数中只有should 不好使用
+    :param my_dic:
+    :param my_key:
+    :return: 有key，则返回true，否则返回false
+    '''
+    return my_key in my_dic
 
 if __name__ == '__main__':
     tmp_list=[{"oil_gun_id":50,"oil_machine_id":1,"oil_id":13,"oil_tank_id":3,"gun_number":2,"auth_method":1,"gun_name":"2号油枪","gun_code":"2","status":1,"third_code":None,"machine_name":"1号加油机","machine_number":"JYJ001","oil_code":"92","oil_name":"92#","oil_short_name":"92#汽油","oil_type_code":"92","oil_type_name":"92#号汽油"}]

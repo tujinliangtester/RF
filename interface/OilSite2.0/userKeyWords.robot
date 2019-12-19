@@ -14,6 +14,7 @@ ${yypcBaseUrl}  http://b.gas.314pay.net
 ${yypcLoginCSV}  E:/tjl/RF/interface/OilSite2.0/DrpAccount/login.csv
 ${loginCSVpath}     interface/OilSite2.0/DrpAccount/login.csv
 ${posBaseUrl}   http://192.168.10.249:8080
+#${posBaseUrl}   http://192.168.10.61:8080
 ${myUuid}     47fa69c6158155abfb7aba00623b0a04
 ${BosLoginCSV}   interface/OilSite2.0/BosService/BosLogin.csv
 ${BosBaseUrl}   http://192.168.10.249:8080
@@ -393,26 +394,34 @@ QueryOnlienUser
     ${res}    post request    posSess     PosService/QueryOnlienUser       data=${requestData}
 
 
-#todo 报系统错误，但没法定位问题的具体位置，可能需要开发人员协助
 CalcOilCoupon
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${ts}=   Get Current Date   exclude_millis=True
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    set test variable  ${goods_amt}     ${requestData}[goods_amt]
+
     set to dictionary  ${requestData}   ts=${ts}    postoken=${postoken}    uuid=${uuid}
     set to dictionary  ${requestData}   oil_trade_list=${oil_trade_list}    mobile=${user_mobile}
 
     ${sign}=     mySign  ${requestData}
     set to dictionary  ${requestData}   sign=${sign}
 
+    ${posHeaders}   create dictionary  Content-Type=application/x-www-form-urlencoded
     ${posSess}    create session  posSess     ${posBaseUrl}
-    ${res}    post request    posSess     PosService/CalcOilCoupon       data=${requestData}
+    ${res}    post request    posSess     PosService/CalcOilCoupon       data=${requestData}    headers=${posHeaders}
 
     ${res_list}     deal http response  ${res}  data
     check code  ${res_list}
+    set test variable  ${CalcOilCouponRes}  ${res_list}[1]
 
 oilTradeList
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    ${trade_log_id}     evaluate   int(${requestData}[trade_log_id])
+    set to dictionary  ${requestData}  trade_log_id=${trade_log_id}
+
+    ${ori_amt}     evaluate   int(${requestData}[ori_amt])
+    set to dictionary  ${requestData}  ori_amt=${ori_amt}
 
     GetOilGunList
     ${oilTradeDic}     get dict from list   ${GunList}   gun_number   ${requestData}[gun_number]
@@ -425,9 +434,11 @@ oilTradeList
     ${litre}    cal litre  ${requestData}[ori_amt]    ${requestData}[price]
     set to dictionary  ${requestData}  litre=${litre}
 
+    pop from dictionary     ${requestData}      gun_number
     ${myOilTradeList}   create list
     append to list  ${myOilTradeList}   ${requestData}
     set test variable  ${oil_trade_list}    ${myOilTradeList}
+    log    ${oil_trade_list}
 
 GetOilGunList
     ${requestData}  create dictionary
@@ -492,3 +503,44 @@ mySetUp
     pos login
     boslogin    ${BosLoginCSV}  BosLogin_BosLogin
     yypc login  ${loginCSVpath}     Login_yypc_login
+
+
+VerifyCouponOrder
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+
+    ${ts}=   Get Current Date   exclude_millis=True
+    set to dictionary  ${requestData}   ts=${ts}    postoken=${postoken}    uuid=${uuid}
+
+    ${tmp_bool}     dic has key  ${CalcOilCouponRes}    goods_coupon_amt
+    run keyword if  ${tmp_bool}     set to dictionary  ${requestData}   goods_coupon_amt=${CalcOilCouponRes}[goods_coupon_amt]
+
+    ${tmp_bool}     dic has key  ${CalcOilCouponRes}    direct_amt
+    run keyword if  ${tmp_bool}     set to dictionary  ${requestData}   direct_amt=${CalcOilCouponRes}[direct_amt]
+
+    ${tmp_bool}     dic has key  ${CalcOilCouponRes}    discount_amt
+    run keyword if  ${tmp_bool}     set to dictionary  ${requestData}   discount_amt=${CalcOilCouponRes}[discount_amt]
+
+    ${tmp_bool}     dic has key  ${CalcOilCouponRes}    goods_coupon_id
+    run keyword if  ${tmp_bool}     set to dictionary  ${requestData}   goods_coupon_id=${CalcOilCouponRes}[goods_coupon_id]
+
+    ${tmp_bool}     dic has key  ${CalcOilCouponRes}    full_amt
+    run keyword if  ${tmp_bool}     set to dictionary  ${requestData}   full_amt=${CalcOilCouponRes}[full_amt]
+
+    ${tmp_bool}     dic has key  ${CalcOilCouponRes}    coupon_amt
+    run keyword if  ${tmp_bool}     set to dictionary  ${requestData}   coupon_amt=${CalcOilCouponRes}[coupon_amt]
+
+    ${tmp_bool}     dic has key  ${CalcOilCouponRes}    coupon_id
+    run keyword if  ${tmp_bool}     set to dictionary  ${requestData}   coupon_id=${CalcOilCouponRes}[coupon_id]
+
+    set to dictionary  ${requestData}   oil_trade_list=${oil_trade_list}    mobile=${user_mobile}     goods_amt=${goods_amt}
+
+    ${sign}=     mySign  ${requestData}
+    set to dictionary  ${requestData}   sign=${sign}
+
+    ${posSess}    create session  posSess     ${posBaseUrl}
+    ${res}    post request    posSess     PosService/VerifyCouponOrder       data=${requestData}
+
+    ${res_list}     deal http response  ${res}  data
+    check code  ${res_list}
+

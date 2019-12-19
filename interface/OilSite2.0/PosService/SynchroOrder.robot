@@ -10,5 +10,5 @@ pos goods cash order
     QueryOnlienUser     ${SynchroOrderCSV}  pos_goods_cash_order_QueryOnlienUser
     oilTradeList     ${SynchroOrderCSV}  pos_goods_cash_order_oilTradeList
     CalcOilCoupon       ${SynchroOrderCSV}  pos_goods_cash_order_CalcOilCoupon
-#    VerifyCouponOrder
+    VerifyCouponOrder   ${SynchroOrderCSV}  pos_goods_cash_order_VerifyCouponOrder
 #    SynchroOrder
