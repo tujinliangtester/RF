@@ -417,8 +417,6 @@ CalcOilCoupon
 oilTradeList
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
-    ${trade_log_id}     evaluate   int(${requestData}[trade_log_id])
-    set to dictionary  ${requestData}  trade_log_id=${trade_log_id}
 
     ${ori_amt}     evaluate   int(${requestData}[ori_amt])
     set to dictionary  ${requestData}  ori_amt=${ori_amt}

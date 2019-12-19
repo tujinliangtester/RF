@@ -79,6 +79,7 @@ def deal_http_response(http_response,*kwargs):
     '''
     http_res_text=http_response.text
     http_res_json=simplejson.loads(http_res_text)
+    print('http_res_json:',http_res_json)
     if(len(kwargs)==0):
         tmp_list=[http_res_json]
         return tmp_list
