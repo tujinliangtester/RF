@@ -1,0 +1,8 @@
+说明：本测试数据文件是根据用例名+关键字来作为主键的，如果一个用例中同一个关键字使用了多次，且数据不同值时，可以在后面加上编号，并且rf用例中留意调整,,
+用例名+关键字名称,参数名称,参数值
+pos_goods_cash_order_QueryOnlienUser,mobile,19907221054
+pos_goods_cash_order_CalcOilCoupon,goods_amt,0
+pos_goods_cash_order_CalcOilCoupon,coupon_code,
+pos_goods_cash_order_oilTradeList,ori_amt,100
+pos_goods_cash_order_oilTradeList,gun_number,927
+pos_goods_cash_order_CalcOilCoupon,score_amt,0
