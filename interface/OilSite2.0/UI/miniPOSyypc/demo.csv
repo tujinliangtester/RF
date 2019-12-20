@@ -1,0 +1,7 @@
+说明：本测试数据文件是根据用例名+关键字来作为主键的，如果一个用例中同一个关键字使用了多次，且数据不同值时，可以在后面加上编号，并且rf用例中留意调整,,
+用例名+关键字名称,参数名称,参数值
+pos login,password,123456
+pos login,user_account,0307
+pos login,shift_id,1
+pos login,pos_id,17
+change pos env,sql_str,"UPDATE base_config set config_value='http://b.gas.314pay.net' WHERE config_key in ('yyxt_drp_site_spare_url','yyxt_drp_site_url');"

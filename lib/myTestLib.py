@@ -2,14 +2,15 @@ import hashlib
 import csv
 import simplejson
 
+
 def mySign(toSignDic):
     toSignStr = ''
-    toSignList=sorted(toSignDic.items(),key=lambda toSignDic:toSignDic[0],reverse=False)
+    toSignList = sorted(toSignDic.items(), key=lambda toSignDic: toSignDic[0], reverse=False)
     for item in toSignList:
         toSignStr += str(item[0]) + '=' + str(item[1]) + '&'
-    #注意，这里的appKey是从数据库中取来写死的
-    appKey='sjyt_jg_2017kmkf'
-    toSignStr+="key=" + appKey
+    # 注意，这里的appKey是从数据库中取来写死的
+    appKey = 'sjyt_jg_2017kmkf'
+    toSignStr += "key=" + appKey
 
     print('toSignStr', toSignStr)
     m = hashlib.md5()
@@ -17,6 +18,7 @@ def mySign(toSignDic):
     sign_md5 = m.hexdigest()
 
     return sign_md5.lower()
+
 
 def read_csv_test_data(csv_file, key_word_name, isSql=False):
     '''
@@ -33,32 +35,34 @@ def read_csv_test_data(csv_file, key_word_name, isSql=False):
     csvfile = csv.reader(file)
     output = {}
     for row in csvfile:
-        if(isSql==False):
-            #row的分布为：关键字名称	参数名称	参数值
-            if(row[0]==key_word_name):
-                output[row[1]]=row[2]
+        if (isSql == False):
+            # row的分布为：关键字名称	参数名称	参数值
+            if (row[0] == key_word_name):
+                output[row[1]] = row[2]
         else:
             inner_row = row[0].split(',')
             if (row[0] == key_word_name):
-                tmp_lenth=len(key_word_name)+1+len(row[1])+1
-                #注意，csv在处理字符串时，如果字符串本身带有 , ，则会自动加上双引号
-                if(row[0][tmp_lenth:][0]=='"'):
+                tmp_lenth = len(key_word_name) + 1 + len(row[1]) + 1
+                # 注意，csv在处理字符串时，如果字符串本身带有 , ，则会自动加上双引号
+                if (row[0][tmp_lenth:][0] == '"'):
                     output[inner_row[1]] = row[0][tmp_lenth:][1:-1]
                 else:
                     output[inner_row[1]] = row[0][tmp_lenth:]
     file.close()
     return output
 
-def write_to_csv(fileName,rows):
+
+def write_to_csv(fileName, rows):
     '''
     写入到csv文件
     :param fileName:csv文件名称
     :param rows: 需要写入的数据，注意，这里是一个二维数组
     :return: 成功
     '''
-    with open(fileName,'a+',newline='') as f:
+    with open(fileName, 'a+', newline='') as f:
         csv_writer = csv.writer(f)
         csv_writer.writerows(rows)
+
 
 def get_response_header(http_response):
     '''
@@ -66,44 +70,46 @@ def get_response_header(http_response):
     :param http_response: 响应
     :return: 头部字典
     '''
-    http_res_header=http_response.headers
+    http_res_header = http_response.headers
     return http_res_header
 
 
-def deal_http_response(http_response,*kwargs):
+def deal_http_response(http_response, *kwargs):
     '''
     由于标准库、扩展库及第三方库的处理都不理想，尝试自己写个函数来处理
     :param http_response:http的响应
     :param response_key:响应中，body里要查找的键（因为一次json的变化可能对子json不起作用）
     :return:响应中的body，json格式
     '''
-    http_res_text=http_response.text
-    http_res_json=simplejson.loads(http_res_text)
-    print('http_res_json:',http_res_json)
-    if(len(kwargs)==0):
-        tmp_list=[http_res_json]
+    http_res_text = http_response.text
+    http_res_json = simplejson.loads(http_res_text)
+    print('http_res_json:', http_res_json)
+    if (len(kwargs) == 0):
+        tmp_list = [http_res_json]
         return tmp_list
-    response_key=kwargs[0]
-    http_res_data=http_res_json[response_key]
-    print('http_res_data:',http_res_data)
-    if(isinstance(http_res_data,dict)):
-        return http_res_json,http_res_data
-    http_res_data_json=simplejson.loads(http_res_data)
-    return http_res_json,http_res_data_json
+    response_key = kwargs[0]
+    http_res_data = http_res_json[response_key]
+    print('http_res_data:', http_res_data)
+    if (isinstance(http_res_data, dict)):
+        return http_res_json, http_res_data
+    http_res_data_json = simplejson.loads(http_res_data)
+    return http_res_json, http_res_data_json
 
-#todo des加密、解密有问题，登录直接给header算了
-def des_decrypt(data ,KEY ):
+
+# todo des加密、解密有问题，登录直接给header算了
+def des_decrypt(data, KEY):
     from binascii import b2a_hex, a2b_hex
     import base64
     from pyDes import des
     n = len(data) % 8
     if (n != 0):
         data = data + ' ' * n
-    k=des(KEY)
-    d=k.decrypt(data)
+    k = des(KEY)
+    d = k.decrypt(data)
     return b2a_hex(d)
 
-def des_encryption(data ,KEY ):
+
+def des_encryption(data, KEY):
     from binascii import b2a_hex, a2b_hex
     import base64
     from pyDes import des
@@ -115,7 +121,7 @@ def des_encryption(data ,KEY ):
     return b2a_hex(d)
 
 
-def gzh_pay_password(password,password_token,real_coin_amt,order_id,type):
+def gzh_pay_password(password, password_token, real_coin_amt, order_id, type):
     '''
     支付密码加密 md5(md5(md5(password_token)+md5(password))+md5((int)real_coin_amt))
     :param password: 明文密码
@@ -125,36 +131,35 @@ def gzh_pay_password(password,password_token,real_coin_amt,order_id,type):
     :param type: 为非0时，代表是提交订单，用实付金额加密；0代表支付订单，用订单id加密
     :return: 支付密码加密之后的密文
     '''
-    m1=hashlib.md5()
-    m2=hashlib.md5()
-    m3=hashlib.md5()
-    m4=hashlib.md5()
-    m6=hashlib.md5()
+    m1 = hashlib.md5()
+    m2 = hashlib.md5()
+    m3 = hashlib.md5()
+    m4 = hashlib.md5()
+    m6 = hashlib.md5()
 
     m1.update(password_token.encode('utf-8'))
-    tmp1=m1.hexdigest()
+    tmp1 = m1.hexdigest()
 
     m2.update(password.encode('utf-8'))
-    tmp2=m2.hexdigest()
-    if(str(type)!='0'):
+    tmp2 = m2.hexdigest()
+    if (str(type) != '0'):
         print('为0时，代表是提交订单，用实付金额加密')
         m3.update(str(int(real_coin_amt)).encode('utf-8'))
-        tmp3=m3.hexdigest()
+        tmp3 = m3.hexdigest()
     else:
         m3.update(str(order_id).encode('utf-8'))
         tmp3 = m3.hexdigest()
-    tmp4=tmp1+tmp2
+    tmp4 = tmp1 + tmp2
     m4.update(tmp4.encode('utf-8'))
-    tmp5=m4.hexdigest()
+    tmp5 = m4.hexdigest()
 
-
-    tmp6=tmp5+tmp3
+    tmp6 = tmp5 + tmp3
     m6.update(tmp6.encode('utf-8'))
-    tmp7=m6.hexdigest()
+    tmp7 = m6.hexdigest()
     return tmp7
 
 
-def yypc_login_password(pwd,mobile,ts):
+def yypc_login_password(pwd, mobile, ts):
     '''
     #md5(md5(md5(pwd)+ md5(mobile))+ md5(ts + mobile))
     :param pwd:明文密码
@@ -162,27 +167,28 @@ def yypc_login_password(pwd,mobile,ts):
     :param ts:时间戳
     :return:登录加密后的密码
     '''
-    m1=hashlib.md5()
+    m1 = hashlib.md5()
     m1.update(str(pwd).encode('utf-8'))
-    md5_pwd=m1.hexdigest()
+    md5_pwd = m1.hexdigest()
 
-    m2=hashlib.md5()
+    m2 = hashlib.md5()
     m2.update(str(mobile).encode('utf-8'))
-    md5_mobile=m2.hexdigest()
+    md5_mobile = m2.hexdigest()
 
-    m3=hashlib.md5()
-    m3.update((str(ts)+str(mobile)).encode('utf-8'))
-    md5_mobile_ts=m3.hexdigest()
+    m3 = hashlib.md5()
+    m3.update((str(ts) + str(mobile)).encode('utf-8'))
+    md5_mobile_ts = m3.hexdigest()
 
     m4 = hashlib.md5()
-    m4.update((md5_pwd+md5_mobile).encode('utf-8'))
+    m4.update((md5_pwd + md5_mobile).encode('utf-8'))
     md5_1 = m4.hexdigest()
-    print('md5_1:',md5_1)
+    print('md5_1:', md5_1)
     m5 = hashlib.md5()
     m5.update((md5_1 + md5_mobile_ts).encode('utf-8'))
     md5_res = m5.hexdigest()
 
     return md5_res
+
 
 def my_md5(pwd):
     '''
@@ -195,7 +201,8 @@ def my_md5(pwd):
     md5_pwd = m1.hexdigest()
     return md5_pwd
 
-def get_dict_from_list(my_list,my_key,my_val):
+
+def get_dict_from_list(my_list, my_key, my_val):
     '''
     从多个字典组成的列表中，查找给定键和值匹配的字典，并返回
     :param my_list: 查找的列表
@@ -204,23 +211,25 @@ def get_dict_from_list(my_list,my_key,my_val):
     :return: 找到的字典
     '''
     for l in list(my_list):
-        if(str(l[my_key])==str(my_val)):
+        if (str(l[my_key]) == str(my_val)):
             return l
 
-def cal_litre(ori_amt,price):
+
+def cal_litre(ori_amt, price):
     '''
     专门为计算升数实现的函数
     :param ori_amt: 加油金额
     :param price: 油品价格
     :return: 加油升数，业务上的逻辑是保留两位小数并直接舍掉第三位
     '''
-    ori_amt=float(ori_amt)
-    price=float(price)
-    ori_amt=100*ori_amt
-    res=round(ori_amt/price,0)
-    return res/100
+    ori_amt = float(ori_amt)
+    price = float(price)
+    ori_amt = 100 * ori_amt
+    res = round(ori_amt / price, 0)
+    return res / 100
 
-def dic_has_key(my_dic,my_key):
+
+def dic_has_key(my_dic, my_key):
     '''
     判定字典是否有给定的key，ps，官方的字典函数中只有should 不好使用
     :param my_dic:
@@ -229,7 +238,78 @@ def dic_has_key(my_dic,my_key):
     '''
     return my_key in my_dic
 
+
+def my_find_el_from_els_by_text(els, el_text):
+    '''
+    从查找到的元素数组中，根据元素的文本查找相应的具体元素
+    :param els: 已获取到的元素数组
+    :param el_text: 元素文本
+    :return: 查找到的元素
+    '''
+    for el in els:
+        if (el.text == el_text):
+            return el
+
+
+def POS_numeric_keypad_change(input_text):
+    '''
+    大POS的数字键盘是安卓自己画的，而且数字与元素id还不对应，没办法，只能自己写个函数来转换
+    1==>1
+    2==>2
+    3==>3
+    4==>5
+    5==>6
+    6==>7
+    7==>9
+    8==>10
+    9==>11
+    0==>13
+    :param input_text: 需要输入的数字
+    :return: 返回对应数字键盘的id序号，以列表形式返回
+    '''
+    tmp_list = list(input_text)
+    targe_list = []
+    for tmp_item in tmp_list:
+        if (tmp_item == '1'):
+            targe_list.append('1')
+            continue
+        elif (tmp_item == '2'):
+            targe_list.append('2')
+            continue
+        elif (tmp_item == '3'):
+            targe_list.append('3')
+            continue
+        elif (tmp_item == '4'):
+            targe_list.append('5')
+            continue
+        elif (tmp_item == '5'):
+            targe_list.append('6')
+            continue
+        elif (tmp_item == '6'):
+            targe_list.append('7')
+            continue
+        elif (tmp_item == '7'):
+            targe_list.append('9')
+            continue
+        elif (tmp_item == '8'):
+            targe_list.append('10')
+            continue
+        elif (tmp_item == '9'):
+            targe_list.append('11')
+            continue
+        elif (tmp_item == '0'):
+            targe_list.append('13')
+            continue
+        else:
+            return '需要输入的符号没有实现或没有找到'
+
+    return targe_list
+
 if __name__ == '__main__':
-    tmp_list=[{"oil_gun_id":50,"oil_machine_id":1,"oil_id":13,"oil_tank_id":3,"gun_number":2,"auth_method":1,"gun_name":"2号油枪","gun_code":"2","status":1,"third_code":None,"machine_name":"1号加油机","machine_number":"JYJ001","oil_code":"92","oil_name":"92#","oil_short_name":"92#汽油","oil_type_code":"92","oil_type_name":"92#号汽油"}]
-    l=get_dict_from_list(tmp_list,'gun_number',2)
+    tmp_list = [
+        {"oil_gun_id": 50, "oil_machine_id": 1, "oil_id": 13, "oil_tank_id": 3, "gun_number": 2, "auth_method": 1,
+         "gun_name": "2号油枪", "gun_code": "2", "status": 1, "third_code": None, "machine_name": "1号加油机",
+         "machine_number": "JYJ001", "oil_code": "92", "oil_name": "92#", "oil_short_name": "92#汽油",
+         "oil_type_code": "92", "oil_type_name": "92#号汽油"}]
+    l = get_dict_from_list(tmp_list, 'gun_number', 2)
     print(l)

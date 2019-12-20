@@ -355,6 +355,10 @@ appium
 查看程序的启动activity
 adb shell
 monkey -p 包名 -v -v -v 1
+或者：
+adb shell dumpsys activity | findstr "mFocusedActivity"
+
+
 
 appium下载地址：
 https://github.com/appium/appium/releases/
