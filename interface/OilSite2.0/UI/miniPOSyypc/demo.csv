@@ -1,7 +1,27 @@
 说明：本测试数据文件是根据用例名+关键字来作为主键的，如果一个用例中同一个关键字使用了多次，且数据不同值时，可以在后面加上编号，并且rf用例中留意调整,,
 用例名+关键字名称,参数名称,参数值
-pos login,password,123456
-pos login,user_account,0307
-pos login,shift_id,1
-pos login,pos_id,17
-change pos env,sql_str,"UPDATE base_config set config_value='http://b.gas.314pay.net' WHERE config_key in ('yyxt_drp_site_spare_url','yyxt_drp_site_url');"
+demo_open_app,platformName,Android
+demo_open_app,platformVersion,7.1.2
+demo_open_app,deviceName,emulator-5554   device
+demo_open_app,appPackage,com.ytny.youhuiduo.oilmanager
+demo_open_app,appActivity,com.ytny.shell.oilmanager.ui.activity.HomeActivity
+demo_open_app,noReset,TRUE
+demo_chose_gun,gunNum,927
+demo_input_oil_amt,oil_amt,100
+demo_chose_pay_method,pay_method,实体卡支付
+order_goods_cash_chose_goods,goods_code,1010100
+order_goods_cash_chose_pay_method,pay_method,实体卡支付
+order_oil_goods_cash_chose_goods,goods_code,1010100
+order_goods_userCard_score_chose_pay_method,pay_method,会员卡支付
+order_goods_userCard_score_input_user,mobile,19907221054
+order_goods_userCard_score_input_userCard_pwd,userCard_pwd,111111
+order_oil_userCard_chose_gun,gunNum,927
+order_oil_userCard_input_oil_amt,oil_amt,110
+order_oil_userCard_input_user,mobile,19907221054
+order_oil_userCard_chose_pay_method,pay_method,会员卡支付
+order_oil_goods_userCard_input_oil_amt,oil_amt,111
+order_oil_fleetCard_chose_pay_method,pay_method,车队卡
+order_oil_fleetCard_input_oil_amt,oil_amt,112
+order_oil_fleetCard_input_user,mobile,19907221054
+order_oil_fleetCard_input_fleetCard_pwd,fleetCard_pwd,123456
+order_goods_cash_input_goods_amt,goods_amt,11

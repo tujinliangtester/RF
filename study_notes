@@ -422,3 +422,7 @@ selenium
 
 
     496,497,498,499,500,501
+
+
+注意，在RF引用selenium appium时可以直接指定等待时间：
+    Library     AppiumLibrary   5

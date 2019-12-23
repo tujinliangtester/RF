@@ -7,8 +7,8 @@ Library     Collections
 Library     ../../../../lib/myTestLib.py
 Library     CSVLib
 Library     String
-#Library     SeleniumLibrary
-Library     AppiumLibrary
+#Library     SeleniumLibrary    5
+Library     AppiumLibrary   10
 *** Variables ***
 
 
@@ -18,45 +18,64 @@ my_test_setup
 open app
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
-    open application  http://localhost:4723/wd/hub      POSapp    platformName=${requestData}[platformName]     platformVersion=${requestData}[platformVersion]     deviceName=${requestData}[deviceName]     appPackage=${requestData}[appPackage]     appActivity=${requestData}[appActivity]     noReset=${requestData}[noReset]
+    open application  http://localhost:4723/wd/hub      miniPOSapp    platformName=${requestData}[platformName]     platformVersion=${requestData}[platformVersion]     deviceName=${requestData}[deviceName]     appPackage=${requestData}[appPackage]     appActivity=${requestData}[appActivity]     noReset=${requestData}[noReset]
     sleep  2
 chose gun
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
-    ${els}     get webelements     id=com.ytny.os.pos:id/tv_number
+    ${els}     get webelements     id=com.ytny.youhuiduo.oilmanager:id/tv_num
     ${el}      my find el from els by text  ${els}     ${requestData}[gunNum]
     click element  ${el}
 
 input oil amt
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
-    ${el}     get webelement     id=com.ytny.os.pos:id/tv_money
+    #浮窗无法定位，目前只能用位置定位
+    sleep  1
+    click a point   742     1365
+
+    ${el}     get webelement     id=com.ytny.youhuiduo.oilmanager:id/et_add_oil_money
     input text  ${el}   ${requestData}[oil_amt]
 
-    ${el}     get webelement     id=com.ytny.os.pos:id/tv_sure
-    click element  ${el}
+input_goods_amt
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    #关闭数字键盘浮窗
+    sleep  1
+    click a point   742     1365
+
+    ${el}     get webelement     id=com.ytny.youhuiduo.oilmanager:id/et_goods_money
+    input text  ${el}   ${requestData}[goods_amt]
+
+
+
+
+
+
+
 
 chose pay method
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    sleep  2
+    go_to_pay   ${csv_path}     demo
 
-    ${el}     get webelement     id=com.ytny.os.pos:id/tv_all
-    click element  ${el}
-
-    ${els}     get webelements     id=com.ytny.os.pos:id/tv_name
+    ${els}     get webelements     id=com.ytny.youhuiduo.oilmanager:id/tv
     ${el}      my find el from els by text  ${els}     ${requestData}[pay_method]
     click element  ${el}
 
 commite pay
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
-    ${el}     get webelement     id=com.ytny.os.pos:id/tv_sumit
+    ${el}     get webelement     id=com.ytny.youhuiduo.oilmanager:id/btn_receivables
     click element  ${el}
 
-close small change window
+#继续收银
+continue_to_check_out
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
-    ${el}     get webelement     id=com.ytny.os.pos:id/tv_back
+    sleep  1
+    ${el}     get webelement     id=com.ytny.youhuiduo.oilmanager:id/btn_continue
     click element  ${el}
 
 chose_goods
@@ -103,24 +122,29 @@ input_user
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
 
-    ${el}     get webelement     id=com.ytny.os.pos:id/tv_all
+    ${el}     get webelement     id=com.ytny.youhuiduo.oilmanager:id/et_phone
+    ${last4_mobile}     get substring  ${requestData}[mobile]   -4
+    input text      ${el}       ${last4_mobile}
+
+    ${el}     get webelement     id=com.ytny.youhuiduo.oilmanager:id/iv_serach
     click element  ${el}
 
-    ${el}     get webelement     id=com.ytny.os.pos:id/rl_about_member
+    ${els}     get webelements     id=com.ytny.youhuiduo.oilmanager:id/tv_phone
+    ${el}  my find el from els by text  ${els}     ${requestData}[mobile]
     click element  ${el}
 
-    ${el}     get webelement     id=com.ytny.os.pos:id/mInputPassword
-    input text      ${el}   ${requestData}[mobile]
-
-    ${el}     get webelement     id=com.ytny.os.pos:id/notice_dialog_confirm
-    click element  ${el}
 
 input_userCard_pwd
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
-
-    ${el}     get webelement     id=com.ytny.os.pos:id/et_member_pwd
-    input text      ${el}   ${requestData}[userCard_pwd]
+    @{userCard_pwd_list}    convert to list  ${requestData}[userCard_pwd]
+    sleep  1
+    ${els}     get webelements     id=com.ytny.youhuiduo.oilmanager:id/btNumber
+    ${tmp_indx}     set variable    0
+    :FOR    ${userCard_pwd_item}  in  @{userCard_pwd_list}
+    \   ${tmp_index}    evaluate  ${userCard_pwd_item}-1
+    \   run keyword if  ${userCard_pwd_item}==0  click element  ${els}[10]
+    \   run keyword unless  ${userCard_pwd_item}==0  click element  ${els}[${tmp_index}]
 
 
 chose_score
@@ -149,3 +173,24 @@ input_fleetCard_pwd
     sleep  1
     ${el}     get webelement     id=com.ytny.os.pos:id/et_password
     input text      ${el}   ${requestData}[fleetCard_pwd]
+
+go_into_check_out
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+
+    ${el}     get webelement     id=com.ytny.youhuiduo.oilmanager:id/btn_cashier
+    click element  ${el}
+    sleep  1
+
+
+go_to_pay
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    ${el}     get webelement     id=com.ytny.youhuiduo.oilmanager:id/btn_to_pay
+    click element  ${el}
+
+not_add_oil
+    [Arguments]  ${csv_path}    ${test_name_kw_name}
+    ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    ${el}     get webelement     id=com.ytny.youhuiduo.oilmanager:id/btn_not_add_oil
+    click element  ${el}

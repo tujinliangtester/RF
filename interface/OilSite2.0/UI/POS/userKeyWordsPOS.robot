@@ -8,7 +8,7 @@ Library     ../../../../lib/myTestLib.py
 Library     CSVLib
 Library     String
 #Library     SeleniumLibrary
-Library     AppiumLibrary
+Library     AppiumLibrary   5
 *** Variables ***
 
 
@@ -39,7 +39,7 @@ input oil amt
 chose pay method
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
-
+    sleep  1
     ${el}     get webelement     id=com.ytny.os.pos:id/tv_all
     click element  ${el}
 
@@ -50,12 +50,14 @@ chose pay method
 commite pay
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    sleep  1
     ${el}     get webelement     id=com.ytny.os.pos:id/tv_sumit
     click element  ${el}
 
 close small change window
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
+    sleep  1
     ${el}     get webelement     id=com.ytny.os.pos:id/tv_back
     click element  ${el}
 
@@ -127,6 +129,7 @@ chose_score
     [Arguments]  ${csv_path}    ${test_name_kw_name}
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
 
+    sleep  1
     ${el}     get webelement     id=com.ytny.os.pos:id/cv_discount4
     click element  ${el}
 
