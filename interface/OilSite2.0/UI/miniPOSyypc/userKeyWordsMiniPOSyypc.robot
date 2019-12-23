@@ -159,10 +159,11 @@ chose_fleetCard
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
 
     sleep  1
-    ${el}     get webelement     id=com.ytny.os.pos:id/tv_card
+    ${els}     get webelements     id=com.ytny.youhuiduo.oilmanager:id/tv_card
+    ${el}   my find el from els by text     ${els}    ${requestData}[sub_fleetCard_no]
     click element  ${el}
 
-    ${el}     get webelement     id=com.ytny.os.pos:id/btn_confirm
+    ${el}     get webelement     id=com.ytny.youhuiduo.oilmanager:id/btn_confirm
     click element  ${el}
 
 
@@ -171,8 +172,12 @@ input_fleetCard_pwd
     ${requestData}=     read csv test data      ${csv_path}    ${test_name_kw_name}
 
     sleep  1
-    ${el}     get webelement     id=com.ytny.os.pos:id/et_password
-    input text      ${el}   ${requestData}[fleetCard_pwd]
+    @{fleetCard_pwd_pwd_list}   convert to list  ${requestData}[fleetCard_pwd]
+    ${tmp_index}     set variable    0
+    :FOR    ${fleetCard_pwd_pwd_item}  in  @{fleetCard_pwd_pwd_list}
+    \   ${tmp_index}    evaluate  ${tmp_index}+1
+    \   ${el}   get webelement      id=com.ytny.youhuiduo.oilmanager:id/et_code${tmp_index}
+    \   input text  ${el}   ${fleetCard_pwd_pwd_item}
 
 go_into_check_out
     [Arguments]  ${csv_path}    ${test_name_kw_name}

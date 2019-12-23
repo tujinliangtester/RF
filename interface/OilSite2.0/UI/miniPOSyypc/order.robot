@@ -70,11 +70,15 @@ order_oil_goods_userCard
     continue_to_check_out    ${csv_path}     demo
 #todo 后续用例待完成
 
-#order_oil_fleetCard
-#    open app    ${csv_path}    demo_open_app
-#    chose gun   ${csv_path}     order_oil_userCard_chose_gun
-#    input oil amt   ${csv_path}     order_oil_fleetCard_input_oil_amt
-#    input_user     ${csv_path}    order_oil_fleetCard_input_user
-#    chose pay method    ${csv_path}     order_oil_fleetCard_chose_pay_method
-#    chose_fleetCard    ${csv_path}     demo
-#    input_fleetCard_pwd     ${csv_path}    order_oil_fleetCard_input_fleetCard_pwd
+order_oil_fleetCard
+    open app    ${csv_path}    demo_open_app
+    go_into_check_out   ${csv_path}    go_into_check_out
+    chose gun   ${csv_path}     order_oil_userCard_chose_gun
+    input_user     ${csv_path}    order_oil_fleetCard_input_user
+    input oil amt   ${csv_path}     order_oil_fleetCard_input_oil_amt
+    chose pay method    ${csv_path}     order_oil_fleetCard_chose_pay_method
+    commite pay    ${csv_path}     demo_commite_pay
+    chose_fleetCard    ${csv_path}     order_oil_fleetCard_chose_fleetCard
+    input_fleetCard_pwd     ${csv_path}    order_oil_fleetCard_input_fleetCard_pwd
+    continue_to_check_out    ${csv_path}     demo
+
