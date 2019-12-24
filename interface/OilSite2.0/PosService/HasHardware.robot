@@ -5,10 +5,10 @@ Resource  E:/tjl/RF/interface/OilSite2.0/userKeyWords.robot
 
 
 *** Test Cases ***
-Class_01
-    pos login
-    ${res_list}=    HasHardware
-    should be equal as numbers  ${res_list}[0][code]  1
+#Class_01
+#    pos login
+#    ${res_list}=    HasHardware
+#    should be equal as numbers  ${res_list}[0][code]  1
 
 *** Keywords ***
 HasHardware

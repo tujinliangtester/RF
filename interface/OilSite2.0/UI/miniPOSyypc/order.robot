@@ -5,7 +5,7 @@ Resource  userKeyWordsMiniPOSyypc.robot
 Test Setup  my_test_setup
 
 *** Variables ***
-${csv_path}     ./demo.csv
+${csv_path}     interface/oilsite2.0/ui/miniPOSyypc/demo.csv
 *** Test Cases ***
 demo
     open app    ${csv_path}    demo_open_app

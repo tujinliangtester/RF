@@ -21,12 +21,12 @@ ${BosBaseUrl}   http://192.168.10.249:8080
 
 
 *** Keywords ***
-order pos goods cash
-    [Arguments]     ${posLoginParam}
-    #首先，需要确认环境是否正确
-#    change pos env
-    pos login   ${posLoginParam}
-    return from keyword  111
+#order pos goods cash
+#    [Arguments]     ${posLoginParam}
+#    #首先，需要确认环境是否正确
+##    change pos env
+#    pos login   ${posLoginParam}
+#    return from keyword  111
 
 
 
@@ -498,8 +498,8 @@ GetOilPriceList
 
 
 mySetUp
-    pos login
-    boslogin    ${BosLoginCSV}  BosLogin_BosLogin
+#    pos login
+#    boslogin    ${BosLoginCSV}  BosLogin_BosLogin
     yypc login  ${loginCSVpath}     Login_yypc_login
 
 

@@ -5,7 +5,7 @@ Resource  userKeyWordsPOS.robot
 Test Setup  my_test_setup
 
 *** Variables ***
-${csv_path}     ./demo.csv
+${csv_path}     interface/oilsite2.0/ui/pos/demo.csv
 *** Test Cases ***
 demo
     open app    ${csv_path}    demo_open_app
@@ -35,7 +35,7 @@ order_goods_userCard_score
     open app    ${csv_path}    demo_open_app
     chose_goods     ${csv_path}    order_goods_cash_chose_goods
     input_user     ${csv_path}    order_goods_userCard_score_input_user
-    chose_score     ${csv_path}    demo
+    #    chose_score     ${csv_path}    demo
     chose pay method    ${csv_path}     order_goods_userCard_score_chose_pay_method
     input_userCard_pwd     ${csv_path}    order_goods_userCard_score_input_userCard_pwd
 
